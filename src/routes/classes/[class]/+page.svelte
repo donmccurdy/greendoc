@@ -5,4 +5,5 @@
 </script>
 
 <h1>{data.title}</h1>
-<p>{data.content}</p>
+<a href="../">Back</a>
+<pre>{JSON.stringify(data.content, null, 2)}</pre>
