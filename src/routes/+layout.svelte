@@ -67,7 +67,7 @@
 	</script> -->
 </header>
 <nav class="tsd-navigation secondary">
-	{#each data.sections as section}
+	{#each data.navigation.sections as section}
 		<h4>{section.title}</h4>
 		<ul>
 			{#each section.items as item}

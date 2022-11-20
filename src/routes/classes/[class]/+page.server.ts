@@ -1,27 +1,25 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { packages } from '$lib/server/api';
-import type { ApiEntryPoint, ApiPackage } from '@microsoft/api-extractor-model';
+import type { ApiClass, ApiEntryPoint, ApiPackage } from '@microsoft/api-extractor-model';
+import { serializeItem, type SerializedApiClass } from '$lib/server/serialize';
 
 const corePackage = packages.find(
 	(pkg) => pkg.displayName === '@gltf-transform/core'
 ) as ApiPackage;
 const coreEntry = corePackage.members[0] as ApiEntryPoint;
 
-export const load: PageServerLoad = async ({ params }) => {
-	console.log('search...', { params });
+interface ClassOutputData {
+	class: SerializedApiClass;
+}
 
-	const member = coreEntry.members.find((member) => {
+export const load: PageServerLoad<ClassOutputData> = async ({ params }) => {
+	const item = coreEntry.members.find((member) => {
 		return `core.${member.displayName.toLowerCase()}.html` === params.class;
 	});
 
-	if (member) {
-		const content = {};
-		member.serializeInto(content);
-		return {
-			title: member.displayName,
-			content
-		};
+	if (item) {
+		return { class: serializeItem(item as ApiClass) };
 	}
 
 	throw error(404, 'Not found');
