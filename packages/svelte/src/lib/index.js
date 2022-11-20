@@ -1,3 +1,4 @@
+// Reexport your entry components here
 export { default as Class } from './Class.svelte';
 export { default as Comment } from './Comment.svelte';
 export { default as Excerpt } from './Excerpt.svelte';

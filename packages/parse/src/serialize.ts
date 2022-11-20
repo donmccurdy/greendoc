@@ -12,7 +12,6 @@ import {
 	type ApiItem
 } from '@microsoft/api-extractor-model';
 import type { DeclarationReference } from '@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference';
-import { getItemByCanonicalReference, getPath } from '../server/models';
 import { renderDocNodes, renderMarkdown } from './format';
 import type { DocComment } from '@microsoft/tsdoc';
 import type {
@@ -28,16 +27,17 @@ import type {
 	SerializedToken,
 	SerializedReference
 } from './types';
+import type { Parser } from './Parser';
 
-export function serializeItem(item: ApiEnum): SerializedApiEnum;
-export function serializeItem(item: ApiInterface): SerializedApiInterface;
-export function serializeItem(item: ApiMethod): SerializedApiMethod;
-export function serializeItem(item: ApiProperty): SerializedApiProperty;
-export function serializeItem(item: ApiClass): SerializedApiClass;
-export function serializeItem(item: ApiEnum): SerializedApiEnum;
-export function serializeItem(item: ApiEnumMember): SerializedApiEnumMember;
-export function serializeItem(item: ApiTypeAlias): SerializedApiTypeAlias;
-export function serializeItem(item: ApiItem): SerializedApiItem {
+export function serializeItem(parser: Parser, item: ApiEnum): SerializedApiEnum;
+export function serializeItem(parser: Parser, item: ApiInterface): SerializedApiInterface;
+export function serializeItem(parser: Parser, item: ApiMethod): SerializedApiMethod;
+export function serializeItem(parser: Parser, item: ApiProperty): SerializedApiProperty;
+export function serializeItem(parser: Parser, item: ApiClass): SerializedApiClass;
+export function serializeItem(parser: Parser, item: ApiEnum): SerializedApiEnum;
+export function serializeItem(parser: Parser, item: ApiEnumMember): SerializedApiEnumMember;
+export function serializeItem(parser: Parser, item: ApiTypeAlias): SerializedApiTypeAlias;
+export function serializeItem(parser: Parser, item: ApiItem): SerializedApiItem {
 	const json: SerializedApiItem = {
 		kind: item.kind,
 		name: item.displayName
@@ -47,32 +47,32 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 		console.log(item.sourceLocation.fileUrl);
 		return {
 			...json,
-			path: getPath(item),
+			path: parser.getPath(item),
 			packageName: item.getAssociatedPackage()!.name,
-			comment: serializeComment(item.tsdocComment),
+			comment: serializeComment(parser, item.tsdocComment),
 			fileUrlPath: item.fileUrlPath,
-			extendsType: item.extendsType ? serializeExcerpt(item.extendsType.excerpt) : null,
+			extendsType: item.extendsType ? serializeExcerpt(parser, item.extendsType.excerpt) : null,
 			properties: item.members
 				.filter((member) => member.kind === ApiItemKind.Property)
-				.map((member) => serializeItem(member as ApiProperty)),
+				.map((member) => serializeItem(parser, member as ApiProperty)),
 			methods: item.members
 				.filter((member) => member.kind === ApiItemKind.Method)
-				.map((member) => serializeItem(member as ApiMethod))
+				.map((member) => serializeItem(parser, member as ApiMethod))
 		} as SerializedApiClass;
 	} else if (item instanceof ApiInterface) {
 		return {
 			...json,
-			path: getPath(item),
+			path: parser.getPath(item),
 			packageName: item.getAssociatedPackage()!.name,
-			comment: serializeComment(item.tsdocComment),
+			comment: serializeComment(parser, item.tsdocComment),
 			fileUrlPath: item.fileUrlPath,
 			// extendsType: item.extendsTypes ? serializeExcerpt(item.extendsType.excerpt) : null,
 			properties: item.members
 				.filter((member) => member.kind === ApiItemKind.Property)
-				.map((member) => serializeItem(member as ApiProperty)),
+				.map((member) => serializeItem(parser, member as ApiProperty)),
 			methods: item.members
 				.filter((member) => member.kind === ApiItemKind.Method)
-				.map((member) => serializeItem(member as ApiMethod))
+				.map((member) => serializeItem(parser, member as ApiMethod))
 		} as SerializedApiInterface;
 	} else if (item instanceof ApiMethod) {
 		return {
@@ -80,8 +80,8 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 			isStatic: item.isStatic,
 			isProtected: item.isProtected,
 			isOptional: item.isOptional,
-			excerpt: serializeExcerpt(item.excerpt),
-			comment: serializeComment(item.tsdocComment)
+			excerpt: serializeExcerpt(parser, item.excerpt),
+			comment: serializeComment(parser, item.tsdocComment)
 		} as SerializedApiMethod;
 	} else if (item instanceof ApiProperty) {
 		return {
@@ -89,21 +89,21 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 			isStatic: item.isStatic,
 			isProtected: item.isProtected,
 			isOptional: item.isOptional,
-			excerpt: serializeExcerpt(item.excerpt),
-			comment: serializeComment(item.tsdocComment)
+			excerpt: serializeExcerpt(parser, item.excerpt),
+			comment: serializeComment(parser, item.tsdocComment)
 		} as SerializedApiProperty;
 	} else if (item instanceof ApiEnum) {
 		return {
 			...json,
-			comment: serializeComment(item.tsdocComment),
-			members: item.members.map((item) => serializeItem(item))
+			comment: serializeComment(parser, item.tsdocComment),
+			members: item.members.map((item) => serializeItem(parser, item))
 		} as SerializedApiEnum;
 	} else if (item instanceof ApiEnumMember) {
 		item.sourceLocation;
 		return {
 			...json,
-			comment: serializeComment(item.tsdocComment),
-			excerpt: serializeExcerpt(item.excerpt)
+			comment: serializeComment(parser, item.tsdocComment),
+			excerpt: serializeExcerpt(parser, item.excerpt)
 		} as SerializedApiEnumMember;
 	} else if (item instanceof ApiTypeAlias) {
 		return {
@@ -114,29 +114,29 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 	throw new Error(`Unsupported serialization type, "${item.kind}"`);
 }
 
-export function serializeExcerpt(excerpt: Excerpt): SerializedExerpt {
+export function serializeExcerpt(parser: Parser, excerpt: Excerpt): SerializedExerpt {
 	const tokens = [] as SerializedToken[];
 	for (const token of excerpt.tokens) {
 		if (token.kind === ExcerptTokenKind.Content) {
 			tokens.push(token.text);
 		} else if (token.kind === ExcerptTokenKind.Reference) {
-			tokens.push(serializeReference(token.canonicalReference!) || token.text);
+			tokens.push(serializeReference(parser, token.canonicalReference!) || token.text);
 		}
 	}
 	return { tokens };
 }
 
-export function serializeReference(ref: DeclarationReference): SerializedReference | null {
-	const item = getItemByCanonicalReference(ref)!;
+export function serializeReference(parser: Parser, ref: DeclarationReference): SerializedReference | null {
+	const item = parser.getItemByCanonicalReference(ref)!;
 	if (!item) return null;
 	return {
-		path: getPath(item),
+		path: parser.getPath(item),
 		name: item.displayName,
 		kind: item.kind
 	};
 }
 
-export function serializeComment(comment?: DocComment): string {
+export function serializeComment(parser: Parser, comment?: DocComment): string {
 	if (!comment) return '';
 	const md = renderDocNodes(comment.getChildNodes());
 	return renderMarkdown(md);

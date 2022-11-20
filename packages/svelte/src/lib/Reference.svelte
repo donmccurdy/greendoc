@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SerializedReference } from '$lib/api';
+	import type { SerializedReference } from '@greendoc/parse';
 	export let data: SerializedReference;
 </script>
 
