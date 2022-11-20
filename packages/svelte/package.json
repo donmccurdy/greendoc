@@ -1,7 +1,11 @@
 {
 	"name": "@greendoc/svelte",
-	"version": "0.0.1",
+	"version": "0.0.2",
+	"repository": "https://github.com/donmccurdy/greendoc",
+	"author": "Don McCurdy <dm@donmccurdy.com>",
+	"license": "MIT",
 	"type": "module",
+	"sideEffects": false,
 	"svelte": "./index.js",
 	"exports": {
 		"./package.json": "./package.json",
