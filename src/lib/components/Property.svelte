@@ -17,11 +17,11 @@
 	<Comment data={data.comment} />
 	<aside class="tsd-sources">
 		<p>
-			Overrides <a href="todo.html">TODO</a>.<a href="todo.html#todoproperty">{data.name}</a>
+			Overrides TODO<!-- Overrides <a href="todo.html">TODO</a>.<a href="todo.html#todoproperty">{data.name}</a> -->
 		</p>
 		<ul>
 			<li>
-				Defined in <a href="TODO.ts#L44">TODO.ts:44</a>
+				Defined in TODO<!-- Defined in <a href="TODO.ts#L44">TODO.ts:44</a> -->
 			</li>
 		</ul>
 	</aside>

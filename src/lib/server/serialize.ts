@@ -1,16 +1,18 @@
 import {
 	ApiClass,
 	ApiEnum,
+	ApiEnumMember,
 	ApiInterface,
 	ApiItemKind,
 	ApiMethod,
 	ApiProperty,
+	ApiTypeAlias,
 	Excerpt,
 	ExcerptTokenKind,
 	type ApiItem
 } from '@microsoft/api-extractor-model';
 import type { DeclarationReference } from '@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference';
-import { getItemByCanonicalReference, getSlug } from './api';
+import { getItemByCanonicalReference, getPath, getSlug } from './api';
 import { renderDocNodes, renderMarkdown } from './format';
 import type { DocComment } from '@microsoft/tsdoc';
 
@@ -21,7 +23,7 @@ export interface SerializedApiItem {
 
 export interface SerializedApiClass extends SerializedApiItem {
 	kind: ApiItemKind.Class;
-	slug: string;
+	path: string | null;
 	packageName: string;
 	comment: string;
 	fileUrlPath: string;
@@ -32,7 +34,7 @@ export interface SerializedApiClass extends SerializedApiItem {
 
 export interface SerializedApiInterface extends SerializedApiItem {
 	kind: ApiItemKind.Interface;
-	slug: string;
+	path: string | null;
 	packageName: string;
 	comment: string;
 	fileUrlPath: string;
@@ -66,6 +68,12 @@ export interface SerializedApiEnum extends SerializedApiItem {
 	comment: string;
 }
 
+export interface SerializedApiEnumMember extends SerializedApiItem {
+	kind: ApiItemKind.EnumMember;
+	comment: string;
+	excerpt: SerializedExerpt;
+}
+
 export interface SerializedExerpt {
 	tokens: SerializedToken[];
 }
@@ -73,16 +81,21 @@ export interface SerializedExerpt {
 export type SerializedToken = string | SerializedReference;
 
 export interface SerializedReference {
-	slug: string;
+	path: string | null;
 	name: string;
 	kind: ApiItemKind;
 }
+
+export interface SerializedApiTypeAlias extends SerializedApiItem {}
 
 export function serializeItem(item: ApiEnum): SerializedApiEnum;
 export function serializeItem(item: ApiInterface): SerializedApiInterface;
 export function serializeItem(item: ApiMethod): SerializedApiMethod;
 export function serializeItem(item: ApiProperty): SerializedApiProperty;
 export function serializeItem(item: ApiClass): SerializedApiClass;
+export function serializeItem(item: ApiEnum): SerializedApiEnum;
+export function serializeItem(item: ApiEnumMember): SerializedApiEnumMember;
+export function serializeItem(item: ApiTypeAlias): SerializedApiTypeAlias;
 export function serializeItem(item: ApiItem): SerializedApiItem {
 	const json: SerializedApiItem = {
 		kind: item.kind,
@@ -90,9 +103,10 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 	};
 
 	if (item instanceof ApiClass) {
+		console.log(item.sourceLocation.fileUrl);
 		return {
 			...json,
-			slug: getSlug(item),
+			path: getPath(item),
 			packageName: item.getAssociatedPackage()!.name,
 			comment: serializeComment(item.tsdocComment),
 			fileUrlPath: item.fileUrlPath,
@@ -107,7 +121,7 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 	} else if (item instanceof ApiInterface) {
 		return {
 			...json,
-			slug: getSlug(item),
+			path: getPath(item),
 			packageName: item.getAssociatedPackage()!.name,
 			comment: serializeComment(item.tsdocComment),
 			fileUrlPath: item.fileUrlPath,
@@ -137,6 +151,23 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 			excerpt: serializeExcerpt(item.excerpt),
 			comment: serializeComment(item.tsdocComment)
 		} as SerializedApiProperty;
+	} else if (item instanceof ApiEnum) {
+		return {
+			...json,
+			comment: serializeComment(item.tsdocComment),
+			members: item.members.map((item) => serializeItem(item))
+		} as SerializedApiEnum;
+	} else if (item instanceof ApiEnumMember) {
+		item.sourceLocation;
+		return {
+			...json,
+			comment: serializeComment(item.tsdocComment),
+			excerpt: serializeExcerpt(item.excerpt)
+		} as SerializedApiEnumMember;
+	} else if (item instanceof ApiTypeAlias) {
+		return {
+			...json
+		} as SerializedApiTypeAlias;
 	}
 	console.log(item);
 	throw new Error(`Unsupported serialization type, "${item.kind}"`);
@@ -158,7 +189,7 @@ export function serializeReference(ref: DeclarationReference): SerializedReferen
 	const item = getItemByCanonicalReference(ref)!;
 	if (!item) return null;
 	return {
-		slug: getSlug(item),
+		path: getPath(item),
 		name: item.displayName,
 		kind: item.kind
 	};

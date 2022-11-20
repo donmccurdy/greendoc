@@ -4,5 +4,9 @@
 </script>
 
 <span>
-	<a href={data.slug} class="tsd-signature-type">{data.name}</a>
+	{#if data.path}
+		<a href={data.path} class="tsd-signature-type">{data.name}</a>
+	{:else}
+		<span class="tsd-signature-type">{data.name}</span>
+	{/if}
 </span>

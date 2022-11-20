@@ -9,7 +9,7 @@
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="../index.html">glTF-Transform</a></strong>
+					<strong><a href="../">glTF-Transform</a></strong>
 					<a
 						class="header-badge"
 						target="_blank"

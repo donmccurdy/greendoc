@@ -1,4 +1,4 @@
-import { ApiItem, ApiModel, ApiPackage } from '@microsoft/api-extractor-model';
+import { ApiItem, ApiItemKind, ApiModel, ApiPackage } from '@microsoft/api-extractor-model';
 import { TSDocConfiguration } from '@microsoft/tsdoc';
 import type { DeclarationReference } from '@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference';
 import core from './core.api.json';
@@ -60,4 +60,17 @@ export function getSlug(item: ApiItem): string {
 	const slug = itemToSlug.get(item);
 	if (slug) return slug;
 	throw new Error(`Slug for "${item.displayName}" not found`);
+}
+
+export function getPath(item: ApiItem): string | null {
+	switch (item.kind) {
+		case ApiItemKind.Class:
+			return `/classes/${getSlug(item)}`;
+		case ApiItemKind.Interface:
+			return `/interfaces/${getSlug(item)}`;
+		// case ApiItemKind.Enum:
+		// 	return `/enums/${getSlug(item)}`;
+		default:
+			return null;
+	}
 }
