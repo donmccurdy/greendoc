@@ -36,7 +36,9 @@ export interface SerializedApiInterface extends SerializedApiItem {
 	packageName: string;
 	comment: string;
 	fileUrlPath: string;
-	extendsType: SerializedExerpt | null;
+	// extendsType: SerializedExerpt | null;
+	properties: SerializedApiProperty[];
+	methods: SerializedApiMethod[];
 }
 
 export type SerializedApiMember = SerializedApiMethod | SerializedApiProperty;
@@ -102,6 +104,21 @@ export function serializeItem(item: ApiItem): SerializedApiItem {
 				.filter((member) => member.kind === ApiItemKind.Method)
 				.map((member) => serializeItem(member as ApiMethod))
 		} as SerializedApiClass;
+	} else if (item instanceof ApiInterface) {
+		return {
+			...json,
+			slug: getSlug(item),
+			packageName: item.getAssociatedPackage()!.name,
+			comment: serializeComment(item.tsdocComment),
+			fileUrlPath: item.fileUrlPath,
+			// extendsType: item.extendsTypes ? serializeExcerpt(item.extendsType.excerpt) : null,
+			properties: item.members
+				.filter((member) => member.kind === ApiItemKind.Property)
+				.map((member) => serializeItem(member as ApiProperty)),
+			methods: item.members
+				.filter((member) => member.kind === ApiItemKind.Method)
+				.map((member) => serializeItem(member as ApiMethod))
+		} as SerializedApiInterface;
 	} else if (item instanceof ApiMethod) {
 		return {
 			...json,

@@ -5,7 +5,7 @@ import type { ApiClass } from '@microsoft/api-extractor-model';
 import { serializeItem, type SerializedApiClass } from '$lib/server/serialize';
 
 export const load: PageServerLoad<{ class: SerializedApiClass }> = async ({ params }) => {
-	const item = getItemBySlug(params.class);
+	const item = getItemBySlug(params.slug);
 	if (item) return { class: serializeItem(item as ApiClass) };
 	throw error(404, 'Not found');
 };

@@ -5,7 +5,11 @@
 	export let data: SerializedApiProperty;
 </script>
 
-<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-overwrite">
+<section
+	class="tsd-panel tsd-member tsd-kind-property"
+	class:tsd-parent-kind-class={true}
+	class:tsd-is-overwrite={true}
+>
 	<a name="propertytype" class="tsd-anchor" />
 	<div class="tsd-signature tsd-kind-icon">
 		<Excerpt data={data.excerpt} />
