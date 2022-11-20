@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SerializedApiMethod } from '$lib/server/serialize';
+	import type { SerializedApiMethod } from '$lib/api';
 	import Comment from './Comment.svelte';
 	import Excerpt from './Excerpt.svelte';
 	export let data: SerializedApiMethod;

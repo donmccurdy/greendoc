@@ -1,5 +1,5 @@
 import type { LayoutServerLoad } from './$types';
-import { packages } from '$lib/server/api/';
+import { packages } from '$lib/server/models';
 import { ApiItemKind, type ApiEntryPoint, type ApiPackage } from '@microsoft/api-extractor-model';
 
 export const prerender = true;

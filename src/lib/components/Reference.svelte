@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SerializedReference } from '$lib/server/serialize';
+	import type { SerializedReference } from '$lib/api';
 	export let data: SerializedReference;
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SerializedExerpt } from '$lib/server/serialize';
+	import type { SerializedExerpt } from '$lib/api';
 	import Reference from './Reference.svelte';
 	export let data: SerializedExerpt;
 </script>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SerializedApiProperty } from '$lib/server/serialize';
+	import type { SerializedApiProperty } from '$lib/api';
 	import Excerpt from './Excerpt.svelte';
 	import Comment from './Comment.svelte';
 	export let data: SerializedApiProperty;

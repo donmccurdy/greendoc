@@ -2,6 +2,17 @@ import { DocExcerpt, type DocNode } from '@microsoft/tsdoc';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
 
+marked.setOptions({
+	highlight: function (code, lang) {
+		const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+		return hljs.highlight(code, { language }).value;
+	}
+});
+
+export function renderMarkdown(md: string): string {
+	return marked.parse(md);
+}
+
 /**
  * https://github.com/microsoft/tsdoc/blob/main/api-demo/src/Formatter.ts
  */
@@ -24,15 +35,4 @@ export function renderDocNodes(docNodes: ReadonlyArray<DocNode>): string {
 		result += renderDocNode(docNode);
 	}
 	return result;
-}
-
-marked.setOptions({
-	highlight: function (code, lang) {
-		const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-		return hljs.highlight(code, { language }).value;
-	}
-});
-
-export function renderMarkdown(md: string): string {
-	return marked.parse(md);
 }

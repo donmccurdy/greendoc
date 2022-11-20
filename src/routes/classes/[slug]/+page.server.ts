@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { getItemBySlug } from '$lib/server/api';
+import { getItemBySlug } from '$lib/server/models';
 import type { ApiClass } from '@microsoft/api-extractor-model';
-import { serializeItem, type SerializedApiClass } from '$lib/server/serialize';
+import { serializeItem, type SerializedApiClass } from '$lib/api';
 
 export const load: PageServerLoad<{ class: SerializedApiClass }> = async ({ params }) => {
 	const item = getItemBySlug(params.slug);

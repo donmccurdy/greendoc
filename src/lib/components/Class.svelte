@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SerializedApiClass } from '$lib/server/serialize';
+	import type { SerializedApiClass } from '$lib/api';
 	import Method from './Method.svelte';
 	import Property from './Property.svelte';
 	import Comment from './Comment.svelte';
