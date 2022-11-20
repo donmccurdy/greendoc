@@ -6,12 +6,18 @@
 </script>
 
 <section
-	class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"
+	class="tsd-panel tsd-member tsd-kind-method"
+	class:tsd-parent-kind-class={true}
+	class:tsd-is-inherited={true}
+	class:tsd-is-external={true}
 	class:tsd-is-protected={data.isProtected}
 >
 	<a name={data.name} class="tsd-anchor" />
 	<ul
-		class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-external"
+		class="tsd-signatures tsd-kind-method"
+		class:tsd-parent-kind-class={true}
+		class:tsd-is-inherited={true}
+		class:tsd-is-external={true}
 		class:tsd-is-protected={data.isProtected}
 	>
 		<li class="tsd-signature tsd-kind-icon">
@@ -29,4 +35,3 @@
 		</li>
 	</ul>
 </section>
-<!-- <pre>{JSON.stringify(data, null, 2)}</pre> -->

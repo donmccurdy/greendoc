@@ -12,7 +12,6 @@ import {
 import type { DeclarationReference } from '@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference';
 import { getItemByCanonicalReference, getSlug } from './api';
 import { renderDocNodes, renderMarkdown } from './format';
-import { marked } from 'marked';
 import type { DocComment } from '@microsoft/tsdoc';
 
 export interface SerializedApiItem {
