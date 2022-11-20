@@ -1,6 +1,6 @@
 {
   "name": "@greendoc/parse",
-  "version": "0.0.0",
+  "version": "0.0.3",
   "type": "module",
   "sideEffects": false,
   "source": "./src/index.ts",
@@ -18,8 +18,8 @@
     "dev": "microbundle watch --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
     "build": "microbundle --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
     "test": "echo \"Tests not yet implemented\"",
-    "preversion": "yarn dist && yarn test",
-    "version": "rimraf dist/* && yarn dist && git add -u",
+    "preversion": "yarn build && yarn test",
+    "version": "rimraf dist/* && yarn build && git add -u",
     "postversion": "git push && git push --tags && npm publish"
   },
   "dependencies": {
