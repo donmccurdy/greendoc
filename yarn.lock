@@ -1007,7 +1007,7 @@
 
 "@greendoc/svelte@*", "@greendoc/svelte@file:/Users/donmccurdy/Documents/Projects/greendoc/packages/svelte":
   "resolved" "file:packages/svelte"
-  "version" "0.0.1"
+  "version" "0.0.2"
   dependencies:
     "@greendoc/parse" "*"
 
