@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "lerna run dev",
+    "dev": "lerna run dev --parallel",
     "build": "lerna run build",
     "link": "lerna link"
   },

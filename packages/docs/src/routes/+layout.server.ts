@@ -1,10 +1,12 @@
 import type { LayoutServerLoad } from './$types';
-import { packages } from '$lib/server/model';
+import { parser } from '$lib/server/model';
 import { ApiItemKind, type ApiEntryPoint, type ApiPackage } from '@microsoft/api-extractor-model';
 
 export const prerender = true;
 
-const core = packages.find((pkg) => pkg.displayName === '@gltf-transform/core') as ApiPackage;
+const core = parser.packages.find(
+	(pkg) => pkg.displayName === '@gltf-transform/core'
+) as ApiPackage;
 const coreEntry = core.members[0] as ApiEntryPoint;
 
 export const load: LayoutServerLoad = () => {
