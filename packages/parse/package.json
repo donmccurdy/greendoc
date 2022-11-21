@@ -1,31 +1,32 @@
 {
-  "name": "@greendoc/parse",
-  "version": "0.0.3",
-  "type": "module",
-  "sideEffects": false,
-  "source": "./src/index.ts",
-  "types": "./dist/index.d.ts",
-  "main": "./dist/greendoc-parse.cjs",
-  "module": "./dist/greendoc-parse.esm.js",
-  "exports": {
-    "require": "./dist/greendoc-parse.cjs",
-    "default": "./dist/greendoc-parse.modern.js"
-  },
-  "repository": "https://github.com/donmccurdy/greendoc",
-  "author": "Don McCurdy <dm@donmccurdy.com>",
-  "license": "MIT",
-  "scripts": {
-    "dev": "microbundle watch --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
-    "build": "microbundle --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
-    "test": "echo \"Tests not yet implemented\"",
-    "preversion": "yarn build && yarn test",
-    "version": "rimraf dist/* && yarn build && git add -u",
-    "postversion": "git push && git push --tags && npm publish"
-  },
-  "dependencies": {
-    "@microsoft/api-extractor-model": "^7.25.2",
-    "@microsoft/tsdoc": "^0.14.2",
-    "highlight.js": "^11.6.0",
-    "marked": "^4.2.3"
-  }
+	"name": "@greendoc/parse",
+	"version": "0.0.3",
+	"type": "module",
+	"sideEffects": false,
+	"source": "./src/index.ts",
+	"types": "./dist/index.d.ts",
+	"main": "./dist/greendoc-parse.cjs",
+	"module": "./dist/greendoc-parse.esm.js",
+	"exports": {
+		"require": "./dist/greendoc-parse.cjs",
+		"default": "./dist/greendoc-parse.modern.js"
+	},
+	"repository": "https://github.com/donmccurdy/greendoc",
+	"author": "Don McCurdy <dm@donmccurdy.com>",
+	"license": "MIT",
+	"scripts": {
+		"dev": "yarn watch",
+		"watch": "microbundle watch --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
+		"build": "microbundle --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
+		"test": "echo \"Tests not yet implemented\"",
+		"preversion": "yarn build && yarn test",
+		"version": "rimraf dist/* && yarn build && git add -u",
+		"postversion": "git push && git push --tags && npm publish"
+	},
+	"dependencies": {
+		"@microsoft/api-extractor-model": "^7.25.2",
+		"@microsoft/tsdoc": "^0.14.2",
+		"highlight.js": "^11.6.0",
+		"marked": "^4.2.3"
+	}
 }

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { SerializedApiInterface } from '@greendoc/parse';
+	import type { GD } from '@greendoc/parse';
 	import Method from './Method.svelte';
 	import Property from './Property.svelte';
 	import Comment from './Comment.svelte';
-	export let data: SerializedApiInterface;
+	export let data: GD.ApiInterface;
 </script>
 
 <section class="tsd-panel tsd-comment">

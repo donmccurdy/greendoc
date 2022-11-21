@@ -11,10 +11,13 @@ export namespace GD {
 		path: string | null;
 		packageName: string;
 		comment: string;
-		fileUrlPath: string;
+		sourceUrl: string;
+		sourceUrlPath: string;
 		extendsType: Excerpt | null;
 		properties: ApiProperty[];
 		methods: ApiMethod[];
+		staticProperties: ApiProperty[];
+		staticMethods: ApiMethod[];
 	}
 
 	export interface ApiInterface extends ApiItem {
@@ -22,10 +25,13 @@ export namespace GD {
 		path: string | null;
 		packageName: string;
 		comment: string;
-		fileUrlPath: string;
-		// extendsType: Exerpt | null;
+		sourceUrl: string;
+		sourceUrlPath: string;
+		extendsTypes: Excerpt[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
+		staticProperties: ApiProperty[];
+		staticMethods: ApiMethod[];
 	}
 
 	export type ApiMember = ApiMethod | ApiProperty;
@@ -35,8 +41,11 @@ export namespace GD {
 		isStatic: boolean;
 		isProtected: boolean;
 		isOptional: boolean;
+		overwrite?: Reference;
 		excerpt: Excerpt;
 		comment: string;
+		sourceUrl: string;
+		sourceUrlPath: string;
 	}
 
 	export interface ApiProperty extends ApiItem {
@@ -44,13 +53,18 @@ export namespace GD {
 		isStatic: boolean;
 		isProtected: Boolean;
 		isOptional: boolean;
+		overwrite?: Reference;
 		excerpt: Excerpt;
 		comment: string;
+		sourceUrl: string;
+		sourceUrlPath: string;
 	}
 
 	export interface ApiEnum extends ApiItem {
 		kind: ApiItemKind.Enum;
 		comment: string;
+		sourceUrl: string;
+		sourceUrlPath: string;
 	}
 
 	export interface ApiEnumMember extends ApiItem {

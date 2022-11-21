@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { SerializedReference } from '@greendoc/parse';
-	export let data: SerializedReference;
+	import type { GD } from '@greendoc/parse';
+	export let data: GD.Reference;
 </script>
 
 <span>

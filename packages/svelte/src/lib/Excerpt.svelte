@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { SerializedExerpt } from '@greendoc/parse';
+	import type { GD } from '@greendoc/parse';
 	import Reference from './Reference.svelte';
-	export let data: SerializedExerpt;
+	export let data: GD.Excerpt;
 </script>
 
 <span>

@@ -16,10 +16,12 @@
 		"./Method.svelte": "./dist/Method.svelte",
 		"./Property.svelte": "./dist/Property.svelte",
 		"./Reference.svelte": "./dist/Reference.svelte",
+		"./Sources.svelte": "./dist/Sources.svelte",
 		".": "./dist/index.js"
 	},
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --force",
+		"watch": "svelte-kit sync && svelte-package --watch",
 		"build": "svelte-kit sync && svelte-package && rm dist/package.json",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

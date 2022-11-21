@@ -6,3 +6,4 @@ export { default as Interface } from './Interface.svelte';
 export { default as Method } from './Method.svelte';
 export { default as Property } from './Property.svelte';
 export { default as Reference } from './Reference.svelte';
+export { default as Sources } from './Sources.svelte';

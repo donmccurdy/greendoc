@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { SerializedApiMethod } from '@greendoc/parse';
+	import type { GD } from '@greendoc/parse';
 	import Comment from './Comment.svelte';
 	import Excerpt from './Excerpt.svelte';
-	export let data: SerializedApiMethod;
+	import Sources from './Sources.svelte';
+	export let data: GD.ApiMethod;
 </script>
 
 <section
@@ -27,11 +28,7 @@
 	<ul class="tsd-descriptions">
 		<li class="tsd-description">
 			<Comment data={data.comment} />
-			<aside class="tsd-sources">
-				<ul>
-					<li>Defined in TODO.ts:125</li>
-				</ul>
-			</aside>
+			<Sources {data} />
 		</li>
 	</ul>
 </section>
