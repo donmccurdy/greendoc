@@ -219,11 +219,16 @@ export class Encoder {
 
 function getExtendsTypes<T extends ApiClass | ApiInterface>(parser: Parser, base: T): T[] {
 	const extendsTypes = [] as HeritageType[];
-	if (base.kind === ApiItemKind.Class && (base as ApiClass).extendsType) {
-		extendsTypes.push((base as ApiClass).extendsType!);
-	} else if (base.kind === ApiItemKind.Interface) {
-		extendsTypes.push(...(base as ApiInterface).extendsTypes);
+	function pushExtendsTypes(item: ApiClass | ApiInterface): void {
+		if (item.kind === ApiItemKind.Class && (item as ApiClass).extendsType) {
+			extendsTypes.push((item as ApiClass).extendsType!);
+		} else if (item.kind === ApiItemKind.Interface) {
+			extendsTypes.push(...(item as ApiInterface).extendsTypes);
+		}
 	}
+
+	pushExtendsTypes(base);
+
 	const results = [] as T[];
 	for (const extendsType of extendsTypes) {
 		for (const token of extendsType.excerpt.spannedTokens) {
@@ -231,6 +236,7 @@ function getExtendsTypes<T extends ApiClass | ApiInterface>(parser: Parser, base
 				const result = parser.getItemByCanonicalReference(token.canonicalReference);
 				if (result) {
 					results.push(result as T);
+					pushExtendsTypes(result as T);
 				} else {
 					console.warn(`Missing reference for base class, ${token.canonicalReference.toString()}`);
 				}
