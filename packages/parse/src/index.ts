@@ -1,4 +1,3 @@
 export * from './Parser';
-export * from './format';
-export * from './serialize';
+export * from './Encoder';
 export * from './types';

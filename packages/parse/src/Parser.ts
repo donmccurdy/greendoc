@@ -1,6 +1,5 @@
 import { ApiItem, ApiItemKind, ApiModel, ApiPackage } from "@microsoft/api-extractor-model";
 import { TSDocConfiguration } from "@microsoft/tsdoc";
-import {  } from "@microsoft/tsdoc";
 
 type $IntentionalAny = any;
 type $StringLike = {toString: () => string};
