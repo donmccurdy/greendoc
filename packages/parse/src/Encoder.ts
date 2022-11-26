@@ -18,11 +18,10 @@ import { DocComment } from '@microsoft/tsdoc';
 import type { GD } from './types';
 import { Parser } from './Parser';
 
+// TODO(feat): Sort results.
 export class Encoder {
 	encodeItem(parser: Parser, item: ApiEnum): GD.ApiEnum;
 	encodeItem(parser: Parser, item: ApiInterface): GD.ApiInterface;
-	encodeItem(parser: Parser, item: ApiMethod): GD.ApiMethod;
-	encodeItem(parser: Parser, item: ApiProperty): GD.ApiProperty;
 	encodeItem(parser: Parser, item: ApiClass): GD.ApiClass;
 	encodeItem(parser: Parser, item: ApiEnum): GD.ApiEnum;
 	encodeItem(parser: Parser, item: ApiEnumMember): GD.ApiEnumMember;
@@ -33,16 +32,15 @@ export class Encoder {
 				return this._encodeClass(parser, item as ApiClass);
 			case ApiItemKind.Interface:
 				return this._encodeInterface(parser, item as ApiInterface);
-			case ApiItemKind.Method:
-				return this._encodeMethod(parser, item as ApiMethod);
-			case ApiItemKind.Property:
-				return this._encodeProperty(parser, item as ApiProperty);
 			case ApiItemKind.Enum:
 				return this._encodeEnum(parser, item as ApiEnum);
 			case ApiItemKind.EnumMember:
 				return this._encodeEnumMember(parser, item as ApiEnumMember);
 			case ApiItemKind.TypeAlias:
 				return this._encodeTypeAlias(parser, item as ApiTypeAlias);
+			case ApiItemKind.Property:
+			case ApiItemKind.Method:
+				throw new Error(`Unexpected detached type, "${item.kind}"`);
 			default:
 				console.log(item);
 				throw new Error(`Unsupported encoded type, "${item.kind}"`);
@@ -67,10 +65,10 @@ export class Encoder {
 			sourceUrl: item.sourceLocation.fileUrl,
 			sourceUrlPath: item.fileUrlPath,
 			extendsType: item.extendsType ? this._encodeExcerpt(parser, item.extendsType.excerpt) : null,
-			properties: properties.filter(({ isStatic }) => !isStatic),
-			methods: methods.filter(({ isStatic }) => !isStatic),
 			staticProperties: properties.filter(({ isStatic }) => isStatic),
-			staticMethods: methods.filter(({ isStatic }) => isStatic)
+			properties: properties.filter(({ isStatic }) => !isStatic),
+			staticMethods: methods.filter(({ isStatic }) => isStatic),
+			methods: methods.filter(({ isStatic }) => !isStatic)
 		} as GD.ApiClass;
 	}
 
@@ -85,37 +83,13 @@ export class Encoder {
 			sourceUrl: item.sourceLocation.fileUrl,
 			sourceUrlPath: item.fileUrlPath,
 			extendsTypes: item.extendsTypes.map(({ excerpt }) => this._encodeExcerpt(parser, excerpt)),
-			properties: properties.filter(({ isStatic }) => !isStatic),
-			methods: methods.filter(({ isStatic }) => !isStatic),
 			staticProperties: properties.filter(({ isStatic }) => isStatic),
-			staticMethods: methods.filter(({ isStatic }) => isStatic)
+			properties: properties.filter(({ isStatic }) => !isStatic),
+			staticMethods: methods.filter(({ isStatic }) => isStatic),
+			methods: methods.filter(({ isStatic }) => !isStatic)
 		} as GD.ApiInterface;
 	}
 
-	protected _encodeMethod(parser: Parser, item: ApiMethod): GD.ApiMethod {
-		return {
-			...this._encodeItem(parser, item),
-			isStatic: item.isStatic,
-			isProtected: item.isProtected,
-			isOptional: item.isOptional,
-			excerpt: this._encodeExcerpt(parser, item.excerpt),
-			comment: this._encodeComment(parser, item.tsdocComment),
-			sourceUrl: item.sourceLocation.fileUrl,
-			sourceUrlPath: item.fileUrlPath
-		} as GD.ApiMethod;
-	}
-	protected _encodeProperty(parser: Parser, item: ApiProperty): GD.ApiProperty {
-		return {
-			...this._encodeItem(parser, item),
-			isStatic: item.isStatic,
-			isProtected: item.isProtected,
-			isOptional: item.isOptional,
-			excerpt: this._encodeExcerpt(parser, item.excerpt),
-			comment: this._encodeComment(parser, item.tsdocComment),
-			sourceUrl: item.sourceLocation.fileUrl,
-			sourceUrlPath: item.fileUrlPath
-		} as GD.ApiProperty;
-	}
 	protected _encodeEnum(parser: Parser, item: ApiEnum): GD.ApiEnum {
 		return {
 			...this._encodeItem(parser, item),
@@ -168,12 +142,12 @@ export class Encoder {
 
 	protected _encodeInheritedMembers<T extends GD.ApiMethod>(
 		parser: Parser,
-		item: ApiClass | ApiInterface,
+		childItem: ApiClass | ApiInterface,
 		kind: ApiItemKind.Method
 	): T[];
 	protected _encodeInheritedMembers<T extends GD.ApiProperty>(
 		parser: Parser,
-		item: ApiClass | ApiInterface,
+		childItem: ApiClass | ApiInterface,
 		kind: ApiItemKind.Property
 	): T[];
 	protected _encodeInheritedMembers<T extends GD.ApiMethod | GD.ApiProperty>(
@@ -181,43 +155,112 @@ export class Encoder {
 		childItem: ApiClass | ApiInterface,
 		kind: ApiItemKind.Method | ApiItemKind.Property
 	): T[] {
-		const inheritedMembers = {} as Record<string, T>;
-		const parentItems = [childItem, ...getExtendsTypes(parser, childItem)];
-		for (const parentItem of parentItems) {
-			const parentMembers = parentItem.members.filter((m) => m.kind === kind) as unknown as T[];
-			for (const member of parentMembers) {
-				const inheritedMember = inheritedMembers[member.name];
-				if (parentItem === childItem || !inheritedMember) {
-					if (kind === ApiItemKind.Method) {
-						// Store base method.
-						inheritedMembers[member.name] = this._encodeMethod(
-							parser,
-							member as unknown as ApiMethod
-						) as T;
-					} else if (kind === ApiItemKind.Property) {
-						// Store base property.
-						inheritedMembers[member.name] = this._encodeProperty(
-							parser,
-							member as unknown as ApiProperty
-						) as T;
-					}
-				} else if (inheritedMember.overwrite) {
-					// If first overwrite is already found, continue;
-					// TODO: Add TSDoc if missing.
-					continue;
-				} else {
-					// If this is the first overwrite, annotate it.
-					// TODO: Add TSDoc if missing.
-					const overwrite = this._encodeReference(parser, parentItem.canonicalReference);
-					if (overwrite) inheritedMember.overwrite = overwrite;
-				}
+		// (1) Obtain leaf member.
+		// (2) Walk up tree until missing info resolved and a direct override found, if exists.
+		// (3) Return resolved member.
+		const result = childItem.findMembersWithInheritance();
+
+		if (result.maybeIncompleteResult) {
+			console.warn(`findMembersWithInheritance: ${JSON.stringify(result.messages)}`);
+		}
+
+		const encodedMembers = [] as T[];
+		for (const member of result.items as (ApiMethod | ApiProperty)[]) {
+			if (member.kind === kind) {
+				encodedMembers.push(this._resolveInheritedMember(parser, member, null));
 			}
 		}
-		return Object.values(inheritedMembers);
+
+		return encodedMembers;
+
+		// const inheritedMembers = {} as Record<string, T>;
+		// const parentItems = [childItem, ...getExtendsTypes(parser, childItem)];
+		// for (const parentItem of parentItems) {
+		// 	const parentMembers = parentItem.members.filter((m) => m.kind === kind) as unknown as T[];
+		// 	for (const member of parentMembers) {
+		// 		const inheritedMember = inheritedMembers[member.name];
+		// 		if (parentItem === childItem || !inheritedMember) {
+		// 			if (kind === ApiItemKind.Method) {
+		// 				// Store base method.
+		// 				inheritedMembers[member.name] = this._encodeMethod(
+		// 					parser,
+		// 					member as unknown as ApiMethod
+		// 				) as T;
+		// 			} else if (kind === ApiItemKind.Property) {
+		// 				// Store base property.
+		// 				inheritedMembers[member.name] = this._encodeProperty(
+		// 					parser,
+		// 					member as unknown as ApiProperty
+		// 				) as T;
+		// 			}
+		// 		} else if (inheritedMember.overwrite) {
+		// 			// If first overwrite is already found, continue;
+		// 			// TODO: Add TSDoc if missing.
+		// 			continue;
+		// 		} else {
+		// 			// If this is the first overwrite, annotate it.
+		// 			// TODO: Add TSDoc if missing.
+		// 			const overwrite = this._encodeReference(parser, parentItem.canonicalReference);
+		// 			if (overwrite) inheritedMember.overwrite = overwrite;
+		// 		}
+		// 	}
+		// }
+		// return Object.values(inheritedMembers);
+	}
+
+	protected _resolveInheritedMember<T extends GD.ApiMethod | GD.ApiProperty>(
+		parser: Parser,
+		member: ApiMethod | ApiProperty,
+		target: Partial<T> | null
+	): T {
+		const parent = member.parent as ApiClass | ApiInterface | undefined;
+		if (!parent) {
+			throw new Error(`Unexpected detached member of type "${member.kind}"`);
+		}
+
+		if (!target) {
+			target = this._encodeItem(parser, member) as Partial<T>;
+		} else if (target.overwrite === undefined) {
+			const overwrite = this._encodeReference(parser, parent.canonicalReference);
+			if (overwrite) target.overwrite = overwrite;
+		}
+
+		if (target.isStatic === undefined) {
+			target.isStatic = member.isStatic;
+		}
+		if (target.isProtected === undefined) {
+			target.isProtected = member.isProtected;
+		}
+		if (target.isOptional === undefined) {
+			target.isOptional = member.isOptional;
+		}
+		if (target.excerpt === undefined) {
+			target.excerpt = this._encodeExcerpt(parser, member.excerpt);
+		}
+		if (target.comment === undefined || target.comment === '') {
+			target.comment = this._encodeComment(parser, member.tsdocComment);
+		}
+		if (target.sourceUrl === undefined) {
+			target.sourceUrl = member.sourceLocation.fileUrl;
+		}
+		if (target.sourceUrlPath === undefined) {
+			target.sourceUrlPath = member.fileUrlPath;
+		}
+
+		// TODO(feat): Consider how to include merged siblings, multiple overrides. If that's
+		// what we're returned by findMembersByName?
+		// See: member.getMergedSiblings();
+		const nextParent = getExtends(parser, parent);
+		const nextMember = nextParent?.findMembersByName(member.name)[0];
+		return nextMember
+			? this._resolveInheritedMember(parser, nextMember as ApiMethod | ApiProperty, target)
+			: (target as T);
 	}
 }
 
-function getExtendsTypes<T extends ApiClass | ApiInterface>(parser: Parser, base: T): T[] {
+// TODO(feat): Would really like to be able to display a full inheritance tree, this includes
+// resolving generics etc. Consider how to refactor this and getExtendsTypes below.
+function getExtends<T extends ApiClass | ApiInterface>(parser: Parser, base: T): T | null {
 	const extendsTypes = [] as HeritageType[];
 	function pushExtendsTypes(item: ApiClass | ApiInterface): void {
 		if (item.kind === ApiItemKind.Class && (item as ApiClass).extendsType) {
@@ -226,17 +269,14 @@ function getExtendsTypes<T extends ApiClass | ApiInterface>(parser: Parser, base
 			extendsTypes.push(...(item as ApiInterface).extendsTypes);
 		}
 	}
-
 	pushExtendsTypes(base);
 
-	const results = [] as T[];
 	for (const extendsType of extendsTypes) {
 		for (const token of extendsType.excerpt.spannedTokens) {
 			if (token.kind === ExcerptTokenKind.Reference && token.canonicalReference) {
 				const result = parser.getItemByCanonicalReference(token.canonicalReference);
 				if (result) {
-					results.push(result as T);
-					pushExtendsTypes(result as T);
+					return result as T;
 				} else {
 					console.warn(`Missing reference for base class, ${token.canonicalReference.toString()}`);
 				}
@@ -246,5 +286,37 @@ function getExtendsTypes<T extends ApiClass | ApiInterface>(parser: Parser, base
 			}
 		}
 	}
-	return results;
+	return null;
 }
+
+// function getExtendsTypes<T extends ApiClass | ApiInterface>(parser: Parser, base: T): T[] {
+// 	const extendsTypes = [] as HeritageType[];
+// 	function pushExtendsTypes(item: ApiClass | ApiInterface): void {
+// 		if (item.kind === ApiItemKind.Class && (item as ApiClass).extendsType) {
+// 			extendsTypes.push((item as ApiClass).extendsType!);
+// 		} else if (item.kind === ApiItemKind.Interface) {
+// 			extendsTypes.push(...(item as ApiInterface).extendsTypes);
+// 		}
+// 	}
+
+// 	pushExtendsTypes(base);
+
+// 	const results = [] as T[];
+// 	for (const extendsType of extendsTypes) {
+// 		for (const token of extendsType.excerpt.spannedTokens) {
+// 			if (token.kind === ExcerptTokenKind.Reference && token.canonicalReference) {
+// 				const result = parser.getItemByCanonicalReference(token.canonicalReference);
+// 				if (result) {
+// 					results.push(result as T);
+// 					pushExtendsTypes(result as T);
+// 				} else {
+// 					console.warn(`Missing reference for base class, ${token.canonicalReference.toString()}`);
+// 				}
+// 				// Not all tokens in the list are classes/interfaces. For lack of a better
+// 				// criteria, bail out after the first reference.
+// 				continue;
+// 			}
+// 		}
+// 	}
+// 	return results;
+// }

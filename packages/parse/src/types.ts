@@ -1,21 +1,26 @@
 import type { ApiItemKind } from '@microsoft/api-extractor-model';
 
+// TODO(design): Clean up API from an end-user perspective.
 export namespace GD {
 	export interface ApiItem {
 		name: string;
-		kind: string;
+		kind: ApiItemKind;
 	}
 
 	export interface ApiClass extends ApiItem {
+		// TODO: static?
+		// TODO: resolved & unresolved generics?
 		kind: ApiItemKind.Class;
-		path: string | null;
-		packageName: string;
-		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
-		extendsType: Excerpt | null;
+		path: string | null; // urlPath
+		packageName: string; // → package
+		comment: string; // → IntlText
+		sourceUrl: string; // remove
+		sourceUrlPath: string; // → sourcePath
+		extendsType: Excerpt | null; // → extends
+		// TODO: implements?
 		properties: ApiProperty[];
 		methods: ApiMethod[];
+		// TODO: overloads?
 		staticProperties: ApiProperty[];
 		staticMethods: ApiMethod[];
 	}
