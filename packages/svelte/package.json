@@ -6,22 +6,44 @@
 	"license": "UNLICENSED",
 	"type": "module",
 	"sideEffects": false,
-	"svelte": "./dist/index.js",
 	"exports": {
-		"./package.json": "./dist/package.json",
-		"./Class.svelte": "./dist/Class.svelte",
-		"./Comment.svelte": "./dist/Comment.svelte",
-		"./Interface.svelte": "./dist/Interface.svelte",
-		"./Method.svelte": "./dist/Method.svelte",
-		"./Property.svelte": "./dist/Property.svelte",
-		"./Reference.svelte": "./dist/Reference.svelte",
-		"./Sources.svelte": "./dist/Sources.svelte",
-		".": "./dist/index.js"
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		}
+	},
+	"typesVersions": {
+		">4.0": {
+			"Class.svelte": [
+				"./dist/dist/Class.d.ts"
+			],
+			"Comment.svelte": [
+				"./dist/dist/Comment.d.ts"
+			],
+			"Interface.svelte": [
+				"./dist/dist/Interface.d.ts"
+			],
+			"Method.svelte": [
+				"./dist/dist/Method.d.ts"
+			],
+			"Property.svelte": [
+				"./dist/dist/Property.d.ts"
+			],
+			"Reference.svelte": [
+				"./dist/dist/Reference.d.ts"
+			],
+			"Sources.svelte": [
+				"./dist/dist/Sources.d.ts"
+			],
+			"index": [
+				"./dist/dist/index.d.ts"
+			]
+		}
 	},
 	"scripts": {
 		"dev": "vite dev --force",
-		"watch": "svelte-kit sync && svelte-package --watch",
-		"build": "svelte-kit sync && svelte-package && rm dist/package.json",
+		"watch": "svelte-kit sync && svelte-package -o dist --watch",
+		"build": "svelte-kit sync && svelte-package -o dist && rm dist/package.json",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check .",
@@ -35,12 +57,17 @@
 	"dependencies": {
 		"@greendoc/parse": "*"
 	},
+	"peerDependencies": {
+		"svelte": "^3.59.0"
+	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "2.0.1",
 		"@sveltejs/kit": "1.16.2",
-		"@sveltejs/package": "^2.0.2",
-		"svelte": "^3.59.0",
+		"@sveltejs/package": "^2.0.0",
 		"svelte-check": "^3.3.1",
 		"svelte-preprocess": "^5.0.3"
-	}
+	},
+	"files": [
+		"dist"
+	]
 }
