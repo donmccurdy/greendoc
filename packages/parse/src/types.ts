@@ -8,16 +8,16 @@ export namespace GD {
 	}
 
 	export interface ApiClass extends ApiItem {
-		// TODO: static?
 		// TODO: resolved & unresolved generics?
+		// TODO: interfaces implemented?
 		kind: ApiItemKind.Class;
-		path: string | null; // urlPath
+		path: string | null;
 		packageName: string; // → package
 		comment: string; // → IntlText
 		sourceUrl: string; // remove
 		sourceUrlPath: string; // → sourcePath
-		extendsType: Excerpt | null; // → extends
-		// TODO: implements?
+		extendsType: Excerpt | null; // → extends;
+		// TODO: hierarchy (up/down)
 		properties: ApiProperty[];
 		methods: ApiMethod[];
 		// TODO: overloads?
@@ -39,9 +39,7 @@ export namespace GD {
 		staticMethods: ApiMethod[];
 	}
 
-	export type ApiMember = ApiMethod | ApiProperty;
-
-	export interface ApiMethod extends ApiItem {
+	export interface ApiMember extends ApiItem {
 		kind: ApiItemKind.Method;
 		isStatic: boolean;
 		isProtected: boolean;
@@ -53,16 +51,10 @@ export namespace GD {
 		sourceUrlPath: string;
 	}
 
-	export interface ApiProperty extends ApiItem {
-		kind: ApiItemKind.Property;
-		isStatic: boolean;
-		isProtected: Boolean;
-		isOptional: boolean;
-		overwrite?: Reference;
-		excerpt: Excerpt;
-		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
+	export interface ApiMethod extends ApiMember {}
+
+	export interface ApiProperty extends ApiMember {
+		isReadonly: boolean;
 	}
 
 	export interface ApiEnum extends ApiItem {

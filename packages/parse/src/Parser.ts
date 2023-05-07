@@ -1,5 +1,5 @@
 import { ApiItem, ApiItemKind, ApiModel, ApiPackage } from '@microsoft/api-extractor-model';
-import { TSDocConfiguration } from '@microsoft/tsdoc';
+import { TSDocConfiguration, TSDocTagDefinition, TSDocTagSyntaxKind } from '@microsoft/tsdoc';
 
 type $IntentionalAny = any;
 type $StringLike = { toString: () => string };
@@ -26,14 +26,17 @@ export class Parser {
 		return this;
 	}
 
-	public addPackage(json: $IntentionalAny, name: string): this {
+	public addPackage(
+		name: string,
+		json: $IntentionalAny,
+		tsdocConfiguration = new TSDocConfiguration()
+	): this {
 		const pkg = ApiPackage.deserialize(json as $IntentionalAny, {
 			apiJsonFilename: name,
 			toolPackage: json.metadata.toolPackage,
-
 			toolVersion: json.metadata.toolVersion,
 			versionToDeserialize: json.metadata.schemaVersion,
-			tsdocConfiguration: new TSDocConfiguration()
+			tsdocConfiguration
 		}) as ApiPackage;
 		this.packages.push(pkg);
 		this.model.addMember(pkg);

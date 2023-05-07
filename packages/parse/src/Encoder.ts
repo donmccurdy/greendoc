@@ -13,7 +13,7 @@ import {
 	HeritageType
 } from '@microsoft/api-extractor-model';
 import type { DeclarationReference } from '@microsoft/tsdoc/lib-commonjs/beta/DeclarationReference';
-import { renderDocNodes, renderMarkdown } from './format';
+import { renderDocNode, renderDocNodes, renderMarkdown } from './format';
 import { DocComment } from '@microsoft/tsdoc';
 import type { GD } from './types';
 import { Parser } from './Parser';
@@ -136,6 +136,11 @@ export class Encoder {
 
 	protected _encodeComment(parser: Parser, comment?: DocComment): string {
 		if (!comment) return '';
+		// TODO(bug): why does summary contain custom tags?
+		console.log({
+			summary: renderDocNode(comment.summarySection),
+			custom: renderDocNodes(comment.customBlocks)
+		});
 		const md = renderDocNodes(comment.getChildNodes());
 		return renderMarkdown(md);
 	}
@@ -208,7 +213,7 @@ export class Encoder {
 		// return Object.values(inheritedMembers);
 	}
 
-	protected _resolveInheritedMember<T extends GD.ApiMethod | GD.ApiProperty>(
+	protected _resolveInheritedMember<T extends GD.ApiMember>(
 		parser: Parser,
 		member: ApiMethod | ApiProperty,
 		target: Partial<T> | null
@@ -217,6 +222,8 @@ export class Encoder {
 		if (!parent) {
 			throw new Error(`Unexpected detached member of type "${member.kind}"`);
 		}
+
+		// TODO(feat): Consider how to resolve generics.
 
 		if (!target) {
 			target = this._encodeItem(parser, member) as Partial<T>;
@@ -233,6 +240,12 @@ export class Encoder {
 		}
 		if (target.isOptional === undefined) {
 			target.isOptional = member.isOptional;
+		}
+		if (
+			member.kind === ApiItemKind.Property &&
+			(target as Partial<GD.ApiProperty>).isReadonly === undefined
+		) {
+			(target as Partial<GD.ApiProperty>).isReadonly = (member as ApiProperty).isReadonly;
 		}
 		if (target.excerpt === undefined) {
 			target.excerpt = this._encodeExcerpt(parser, member.excerpt);
