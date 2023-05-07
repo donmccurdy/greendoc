@@ -63,6 +63,11 @@ export class Parser {
 	// }
 
 	/** @internal */
+	hasItem(item: Node): boolean {
+		return this.itemToSlug.has(item);
+	}
+
+	/** @internal */
 	getSlug(item: Node): string {
 		const slug = this.itemToSlug.get(item);
 		if (slug) return slug;

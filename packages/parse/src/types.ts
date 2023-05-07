@@ -77,6 +77,7 @@ export namespace GD {
 
 	export interface ApiProperty extends ApiMember {
 		kind: ApiItemKind.PROPERTY;
+		type?: Token;
 		isReadonly: boolean;
 	}
 

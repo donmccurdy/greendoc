@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { GD } from '@greendoc/parse';
-	import Excerpt from './Excerpt.svelte';
 	import Comment from './Comment.svelte';
 	import Sources from './Sources.svelte';
+	import Reference from './Reference.svelte';
 	export let data: GD.ApiProperty;
 </script>
 
@@ -13,7 +13,10 @@
 >
 	<a name={data.name} class="tsd-anchor" />
 	<div class="tsd-signature tsd-kind-icon">
-		{data.name}: [type]
+		{data.name}{#if typeof data.type === 'string'}:
+			<span class="tsd-signature-symbol">{data.type}</span>{:else if data.type}: <Reference
+				data={data.type}
+			/>{/if}
 	</div>
 	<Comment data={data.comment} />
 	<Sources {data} />

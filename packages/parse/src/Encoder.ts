@@ -11,6 +11,7 @@ import {
 	MethodSignature,
 	Node,
 	PropertyDeclaration,
+	Scope,
 	SyntaxKind,
 	Type,
 	TypeAliasDeclaration,
@@ -89,9 +90,13 @@ export class Encoder {
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
 			properties: item
 				.getInstanceProperties()
+				.filter((prop) => prop.getScope() !== Scope.Private)
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
 			staticMethods: item.getStaticMethods().map((method) => this._encodeMethod(parser, method)),
-			methods: item.getInstanceMethods().map((method) => this._encodeMethod(parser, method))
+			methods: item
+				.getInstanceMethods()
+				.filter((method) => method.getScope() !== Scope.Private)
+				.map((method) => this._encodeMethod(parser, method))
 		} as GD.ApiClass;
 	}
 
@@ -132,7 +137,6 @@ export class Encoder {
 	}
 
 	protected _encodeReference(parser: Parser, item: Node): GD.Reference | null {
-		return null;
 		return {
 			path: parser.getPath(item),
 			name: (item as any).getName ? (item as any).getName() : '',
@@ -141,20 +145,17 @@ export class Encoder {
 	}
 
 	protected _encodeType(parser: Parser, type: Type, typeNode?: TypeNode): GD.Token {
+		const symbol = type.getSymbol();
+		if (symbol) {
+			for (const decl of symbol.getDeclarations()) {
+				if (!parser.hasItem(decl)) continue;
+				const ref = this._encodeReference(parser, decl);
+				if (ref) return ref;
+			}
+		}
 		if (typeNode) return typeNode.getText();
-
-		// const symbol = type.getSymbol();
-		// if (symbol) {
-		// 	console.log(symbol);
-		// 	for (const decl of symbol.getDeclarations()) {
-		// 		const ref = this._encodeReference(parser, decl);
-		// 		if (ref) return ref;
-		// 	}
-		// }
-
-		const text = type.getText();
-		console.log(text);
-		return text;
+		if (type.isAnonymous()) return 'unknown';
+		return type.getText();
 	}
 
 	protected _encodeComment(parser: Parser, comment?: JSDoc): string {
@@ -175,7 +176,7 @@ export class Encoder {
 					? GD.ApiItemKind.METHOD
 					: GD.ApiItemKind.PROPERTY,
 			isStatic: item.isStatic(),
-			isProtected: false,
+			isProtected: item.getScope() === Scope.Protected,
 			isOptional: false,
 			// overwrite?: Reference,
 			excerpt: { tokens: [item.getName()] },
@@ -200,6 +201,7 @@ export class Encoder {
 		return {
 			...this._encodeMember(parser, item),
 			kind: GD.ApiItemKind.PROPERTY,
+			type: this._encodeType(parser, item.getType(), item.getTypeNode()),
 			isReadonly: item.isReadonly()
 		};
 	}
