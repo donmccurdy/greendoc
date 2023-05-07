@@ -77,12 +77,10 @@ export class Encoder {
 	protected _encodeClass(parser: Parser, item: ClassDeclaration): GD.ApiClass {
 		return {
 			...this._encodeItem(parser, item),
-			path: parser.getPath(item),
-			packageName: '', // item.getAssociatedPackage()!.name,
 			comment: this._encodeComment(parser, item.getJsDocs().pop()),
-			sourceUrl: '', //item.sourceLocation.fileUrl,
-			sourceUrlPath: '', //item.fileUrlPath,
-			extendsType: item.getBaseClass() ? this._encodeReference(parser, item.getBaseClass()!) : null,
+			extendsTypes: item.getBaseClass()
+				? [this._encodeReference(parser, item.getBaseClass()!)]
+				: [],
 			staticProperties: item
 				.getStaticProperties()
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
@@ -124,10 +122,7 @@ export class Encoder {
 	protected _encodeEnumMember(parser: Parser, item: EnumMember): GD.ApiEnumMember {
 		return {
 			...this._encodeItem(parser, item),
-			comment: '', // this._encodeComment(parser, item.tsdocComment),
-			excerpt: { tokens: [] }, // this._encodeExcerpt(parser, item.excerpt),
-			sourceUrl: '', // item.sourceLocation.fileUrl,
-			sourceUrlPath: '' // item.fileUrlPath
+			comment: this._encodeComment(parser, item.getJsDocs().pop())
 		} as GD.ApiEnumMember;
 	}
 	protected _encodeTypeAlias(parser: Parser, item: TypeAliasDeclaration): GD.ApiTypeAlias {
@@ -177,7 +172,6 @@ export class Encoder {
 			isProtected: item.getScope() === Scope.Protected,
 			isOptional: false,
 			// overwrite?: Reference,
-			excerpt: { tokens: [item.getName()] },
 			comment: this._encodeComment(parser, item.getJsDocs().pop())
 		};
 	}

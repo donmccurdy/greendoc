@@ -11,6 +11,7 @@
 	class:tsd-parent-kind-class={true}
 	class:tsd-is-overwrite={true}
 >
+	<!-- svelte-ignore a11y-missing-content -->
 	<a name={data.name} class="tsd-anchor" />
 	<div class="tsd-signature tsd-kind-icon">
 		{data.name}{#if typeof data.type === 'string'}:

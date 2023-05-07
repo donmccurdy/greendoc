@@ -13,6 +13,7 @@
 	class:tsd-is-external={true}
 	class:tsd-is-protected={data.isProtected}
 >
+	<!-- svelte-ignore a11y-missing-content -->
 	<a name={data.name} class="tsd-anchor" />
 	<ul
 		class="tsd-signatures tsd-kind-method"

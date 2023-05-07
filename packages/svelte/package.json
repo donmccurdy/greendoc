@@ -11,7 +11,6 @@
 		"./package.json": "./dist/package.json",
 		"./Class.svelte": "./dist/Class.svelte",
 		"./Comment.svelte": "./dist/Comment.svelte",
-		"./Excerpt.svelte": "./dist/Excerpt.svelte",
 		"./Interface.svelte": "./dist/Interface.svelte",
 		"./Method.svelte": "./dist/Method.svelte",
 		"./Property.svelte": "./dist/Property.svelte",

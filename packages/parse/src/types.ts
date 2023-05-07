@@ -29,11 +29,8 @@ export namespace GD {
 		// TODO: resolved & unresolved generics?
 		// TODO: interfaces implemented?
 		kind: ApiItemKind.CLASS;
-		path: string | null;
-		packageName: string; // → package
 		comment: string; // → IntlText
-		// extendsType: Excerpt | null; // → extends;
-		// TODO: hierarchy (up/down)
+		extendsTypes: Reference[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
 		// TODO: overloads?
@@ -43,10 +40,8 @@ export namespace GD {
 
 	export interface ApiInterface extends ApiItem {
 		kind: ApiItemKind.INTERFACE;
-		path: string | null;
-		packageName: string;
 		comment: string;
-		extendsTypes: Excerpt[];
+		extendsTypes: Reference[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
 	}
@@ -57,7 +52,6 @@ export namespace GD {
 		isProtected: boolean;
 		isOptional: boolean;
 		overwrite?: Reference;
-		excerpt: Excerpt;
 		comment: string;
 	}
 
@@ -89,11 +83,6 @@ export namespace GD {
 	export interface ApiEnumMember extends ApiItem {
 		kind: ApiItemKind.ENUM_MEMBER;
 		comment: string;
-		excerpt: Excerpt;
-	}
-
-	export interface Excerpt {
-		tokens: Token[];
 	}
 
 	export type Token = string | Reference;
