@@ -21,7 +21,8 @@
 		"test": "echo \"Tests not yet implemented\"",
 		"preversion": "yarn build && yarn test",
 		"version": "rimraf dist/* && yarn build && git add -u",
-		"postversion": "git push && git push --tags && npm publish"
+		"postversion": "git push && git push --tags && npm publish",
+		"clean": "rimraf dist/*"
 	},
 	"dependencies": {
 		"highlight.js": "^11.6.0",

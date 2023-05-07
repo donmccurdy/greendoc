@@ -8,7 +8,8 @@
 		"dev": "lerna run dev --parallel --stream",
 		"watch": "lerna run watch --parallel --stream",
 		"build": "lerna run build",
-		"test": "lerna run test --parallel"
+		"test": "lerna run test --parallel",
+		"clean": "lerna run clean --parallel"
 	},
 	"devDependencies": {
 		"ava": "^5.1.0",
