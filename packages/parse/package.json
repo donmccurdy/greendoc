@@ -24,7 +24,6 @@
 		"postversion": "git push && git push --tags && npm publish"
 	},
 	"dependencies": {
-		"@microsoft/tsdoc": "^0.14.2",
 		"highlight.js": "^11.6.0",
 		"marked": "^4.2.3",
 		"ts-morph": "^18.0.0"

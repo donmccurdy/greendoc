@@ -16,9 +16,7 @@ export namespace GD {
 		FUNCTION = 'Function',
 		VARIABLE = 'Variable',
 		METHOD = 'Method',
-		STATIC_METHOD = 'StaticMethod',
-		PROPERTY = 'Property',
-		STATIC_PROPERTY = 'StaticProperty'
+		PROPERTY = 'Property'
 	}
 
 	export interface ApiItem {
@@ -54,12 +52,10 @@ export namespace GD {
 		extendsTypes: Excerpt[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
-		staticProperties: ApiProperty[];
-		staticMethods: ApiMethod[];
 	}
 
 	export interface ApiMember extends ApiItem {
-		kind: ApiItemKind.METHOD;
+		kind: ApiItemKind.METHOD | ApiItemKind.PROPERTY;
 		isStatic: boolean;
 		isProtected: boolean;
 		isOptional: boolean;
@@ -70,9 +66,12 @@ export namespace GD {
 		sourceUrlPath: string;
 	}
 
-	export interface ApiMethod extends ApiMember {}
+	export interface ApiMethod extends ApiMember {
+		kind: ApiItemKind.METHOD;
+	}
 
 	export interface ApiProperty extends ApiMember {
+		kind: ApiItemKind.PROPERTY;
 		isReadonly: boolean;
 	}
 

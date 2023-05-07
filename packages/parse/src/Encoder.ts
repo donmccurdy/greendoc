@@ -1,5 +1,4 @@
-import { renderDocNode, renderDocNodes, renderMarkdown } from './format';
-import { DocComment } from '@microsoft/tsdoc';
+import { renderMarkdown } from './format';
 import { GD } from './types';
 import { Parser } from './Parser';
 import {
@@ -7,6 +6,7 @@ import {
 	EnumDeclaration,
 	EnumMember,
 	InterfaceDeclaration,
+	JSDoc,
 	MethodDeclaration,
 	Node,
 	PropertyDeclaration,
@@ -68,38 +68,36 @@ export class Encoder {
 	}
 
 	protected _encodeClass(parser: Parser, item: ClassDeclaration): GD.ApiClass {
-		const properties = this._encodeInheritedMembers(parser, item, SyntaxKind.PropertyDeclaration);
-		const methods = this._encodeInheritedMembers(parser, item, SyntaxKind.MethodDeclaration);
 		return {
 			...this._encodeItem(parser, item),
 			path: parser.getPath(item),
 			packageName: '', // item.getAssociatedPackage()!.name,
-			comment: '', // this._encodeComment(parser, item.tsdocComment),
+			comment: this._encodeComment(parser, item.getJsDocs()[0]),
 			sourceUrl: '', //item.sourceLocation.fileUrl,
 			sourceUrlPath: '', //item.fileUrlPath,
-			extendsType: null, //item.extendsType ? this._encodeExcerpt(parser, item.extendsType.excerpt) : null,
-			staticProperties: [], // properties.filter(({ isStatic }) => isStatic),
-			properties: [], // properties.filter(({ isStatic }) => !isStatic),
-			staticMethods: [], // methods.filter(({ isStatic }) => isStatic),
-			methods: [] // methods.filter(({ isStatic }) => !isStatic)
+			extendsType: item.getBaseClass() ? this._encodeReference(parser, item.getBaseClass()!) : null,
+			staticProperties: item
+				.getStaticProperties()
+				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
+			properties: item
+				.getInstanceProperties()
+				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
+			staticMethods: item.getStaticMethods().map((method) => this._encodeMember(parser, method)),
+			methods: item.getInstanceMethods().map((method) => this._encodeMember(parser, method))
 		} as GD.ApiClass;
 	}
 
 	protected _encodeInterface(parser: Parser, item: InterfaceDeclaration): GD.ApiInterface {
-		const properties = this._encodeInheritedMembers(parser, item, SyntaxKind.PropertyDeclaration);
-		const methods = this._encodeInheritedMembers(parser, item, SyntaxKind.MethodDeclaration);
 		return {
 			...this._encodeItem(parser, item),
 			path: parser.getPath(item),
 			packageName: '', // item.getAssociatedPackage()!.name,
-			comment: '', // this._encodeComment(parser, item.tsdocComment),
+			comment: this._encodeComment(parser, item.getJsDocs()[0]),
 			sourceUrl: '', // item.sourceLocation.fileUrl,
 			sourceUrlPath: '', // item.fileUrlPath,
 			extendsTypes: [], // item.extendsTypes.map(({ excerpt }) => this._encodeExcerpt(parser, excerpt)),
-			staticProperties: [], // properties.filter(({ isStatic }) => isStatic),
-			properties: [], // properties.filter(({ isStatic }) => !isStatic),
-			staticMethods: [], // methods.filter(({ isStatic }) => isStatic),
-			methods: [] // methods.filter(({ isStatic }) => !isStatic)
+			properties: item.getProperties().map((prop) => this._encodeProperty(parser, prop as any)),
+			methods: item.getMethods().map((method) => this._encodeMember(parser, method as any))
 		} as GD.ApiInterface;
 	}
 
@@ -137,25 +135,51 @@ export class Encoder {
 	// 	return { tokens };
 	// }
 
-	// protected _encodeReference(parser: Parser, ref: DeclarationReference): GD.Reference | null {
-	// 	const item = parser.getItemByCanonicalReference(ref)!;
-	// 	if (!item) return null;
-	// 	return {
-	// 		path: parser.getPath(item),
-	// 		name: item.displayName,
-	// 		kind: item.kind
-	// 	};
-	// }
+	protected _encodeReference(
+		parser: Parser,
+		item: ClassDeclaration | InterfaceDeclaration
+	): GD.Reference | null {
+		return {
+			path: parser.getPath(item),
+			name: item.getName() || 'Unknown',
+			kind: this._encodeKind(item.getKind())
+		};
+	}
 
-	protected _encodeComment(parser: Parser, comment?: DocComment): string {
+	protected _encodeComment(parser: Parser, comment?: JSDoc): string {
 		if (!comment) return '';
-		// TODO(bug): why does summary contain custom tags?
-		console.log({
-			summary: renderDocNode(comment.summarySection),
-			custom: renderDocNodes(comment.customBlocks)
-		});
-		const md = renderDocNodes(comment.getChildNodes());
-		return renderMarkdown(md);
+		const md = comment.getCommentText();
+		const html = md ? renderMarkdown(md) : '';
+		return html;
+	}
+
+	protected _encodeMember(
+		parser: Parser,
+		item: MethodDeclaration | PropertyDeclaration
+	): GD.ApiMember {
+		return {
+			...this._encodeItem(parser, item),
+			kind:
+				item.getKind() === SyntaxKind.MethodDeclaration
+					? GD.ApiItemKind.METHOD
+					: GD.ApiItemKind.PROPERTY,
+			isStatic: item.isStatic(),
+			isProtected: false,
+			isOptional: false,
+			// overwrite?: Reference,
+			excerpt: { tokens: [item.getName()] },
+			comment: this._encodeComment(parser, item.getJsDocs()[0]),
+			sourceUrl: '',
+			sourceUrlPath: ''
+		};
+	}
+
+	protected _encodeProperty(parser: Parser, item: PropertyDeclaration): GD.ApiProperty {
+		return {
+			...this._encodeMember(parser, item),
+			kind: GD.ApiItemKind.PROPERTY,
+			isReadonly: item.isReadonly()
+		};
 	}
 
 	protected _encodeInheritedMembers<T extends GD.ApiMethod>(
@@ -173,24 +197,19 @@ export class Encoder {
 		childItem: ClassDeclaration | InterfaceDeclaration,
 		kind: SyntaxKind.MethodDeclaration | SyntaxKind.PropertyDeclaration
 	): T[] {
-		return [];
 		// (1) Obtain leaf member.
 		// (2) Walk up tree until missing info resolved and a direct override found, if exists.
 		// (3) Return resolved member.
-		// const result = childItem.findMembersWithInheritance();
+		const members =
+			kind === SyntaxKind.MethodDeclaration ? childItem.getMethods() : childItem.getProperties();
 
-		// if (result.maybeIncompleteResult) {
-		// 	console.warn(`findMembersWithInheritance: ${JSON.stringify(result.messages)}`);
-		// }
+		const encodedMembers = [] as T[];
+		for (const member of members) {
+			// encodedMembers.push(this._resolveInheritedMember(parser, member, null));
+			encodedMembers.push(this._encodeItem(parser, member) as T);
+		}
 
-		// const encodedMembers = [] as T[];
-		// for (const member of result.items as (ApiMethod | ApiProperty)[]) {
-		// 	if (member.kind === kind) {
-		// 		encodedMembers.push(this._resolveInheritedMember(parser, member, null));
-		// 	}
-		// }
-
-		// return encodedMembers;
+		return encodedMembers;
 
 		// const inheritedMembers = {} as Record<string, T>;
 		// const parentItems = [childItem, ...getExtendsTypes(parser, childItem)];
@@ -227,62 +246,62 @@ export class Encoder {
 		// return Object.values(inheritedMembers);
 	}
 
-	// 	protected _resolveInheritedMember<T extends GD.ApiMember>(
-	// 		parser: Parser,
-	// 		member: MethodDeclaration | PropertyDeclaration,
-	// 		target: Partial<T> | null
-	// 	): T {
-	// 		const parent = member.parent as ApiClass | ApiInterface | undefined;
-	// 		if (!parent) {
-	// 			throw new Error(`Unexpected detached member of type "${member.kind}"`);
-	// 		}
-
-	// 		// TODO(feat): Consider how to resolve generics.
-
-	// 		if (!target) {
-	// 			target = this._encodeItem(parser, member) as Partial<T>;
-	// 		} else if (target.overwrite === undefined) {
-	// 			const overwrite = this._encodeReference(parser, parent.canonicalReference);
-	// 			if (overwrite) target.overwrite = overwrite;
-	// 		}
-
-	// 		if (target.isStatic === undefined) {
-	// 			target.isStatic = member.isStatic;
-	// 		}
-	// 		if (target.isProtected === undefined) {
-	// 			target.isProtected = member.isProtected;
-	// 		}
-	// 		if (target.isOptional === undefined) {
-	// 			target.isOptional = member.isOptional;
-	// 		}
-	// 		if (
-	// 			member.kind === ApiItemKind.Property &&
-	// 			(target as Partial<GD.ApiProperty>).isReadonly === undefined
-	// 		) {
-	// 			(target as Partial<GD.ApiProperty>).isReadonly = (member as ApiProperty).isReadonly;
-	// 		}
-	// 		if (target.excerpt === undefined) {
-	// 			target.excerpt = this._encodeExcerpt(parser, member.excerpt);
-	// 		}
-	// 		if (target.comment === undefined || target.comment === '') {
-	// 			target.comment = this._encodeComment(parser, member.tsdocComment);
-	// 		}
-	// 		if (target.sourceUrl === undefined) {
-	// 			target.sourceUrl = member.sourceLocation.fileUrl;
-	// 		}
-	// 		if (target.sourceUrlPath === undefined) {
-	// 			target.sourceUrlPath = member.fileUrlPath;
-	// 		}
-
-	// 		// TODO(feat): Consider how to include merged siblings, multiple overrides. If that's
-	// 		// what we're returned by findMembersByName?
-	// 		// See: member.getMergedSiblings();
-	// 		const nextParent = getExtends(parser, parent);
-	// 		const nextMember = nextParent?.findMembersByName(member.name)[0];
-	// 		return nextMember
-	// 			? this._resolveInheritedMember(parser, nextMember as ApiMethod | ApiProperty, target)
-	// 			: (target as T);
+	// protected _resolveInheritedMember<T extends GD.ApiMember>(
+	// 	parser: Parser,
+	// 	member: MethodDeclaration | PropertyDeclaration,
+	// 	target: Partial<T> | null
+	// ): T {
+	// 	const parent = member.parent as ApiClass | ApiInterface | undefined;
+	// 	if (!parent) {
+	// 		throw new Error(`Unexpected detached member of type "${member.kind}"`);
 	// 	}
+
+	// 	// TODO(feat): Consider how to resolve generics.
+
+	// 	if (!target) {
+	// 		target = this._encodeItem(parser, member) as Partial<T>;
+	// 	} else if (target.overwrite === undefined) {
+	// 		const overwrite = this._encodeReference(parser, parent.canonicalReference);
+	// 		if (overwrite) target.overwrite = overwrite;
+	// 	}
+
+	// 	if (target.isStatic === undefined) {
+	// 		target.isStatic = member.isStatic;
+	// 	}
+	// 	if (target.isProtected === undefined) {
+	// 		target.isProtected = member.isProtected;
+	// 	}
+	// 	if (target.isOptional === undefined) {
+	// 		target.isOptional = member.isOptional;
+	// 	}
+	// 	if (
+	// 		member.kind === ApiItemKind.Property &&
+	// 		(target as Partial<GD.ApiProperty>).isReadonly === undefined
+	// 	) {
+	// 		(target as Partial<GD.ApiProperty>).isReadonly = (member as ApiProperty).isReadonly;
+	// 	}
+	// 	if (target.excerpt === undefined) {
+	// 		target.excerpt = this._encodeExcerpt(parser, member.excerpt);
+	// 	}
+	// 	if (target.comment === undefined || target.comment === '') {
+	// 		target.comment = this._encodeComment(parser, member.tsdocComment);
+	// 	}
+	// 	if (target.sourceUrl === undefined) {
+	// 		target.sourceUrl = member.sourceLocation.fileUrl;
+	// 	}
+	// 	if (target.sourceUrlPath === undefined) {
+	// 		target.sourceUrlPath = member.fileUrlPath;
+	// 	}
+
+	// 	// TODO(feat): Consider how to include merged siblings, multiple overrides. If that's
+	// 	// what we're returned by findMembersByName?
+	// 	// See: member.getMergedSiblings();
+	// 	const nextParent = getExtends(parser, parent);
+	// 	const nextMember = nextParent?.findMembersByName(member.name)[0];
+	// 	return nextMember
+	// 		? this._resolveInheritedMember(parser, nextMember as ApiMethod | ApiProperty, target)
+	// 		: (target as T);
+	// }
 }
 
 // TODO(feat): Would really like to be able to display a full inheritance tree, this includes

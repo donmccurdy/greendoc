@@ -28,7 +28,12 @@ export class Parser {
 					const slug = `${pkgSlug}.${name}.html`;
 					this.itemToSlug.set(declaration, slug);
 					this.slugToItem.set(slug, declaration);
-					pkg.exports.push({ name, path: slug });
+					const path = this.getPath(declaration);
+					if (path) {
+						pkg.exports.push({ name, path });
+					} else {
+						console.log(`No path for slug ${slug}`);
+					}
 				}
 			}
 		}
