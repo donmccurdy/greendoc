@@ -1,7 +1,26 @@
-import type { ApiItemKind } from '@microsoft/api-extractor-model';
-
 // TODO(design): Clean up API from an end-user perspective.
 export namespace GD {
+	// export enum ApiExportKind {
+	// 	CLASS = 'Class',
+	// 	INTERFACE = 'Interface',
+	// 	ENUM = 'Enum',
+	// 	FUNCTION = 'Function',
+	// 	VARIABLE = 'Variable'
+	// }
+
+	export enum ApiItemKind {
+		CLASS = 'Class',
+		INTERFACE = 'Interface',
+		ENUM = 'Enum',
+		ENUM_MEMBER = 'EnumMember',
+		FUNCTION = 'Function',
+		VARIABLE = 'Variable',
+		METHOD = 'Method',
+		STATIC_METHOD = 'StaticMethod',
+		PROPERTY = 'Property',
+		STATIC_PROPERTY = 'StaticProperty'
+	}
+
 	export interface ApiItem {
 		name: string;
 		kind: ApiItemKind;
@@ -10,13 +29,13 @@ export namespace GD {
 	export interface ApiClass extends ApiItem {
 		// TODO: resolved & unresolved generics?
 		// TODO: interfaces implemented?
-		kind: ApiItemKind.Class;
+		kind: ApiItemKind.CLASS;
 		path: string | null;
 		packageName: string; // → package
 		comment: string; // → IntlText
 		sourceUrl: string; // remove
 		sourceUrlPath: string; // → sourcePath
-		extendsType: Excerpt | null; // → extends;
+		// extendsType: Excerpt | null; // → extends;
 		// TODO: hierarchy (up/down)
 		properties: ApiProperty[];
 		methods: ApiMethod[];
@@ -26,7 +45,7 @@ export namespace GD {
 	}
 
 	export interface ApiInterface extends ApiItem {
-		kind: ApiItemKind.Interface;
+		kind: ApiItemKind.INTERFACE;
 		path: string | null;
 		packageName: string;
 		comment: string;
@@ -40,7 +59,7 @@ export namespace GD {
 	}
 
 	export interface ApiMember extends ApiItem {
-		kind: ApiItemKind.Method;
+		kind: ApiItemKind.METHOD;
 		isStatic: boolean;
 		isProtected: boolean;
 		isOptional: boolean;
@@ -58,14 +77,14 @@ export namespace GD {
 	}
 
 	export interface ApiEnum extends ApiItem {
-		kind: ApiItemKind.Enum;
+		kind: ApiItemKind.ENUM;
 		comment: string;
 		sourceUrl: string;
 		sourceUrlPath: string;
 	}
 
 	export interface ApiEnumMember extends ApiItem {
-		kind: ApiItemKind.EnumMember;
+		kind: ApiItemKind.ENUM_MEMBER;
 		comment: string;
 		excerpt: Excerpt;
 	}

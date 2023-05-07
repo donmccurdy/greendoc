@@ -1,76 +1,79 @@
-import { ApiItem, ApiItemKind, ApiModel, ApiPackage } from '@microsoft/api-extractor-model';
-import { TSDocConfiguration, TSDocTagDefinition, TSDocTagSyntaxKind } from '@microsoft/tsdoc';
+import { Node, Project, SourceFile, SyntaxKind } from 'ts-morph';
 
-type $IntentionalAny = any;
 type $StringLike = { toString: () => string };
 
+interface Package {
+	name: string;
+	entry: SourceFile;
+	exports: { name: string; path: string; category?: string }[];
+}
+
 export class Parser {
-	readonly model = new ApiModel();
-	readonly packages: ApiPackage[] = [];
-	readonly itemToSlug = new Map<ApiItem, string>();
-	readonly slugToItem = new Map<string, ApiItem>();
-	readonly canonicalReferenceToItem = new Map<string, ApiItem>();
+	readonly project = new Project();
+	readonly packages: Package[] = [];
+	readonly itemToSlug = new Map<Node, string>();
+	readonly slugToItem = new Map<string, Node>();
+	readonly canonicalReferenceToItem = new Map<string, Node>();
 
 	public init(): this {
+		console.log('BEGIN INIT');
+		console.time('init');
 		for (const pkg of this.packages) {
-			const pkgSlug = pkg.displayName.split('/').pop();
-			for (const entry of pkg.members) {
-				for (const member of entry.members) {
-					const slug = `${pkgSlug}.${member.displayName.toLowerCase()}.html`;
-					this.itemToSlug.set(member, slug);
-					this.slugToItem.set(slug, member);
-					this.canonicalReferenceToItem.set(member.canonicalReference.toString(), member);
+			const pkgSlug = pkg.name.split('/').pop();
+			for (const member of pkg.entry.getClasses()) {
+				console.log(member);
+			}
+			for (const [name, declarations] of pkg.entry.getExportedDeclarations()) {
+				for (const declaration of declarations) {
+					const slug = `${pkgSlug}.${name}.html`;
+					this.itemToSlug.set(declaration, slug);
+					this.slugToItem.set(slug, declaration);
+					pkg.exports.push({ name, path: slug });
 				}
 			}
 		}
+		console.timeEnd('init');
 		return this;
 	}
 
-	public addPackage(
-		name: string,
-		json: $IntentionalAny,
-		tsdocConfiguration = new TSDocConfiguration()
-	): this {
-		const pkg = ApiPackage.deserialize(json as $IntentionalAny, {
-			apiJsonFilename: name,
-			toolPackage: json.metadata.toolPackage,
-			toolVersion: json.metadata.toolVersion,
-			versionToDeserialize: json.metadata.schemaVersion,
-			tsdocConfiguration
-		}) as ApiPackage;
-		this.packages.push(pkg);
-		this.model.addMember(pkg);
+	public addPackage(name: string, entryPath: string): this {
+		this.packages.push({
+			name,
+			entry: this.project.addSourceFileAtPath(entryPath),
+			exports: []
+		});
 		return this;
 	}
 
 	/** @internal */
-	getItemBySlug(slug: string): ApiItem {
+	getItemBySlug(slug: string): Node {
 		const item = this.slugToItem.get(slug);
 		if (item) return item;
 		throw new Error(`Item for "${slug}" not found`);
 	}
 
-	/** @internal */
-	getItemByCanonicalReference(canonicalReference: $StringLike): ApiItem | null {
-		return this.canonicalReferenceToItem.get(canonicalReference.toString()) || null;
-	}
+	// /** @internal */
+	// getItemByCanonicalReference(canonicalReference: $StringLike): Node | null {
+	// 	return this.canonicalReferenceToItem.get(canonicalReference.toString()) || null;
+	// }
 
 	/** @internal */
-	getSlug(item: ApiItem): string {
+	getSlug(item: Node): string {
 		const slug = this.itemToSlug.get(item);
 		if (slug) return slug;
-		throw new Error(`Slug for "${item.displayName}" not found`);
+		throw new Error(`Slug for "${item.toString()}" not found`);
 	}
 
+	// TODO(design): URL paths should be an application-level decision.
 	/** @internal */
-	getPath(item: ApiItem): string | null {
-		switch (item.kind) {
-			case ApiItemKind.Class:
+	getPath(item: Node): string | null {
+		switch (item.getKind()) {
+			case SyntaxKind.ClassDeclaration:
 				return `/classes/${this.getSlug(item)}`;
-			case ApiItemKind.Interface:
+			case SyntaxKind.InterfaceDeclaration:
 				return `/interfaces/${this.getSlug(item)}`;
-			// case ApiItemKind.Enum:
-			// 	return `/enums/${getSlug(item)}`;
+			case SyntaxKind.EnumDeclaration:
+				return `/enums/${this.getSlug(item)}`;
 			default:
 				return null;
 		}

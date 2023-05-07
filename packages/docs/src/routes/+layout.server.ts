@@ -1,13 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { parser } from '$lib/server/model';
-import { ApiItemKind, type ApiEntryPoint, type ApiPackage } from '@microsoft/api-extractor-model';
 
-export const prerender = true;
-
-const core = parser.packages.find(
-	(pkg) => pkg.displayName === '@gltf-transform/core'
-) as ApiPackage;
-const coreEntry = core.members[0] as ApiEntryPoint;
+// export const prerender = true;
 
 export const load: LayoutServerLoad = () => {
 	return {
@@ -45,23 +39,13 @@ export const load: LayoutServerLoad = () => {
 						}
 					]
 				},
-				{
-					title: 'Documents',
-					items: coreEntry.members
-						.filter((member) => member.kind === ApiItemKind.Class)
-						.map((member) => ({
-							text: member.displayName,
-							href: `/classes/core.${member.displayName.toLowerCase()}.html`
-						}))
-				},
-				{
-					title: 'I/O',
-					items: []
-				},
-				{
-					title: 'Properties',
-					items: []
-				}
+				...parser.packages.map((pkg) => ({
+					title: pkg.name,
+					items: pkg.exports.map((item) => ({
+						text: item.name,
+						href: item.path
+					}))
+				}))
 			]
 		}
 	};
