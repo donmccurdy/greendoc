@@ -11,9 +11,9 @@
 	class:tsd-parent-kind-class={true}
 	class:tsd-is-overwrite={true}
 >
-	<a name="propertytype" class="tsd-anchor" />
+	<a name={data.name} class="tsd-anchor" />
 	<div class="tsd-signature tsd-kind-icon">
-		<Excerpt data={data.excerpt} />
+		{data.name}: [type]
 	</div>
 	<Comment data={data.comment} />
 	<Sources {data} />

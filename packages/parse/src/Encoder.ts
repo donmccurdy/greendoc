@@ -8,10 +8,14 @@ import {
 	InterfaceDeclaration,
 	JSDoc,
 	MethodDeclaration,
+	MethodSignature,
 	Node,
 	PropertyDeclaration,
 	SyntaxKind,
-	TypeAliasDeclaration
+	Type,
+	TypeAliasDeclaration,
+	TypeNode,
+	TypeReferenceNode
 } from 'ts-morph';
 
 // // TODO(feat): Sort results.
@@ -46,7 +50,11 @@ export class Encoder {
 	protected _encodeItem(parser: Parser, item: Node): GD.ApiItem {
 		return {
 			kind: this._encodeKind(item.getKind()),
-			name: 'Item' + Math.round(Math.random() * 1000)
+			name: (item as any).getName ? (item as any).getName() : '',
+			source: {
+				text: parser.getSourceText(item),
+				url: parser.getSourceURL(item)
+			}
 		};
 	}
 
@@ -72,7 +80,7 @@ export class Encoder {
 			...this._encodeItem(parser, item),
 			path: parser.getPath(item),
 			packageName: '', // item.getAssociatedPackage()!.name,
-			comment: this._encodeComment(parser, item.getJsDocs()[0]),
+			comment: this._encodeComment(parser, item.getJsDocs().pop()),
 			sourceUrl: '', //item.sourceLocation.fileUrl,
 			sourceUrlPath: '', //item.fileUrlPath,
 			extendsType: item.getBaseClass() ? this._encodeReference(parser, item.getBaseClass()!) : null,
@@ -82,8 +90,8 @@ export class Encoder {
 			properties: item
 				.getInstanceProperties()
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
-			staticMethods: item.getStaticMethods().map((method) => this._encodeMember(parser, method)),
-			methods: item.getInstanceMethods().map((method) => this._encodeMember(parser, method))
+			staticMethods: item.getStaticMethods().map((method) => this._encodeMethod(parser, method)),
+			methods: item.getInstanceMethods().map((method) => this._encodeMethod(parser, method))
 		} as GD.ApiClass;
 	}
 
@@ -92,12 +100,12 @@ export class Encoder {
 			...this._encodeItem(parser, item),
 			path: parser.getPath(item),
 			packageName: '', // item.getAssociatedPackage()!.name,
-			comment: this._encodeComment(parser, item.getJsDocs()[0]),
+			comment: this._encodeComment(parser, item.getJsDocs().pop()),
 			sourceUrl: '', // item.sourceLocation.fileUrl,
 			sourceUrlPath: '', // item.fileUrlPath,
 			extendsTypes: [], // item.extendsTypes.map(({ excerpt }) => this._encodeExcerpt(parser, excerpt)),
 			properties: item.getProperties().map((prop) => this._encodeProperty(parser, prop as any)),
-			methods: item.getMethods().map((method) => this._encodeMember(parser, method as any))
+			methods: item.getMethods().map((method) => this._encodeMethod(parser, method as any))
 		} as GD.ApiInterface;
 	}
 
@@ -123,27 +131,30 @@ export class Encoder {
 		return this._encodeItem(parser, item) as GD.ApiTypeAlias;
 	}
 
-	// protected _encodeExcerpt(parser: Parser, excerpt: Excerpt): GD.Excerpt {
-	// 	const tokens = [] as GD.Token[];
-	// 	for (const token of excerpt.tokens) {
-	// 		if (token.kind === ExcerptTokenKind.Content) {
-	// 			tokens.push(token.text);
-	// 		} else if (token.kind === ExcerptTokenKind.Reference) {
-	// 			tokens.push(this._encodeReference(parser, token.canonicalReference!) || token.text);
-	// 		}
-	// 	}
-	// 	return { tokens };
-	// }
-
-	protected _encodeReference(
-		parser: Parser,
-		item: ClassDeclaration | InterfaceDeclaration
-	): GD.Reference | null {
+	protected _encodeReference(parser: Parser, item: Node): GD.Reference | null {
+		return null;
 		return {
 			path: parser.getPath(item),
-			name: item.getName() || 'Unknown',
+			name: (item as any).getName ? (item as any).getName() : '',
 			kind: this._encodeKind(item.getKind())
 		};
+	}
+
+	protected _encodeType(parser: Parser, type: Type, typeNode?: TypeNode): GD.Token {
+		if (typeNode) return typeNode.getText();
+
+		// const symbol = type.getSymbol();
+		// if (symbol) {
+		// 	console.log(symbol);
+		// 	for (const decl of symbol.getDeclarations()) {
+		// 		const ref = this._encodeReference(parser, decl);
+		// 		if (ref) return ref;
+		// 	}
+		// }
+
+		const text = type.getText();
+		console.log(text);
+		return text;
 	}
 
 	protected _encodeComment(parser: Parser, comment?: JSDoc): string {
@@ -168,9 +179,20 @@ export class Encoder {
 			isOptional: false,
 			// overwrite?: Reference,
 			excerpt: { tokens: [item.getName()] },
-			comment: this._encodeComment(parser, item.getJsDocs()[0]),
-			sourceUrl: '',
-			sourceUrlPath: ''
+			comment: this._encodeComment(parser, item.getJsDocs().pop())
+		};
+	}
+
+	protected _encodeMethod(parser: Parser, item: MethodDeclaration): GD.ApiMethod {
+		return {
+			...this._encodeMember(parser, item),
+			kind: GD.ApiItemKind.METHOD,
+			params: item.getParameters().map((param) => ({
+				name: param.getName(),
+				type: this._encodeType(parser, param.getType(), param.getTypeNode()),
+				optional: param.isOptional() || undefined
+			})),
+			returns: this._encodeType(parser, item.getReturnType(), item.getReturnTypeNode())
 		};
 	}
 
@@ -303,66 +325,3 @@ export class Encoder {
 	// 		: (target as T);
 	// }
 }
-
-// TODO(feat): Would really like to be able to display a full inheritance tree, this includes
-// resolving generics etc. Consider how to refactor this and getExtendsTypes below.
-// function getExtends<T extends ApiClass | ApiInterface>(parser: Parser, base: T): T | null {
-// 	const extendsTypes = [] as HeritageType[];
-// 	function pushExtendsTypes(item: ApiClass | ApiInterface): void {
-// 		if (item.kind === ApiItemKind.Class && (item as ApiClass).extendsType) {
-// 			extendsTypes.push((item as ApiClass).extendsType!);
-// 		} else if (item.kind === ApiItemKind.Interface) {
-// 			extendsTypes.push(...(item as ApiInterface).extendsTypes);
-// 		}
-// 	}
-// 	pushExtendsTypes(base);
-
-// 	for (const extendsType of extendsTypes) {
-// 		for (const token of extendsType.excerpt.spannedTokens) {
-// 			if (token.kind === ExcerptTokenKind.Reference && token.canonicalReference) {
-// 				const result = parser.getItemByCanonicalReference(token.canonicalReference);
-// 				if (result) {
-// 					return result as T;
-// 				} else {
-// 					console.warn(`Missing reference for base class, ${token.canonicalReference.toString()}`);
-// 				}
-// 				// Not all tokens in the list are classes/interfaces. For lack of a better
-// 				// criteria, bail out after the first reference.
-// 				continue;
-// 			}
-// 		}
-// 	}
-// 	return null;
-// }
-
-// function getExtendsTypes<T extends ApiClass | ApiInterface>(parser: Parser, base: T): T[] {
-// 	const extendsTypes = [] as HeritageType[];
-// 	function pushExtendsTypes(item: ApiClass | ApiInterface): void {
-// 		if (item.kind === ApiItemKind.Class && (item as ApiClass).extendsType) {
-// 			extendsTypes.push((item as ApiClass).extendsType!);
-// 		} else if (item.kind === ApiItemKind.Interface) {
-// 			extendsTypes.push(...(item as ApiInterface).extendsTypes);
-// 		}
-// 	}
-
-// 	pushExtendsTypes(base);
-
-// 	const results = [] as T[];
-// 	for (const extendsType of extendsTypes) {
-// 		for (const token of extendsType.excerpt.spannedTokens) {
-// 			if (token.kind === ExcerptTokenKind.Reference && token.canonicalReference) {
-// 				const result = parser.getItemByCanonicalReference(token.canonicalReference);
-// 				if (result) {
-// 					results.push(result as T);
-// 					pushExtendsTypes(result as T);
-// 				} else {
-// 					console.warn(`Missing reference for base class, ${token.canonicalReference.toString()}`);
-// 				}
-// 				// Not all tokens in the list are classes/interfaces. For lack of a better
-// 				// criteria, bail out after the first reference.
-// 				continue;
-// 			}
-// 		}
-// 	}
-// 	return results;
-// }

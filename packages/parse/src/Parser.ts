@@ -83,4 +83,12 @@ export class Parser {
 				return null;
 		}
 	}
+
+	getSourceText(item: Node): string {
+		return item.getSourceFile().getBaseName();
+	}
+
+	getSourceURL(item: Node): string {
+		return item.getSourceFile().getFilePath();
+	}
 }

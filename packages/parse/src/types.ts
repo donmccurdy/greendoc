@@ -22,6 +22,7 @@ export namespace GD {
 	export interface ApiItem {
 		name: string;
 		kind: ApiItemKind;
+		source?: Source;
 	}
 
 	export interface ApiClass extends ApiItem {
@@ -31,8 +32,6 @@ export namespace GD {
 		path: string | null;
 		packageName: string; // → package
 		comment: string; // → IntlText
-		sourceUrl: string; // remove
-		sourceUrlPath: string; // → sourcePath
 		// extendsType: Excerpt | null; // → extends;
 		// TODO: hierarchy (up/down)
 		properties: ApiProperty[];
@@ -47,8 +46,6 @@ export namespace GD {
 		path: string | null;
 		packageName: string;
 		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
 		extendsTypes: Excerpt[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
@@ -62,13 +59,21 @@ export namespace GD {
 		overwrite?: Reference;
 		excerpt: Excerpt;
 		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
 	}
 
 	export interface ApiMethod extends ApiMember {
 		kind: ApiItemKind.METHOD;
+		params: ApiMethodParam[];
+		returns: ApiMethodReturnType;
 	}
+
+	export type ApiMethodParam = {
+		name: string;
+		type?: Token;
+		optional?: boolean;
+	};
+
+	export type ApiMethodReturnType = Token;
 
 	export interface ApiProperty extends ApiMember {
 		kind: ApiItemKind.PROPERTY;
@@ -78,8 +83,6 @@ export namespace GD {
 	export interface ApiEnum extends ApiItem {
 		kind: ApiItemKind.ENUM;
 		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
 	}
 
 	export interface ApiEnumMember extends ApiItem {
@@ -98,6 +101,11 @@ export namespace GD {
 		path: string | null;
 		name: string;
 		kind: ApiItemKind;
+	}
+
+	export interface Source {
+		text: string;
+		url: string;
 	}
 
 	export interface ApiTypeAlias extends ApiItem {}

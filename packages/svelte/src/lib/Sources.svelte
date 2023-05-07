@@ -12,12 +12,10 @@
 			</a>
 		</p>
 	{/if}
-	{#if data.sourceUrl}
+	{#if data.source}
 		<ul>
 			<li>
-				Defined in <a href={data.sourceUrl} target="_blank" rel="noreferrer"
-					>{data.sourceUrlPath || data.sourceUrl}</a
-				>
+				Defined in <a href={data.source.url} target="_blank" rel="noreferrer">{data.source.text}</a>
 			</li>
 		</ul>
 	{/if}
