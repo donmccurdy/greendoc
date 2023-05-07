@@ -8,15 +8,13 @@ import {
 	InterfaceDeclaration,
 	JSDoc,
 	MethodDeclaration,
-	MethodSignature,
 	Node,
 	PropertyDeclaration,
 	Scope,
 	SyntaxKind,
 	Type,
 	TypeAliasDeclaration,
-	TypeNode,
-	TypeReferenceNode
+	TypeNode
 } from 'ts-morph';
 
 // // TODO(feat): Sort results.

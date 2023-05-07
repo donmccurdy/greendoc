@@ -3,7 +3,7 @@
 	"version": "0.0.2",
 	"repository": "https://github.com/donmccurdy/greendoc",
 	"author": "Don McCurdy <dm@donmccurdy.com>",
-	"license": "MIT",
+	"license": "UNLICENSED",
 	"type": "module",
 	"sideEffects": false,
 	"svelte": "./dist/index.js",
