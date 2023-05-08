@@ -67,7 +67,7 @@ test('encoder', (t) => {
 			entry: file
 		})
 		.init();
-	const dog = parser.getItemBySlug('Dog.html') as ClassDeclaration;
+	const dog = parser.getItemBySlug('Dog') as ClassDeclaration;
 	t.deepEqual(
 		encoder.encodeItem(parser, dog),
 		{
@@ -80,7 +80,7 @@ test('encoder', (t) => {
 			comment: '<p>Description of Dog.</p>\n',
 			extendsTypes: [
 				{
-					path: '/modules/my-package/classes/Animal.html',
+					path: '/modules/my-package/classes/Animal',
 					name: 'Animal',
 					kind: 'Class'
 				}
