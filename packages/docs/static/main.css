@@ -1023,10 +1023,6 @@ html.minimal .greendoc-page-toolbar {
 	position: fixed;
 	z-index: 2;
 }
-html.minimal #greendoc-filter .greendoc-filter-group {
-	right: 0;
-	transform: none;
-}
 html.minimal footer {
 	background-color: transparent;
 }
@@ -1103,52 +1099,6 @@ dl.greendoc-comment-tags p {
 
 .toggle-externals .greendoc-is-external {
 	display: none;
-}
-
-#greendoc-filter {
-	position: relative;
-	display: inline-block;
-	height: 40px;
-	vertical-align: bottom;
-}
-.no-filter #greendoc-filter {
-	display: none;
-}
-#greendoc-filter .greendoc-filter-group {
-	display: inline-block;
-	height: 40px;
-	vertical-align: bottom;
-	white-space: nowrap;
-}
-#greendoc-filter input {
-	display: none;
-}
-@media (max-width: 900px) {
-	#greendoc-filter .greendoc-filter-group {
-		display: block;
-		position: absolute;
-		top: 40px;
-		right: 20px;
-		height: auto;
-		background-color: #fff;
-		visibility: hidden;
-		transform: translate(50%, 0);
-		box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-	}
-	.has-options #greendoc-filter .greendoc-filter-group {
-		visibility: visible;
-	}
-	.to-has-options #greendoc-filter .greendoc-filter-group {
-		animation: fade-in 0.2s;
-	}
-	.from-has-options #greendoc-filter .greendoc-filter-group {
-		animation: fade-out 0.2s;
-	}
-	#greendoc-filter label,
-	#greendoc-filter .greendoc-select {
-		display: block;
-		padding-right: 20px;
-	}
 }
 
 footer {
@@ -2012,10 +1962,6 @@ details > summary {
 
 	html.minimal .toggle-nav .greendoc-navigation {
 		left: 0;
-	}
-
-	#greendoc-filter {
-		display: none;
 	}
 
 	.greendoc-generator img {

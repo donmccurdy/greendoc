@@ -27,13 +27,6 @@
 					</a>
 				</div>
 				<div class="table-cell" id="greendoc-widgets">
-					<!-- <div id="greendoc-filter">
-						<a href="#" class="greendoc-widget options no-caption" data-toggle="options">Options</a>
-						<div class="greendoc-filter-group">
-							<input type="checkbox" id="greendoc-filter-inherited" checked />
-							<label class="greendoc-widget" for="greendoc-filter-inherited">Inherited</label>
-						</div>
-					</div> -->
 					<button id="greendoc-menu" class="greendoc-widget menu no-caption" on:click={toggleNav}
 						>Menu</button
 					>
@@ -41,32 +34,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- <script>
-		(function () {
-			const bodyEl = document.body;
-
-			// Show/hide navigation sidebar (mobile).
-			const menuEl = document.querySelector('#greendoc-menu');
-			menuEl.addEventListener('click', function () {
-
-			});
-
-			// Show/hide inherited members.
-			if (location.href.includes('classes')) {
-				const inheritedInputEl = document.querySelector('#greendoc-filter-inherited');
-				inheritedInputEl.addEventListener('change', function () {
-					if (inheritedInputEl.checked) {
-						bodyEl.classList.remove('toggle-inherited');
-					} else {
-						bodyEl.classList.add('toggle-inherited');
-					}
-				});
-			} else {
-				const filterEl = document.querySelector('#greendoc-filter');
-				filterEl.style.display = 'none';
-			}
-		})();
-	</script> -->
 </header>
 <nav class="greendoc-navigation secondary">
 	{#each data.navigation.sections as section}
