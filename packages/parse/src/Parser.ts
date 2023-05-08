@@ -9,20 +9,19 @@ interface Package {
 }
 
 export class Parser {
-	readonly project = new Project();
+	readonly project: Project;
 	readonly packages: Package[] = [];
 	readonly itemToSlug = new Map<Node, string>();
 	readonly slugToItem = new Map<string, Node>();
 	readonly canonicalReferenceToItem = new Map<string, Node>();
 
+	constructor(project = new Project()) {
+		this.project = project;
+	}
+
 	public init(): this {
-		console.log('BEGIN INIT');
-		console.time('init');
 		for (const pkg of this.packages) {
 			const pkgSlug = pkg.name.split('/').pop();
-			for (const member of pkg.entry.getClasses()) {
-				console.log(member);
-			}
 			for (const [name, declarations] of pkg.entry.getExportedDeclarations()) {
 				for (const declaration of declarations) {
 					const slug = `${pkgSlug}.${name}.html`;
@@ -32,16 +31,24 @@ export class Parser {
 					if (path) {
 						pkg.exports.push({ name, path });
 					} else {
-						console.log(`No path for slug ${slug}`);
+						console.warn(`No path for export, "${name}".`);
 					}
 				}
 			}
 		}
-		console.timeEnd('init');
 		return this;
 	}
 
-	public addPackage(name: string, entryPath: string): this {
+	public addPackageFromFile(name: string, sourceFile: SourceFile): this {
+		this.packages.push({
+			name,
+			entry: sourceFile,
+			exports: []
+		});
+		return this;
+	}
+
+	public addPackageFromPath(name: string, entryPath: string): this {
 		this.packages.push({
 			name,
 			entry: this.project.addSourceFileAtPath(entryPath),
@@ -56,11 +63,6 @@ export class Parser {
 		if (item) return item;
 		throw new Error(`Item for "${slug}" not found`);
 	}
-
-	// /** @internal */
-	// getItemByCanonicalReference(canonicalReference: $StringLike): Node | null {
-	// 	return this.canonicalReferenceToItem.get(canonicalReference.toString()) || null;
-	// }
 
 	/** @internal */
 	hasItem(item: Node): boolean {
@@ -84,6 +86,10 @@ export class Parser {
 				return `/interfaces/${this.getSlug(item)}`;
 			case SyntaxKind.EnumDeclaration:
 				return `/enums/${this.getSlug(item)}`;
+			case SyntaxKind.FunctionDeclaration:
+				return `/functions/${this.getSlug(item)}`;
+			// case SyntaxKind.VariableDeclaration:
+			// 	return `/constants/${this.getSlug(item)}`;
 			default:
 				return null;
 		}
