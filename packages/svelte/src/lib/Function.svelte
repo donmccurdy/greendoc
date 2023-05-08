@@ -8,7 +8,7 @@
 
 <section class="tsd-panel tsd-member tsd-kind-function">
 	<!-- svelte-ignore a11y-missing-content -->
-	<a name={data.name} class="tsd-anchor" />
+	<a id={data.name} class="tsd-anchor" />
 	<ul class="tsd-signatures tsd-kind-function">
 		<li class="tsd-signature tsd-kind-icon">
 			{data.name}({#each data.params as param, i}{param.name}{#if param.optional}?{/if}{#if typeof param.type === 'string'}:
