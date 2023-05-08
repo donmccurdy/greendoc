@@ -28,6 +28,7 @@ export class Encoder {
 	encodeItem(parser: Parser, item: EnumDeclaration): GD.ApiEnum;
 	encodeItem(parser: Parser, item: EnumMember): GD.ApiEnumMember;
 	encodeItem(parser: Parser, item: TypeAliasDeclaration): GD.ApiTypeAlias;
+	encodeItem(parser: Parser, item: FunctionDeclaration): GD.ApiFunction;
 	encodeItem(parser: Parser, item: Node): GD.ApiItem {
 		switch (item.getKind()) {
 			case SyntaxKind.ClassDeclaration:

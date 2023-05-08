@@ -4,4 +4,4 @@
 	export let data: PageData;
 </script>
 
-<Enum data={data.enum} />
+<Enum data={data.export} />

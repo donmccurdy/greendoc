@@ -4,4 +4,4 @@
 	export let data: PageData;
 </script>
 
-<Function data={data.function} />
+<Function data={data.export} />

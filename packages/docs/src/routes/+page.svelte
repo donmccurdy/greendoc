@@ -3,5 +3,5 @@
 	export let data: PageData;
 </script>
 
-<h1>{data.title}</h1>
-<p>{data.content}</p>
+<h1>glTF Transform</h1>
+<p>Lorem ipsum</p>

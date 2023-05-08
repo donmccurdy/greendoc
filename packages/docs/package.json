@@ -16,6 +16,8 @@
 	"dependencies": {
 		"@greendoc/parse": "*",
 		"@greendoc/svelte": "*",
+		"@types/he": "^1.2.0",
+		"he": "^1.2.0",
 		"ts-morph": "^18.0.0"
 	},
 	"devDependencies": {

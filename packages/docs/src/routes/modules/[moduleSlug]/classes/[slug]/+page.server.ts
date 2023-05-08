@@ -1,11 +1,17 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { parser, encoder } from '$lib/server/model';
+import { parser, encoder, getMetadata } from '$lib/server/model';
 import type { GD } from '@greendoc/parse';
 import type { ClassDeclaration } from 'ts-morph';
 
 export const load: PageServerLoad<{ export: GD.ApiClass }> = async ({ params }) => {
-	const item = parser.getItemBySlug(params.slug);
-	if (item) return { export: encoder.encodeItem(parser, item as ClassDeclaration) };
+	const item = parser.getItemBySlug(params.slug) as ClassDeclaration;
+	const encodedItem = encoder.encodeItem(parser, item);
+	if (item && encodedItem) {
+		return {
+			metadata: getMetadata(encodedItem),
+			export: encodedItem
+		};
+	}
 	throw error(404, 'Not found');
 };

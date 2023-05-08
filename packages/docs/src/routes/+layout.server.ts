@@ -36,6 +36,10 @@ function createExport(item: Node): Export {
 
 export const load: LayoutServerLoad = () => {
 	return {
+		metadata: {
+			title: 'glTF Transform',
+			snippet: ''
+		},
 		navigation: {
 			sections: [
 				{
