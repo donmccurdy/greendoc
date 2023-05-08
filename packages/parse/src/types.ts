@@ -16,7 +16,8 @@ export namespace GD {
 		FUNCTION = 'Function',
 		VARIABLE = 'Variable',
 		METHOD = 'Method',
-		PROPERTY = 'Property'
+		PROPERTY = 'Property',
+		PROPERTY_SIGNATURE = 'PropertySignature'
 	}
 
 	export interface ApiItem {

@@ -9,8 +9,10 @@ import {
 	InterfaceDeclaration,
 	JSDoc,
 	MethodDeclaration,
+	MethodSignature,
 	Node,
 	PropertyDeclaration,
+	PropertySignature,
 	Scope,
 	SyntaxKind,
 	Type,
@@ -74,6 +76,8 @@ export class Encoder {
 				return GD.ApiItemKind.METHOD;
 			case SyntaxKind.PropertyDeclaration:
 				return GD.ApiItemKind.PROPERTY;
+			case SyntaxKind.PropertySignature:
+				return GD.ApiItemKind.PROPERTY_SIGNATURE;
 			default:
 				throw new Error(`SyntaxKind.${getKindName(kind)} not implemented.`);
 		}
@@ -175,7 +179,7 @@ export class Encoder {
 
 	protected _encodeMember(
 		parser: Parser,
-		item: MethodDeclaration | PropertyDeclaration
+		item: MethodDeclaration | MethodSignature | PropertyDeclaration | PropertySignature
 	): GD.ApiMember {
 		const data = {
 			...this._encodeItem(parser, item),
@@ -186,16 +190,18 @@ export class Encoder {
 			// overwrite?: Reference,
 		} as Partial<GD.ApiMember>;
 
-		const comment = item.getJsDocs().pop();
+		if (item instanceof MethodDeclaration || item instanceof PropertyDeclaration) {
+			if (item.isStatic()) data.isStatic = true;
+			if (item.getScope() === Scope.Protected) data.isProtected = true;
+		}
 
-		if (item.isStatic()) data.isStatic = true;
-		if (item.getScope() === Scope.Protected) data.isProtected = true;
+		const comment = item.getJsDocs().pop();
 		if (comment) data.comment = this._encodeComment(parser, comment);
 
 		return data as GD.ApiMember;
 	}
 
-	protected _encodeMethod(parser: Parser, item: MethodDeclaration): GD.ApiMethod {
+	protected _encodeMethod(parser: Parser, item: MethodDeclaration | MethodSignature): GD.ApiMethod {
 		return {
 			...this._encodeMember(parser, item),
 			kind: GD.ApiItemKind.METHOD,
@@ -208,7 +214,10 @@ export class Encoder {
 		};
 	}
 
-	protected _encodeProperty(parser: Parser, item: PropertyDeclaration): GD.ApiProperty {
+	protected _encodeProperty(
+		parser: Parser,
+		item: PropertyDeclaration | PropertySignature
+	): GD.ApiProperty {
 		return {
 			...this._encodeMember(parser, item),
 			kind: GD.ApiItemKind.PROPERTY,

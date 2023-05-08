@@ -7,23 +7,28 @@
 </script>
 
 <section class="tsd-panel tsd-comment">
+	<h1>{data.name}</h1>
 	{#if data.comment}
 		<Comment data={data.comment} />
 	{/if}
 </section>
 
-<section class="tsd-panel-group tsd-member-group ">
-	<h2>Properties</h2>
-	{#each data.properties as property}
-		<Property data={property} />
-	{/each}
-</section>
+{#if data.properties.length}
+	<section class="tsd-panel-group tsd-member-group ">
+		<h2>Properties</h2>
+		{#each data.properties as property}
+			<Property data={property} />
+		{/each}
+	</section>
+{/if}
 
-<section class="tsd-panel-group tsd-member-group ">
-	<h2>Methods</h2>
-	{#each data.methods as method}
-		<Method data={method} />
-	{/each}
-</section>
+{#if data.methods.length}
+	<section class="tsd-panel-group tsd-member-group ">
+		<h2>Methods</h2>
+		{#each data.methods as method}
+			<Method data={method} />
+		{/each}
+	</section>
+{/if}
 
 <pre>{JSON.stringify(data, null, 2)}</pre>

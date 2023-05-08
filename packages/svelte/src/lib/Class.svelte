@@ -6,12 +6,12 @@
 	export let data: GD.ApiClass;
 </script>
 
-{#if data.comment}
-	<section class="tsd-panel tsd-comment">
-		<h1>{data.name}</h1>
+<section class="tsd-panel tsd-comment">
+	<h1>{data.name}</h1>
+	{#if data.comment}
 		<Comment data={data.comment} />
-	</section>
-{/if}
+	{/if}
+</section>
 
 {#if data.staticProperties.length}
 	<section class="tsd-panel-group tsd-member-group ">
