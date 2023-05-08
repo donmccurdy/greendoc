@@ -4,8 +4,6 @@
 
 	export let data: LayoutData;
 
-	console.log($page.data.metadata);
-
 	function toggleNav() {
 		document.body.classList.toggle('toggle-nav');
 	}
