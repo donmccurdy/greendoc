@@ -1,6 +1,6 @@
 {
 	"name": "@greendocs/docs",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev --force",
@@ -14,8 +14,8 @@
 		"clean": "rimraf build/*"
 	},
 	"dependencies": {
-		"@greendoc/parse": "*",
-		"@greendoc/svelte": "*",
+		"@greendoc/parse": "^0.1.0",
+		"@greendoc/svelte": "^0.1.0",
 		"@types/he": "^1.2.0",
 		"he": "^1.2.0",
 		"ts-morph": "^18.0.0"
