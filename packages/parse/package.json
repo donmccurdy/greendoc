@@ -36,5 +36,6 @@
 		"nodeArguments": [
 			"--loader=ts-node/esm"
 		]
-	}
+	},
+	"gitHead": "b22283d17e48135dc5ce83e2c945a87f3620ba93"
 }
