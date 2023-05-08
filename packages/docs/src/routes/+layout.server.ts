@@ -4,9 +4,18 @@ import type { Node } from 'ts-morph';
 
 // export const prerender = true;
 
-const coreExports = parser.getModuleExports('@gltf-transform/core').map(createExport);
-const extensionsExports = parser.getModuleExports('@gltf-transform/extensions').map(createExport);
-const functionsExports = parser.getModuleExports('@gltf-transform/functions').map(createExport);
+const coreExports = parser
+	.getModuleExports('@gltf-transform/core')
+	.map(createExport)
+	.sort((a, b) => (a.text > b.text ? 1 : -1));
+const extensionsExports = parser
+	.getModuleExports('@gltf-transform/extensions')
+	.map(createExport)
+	.sort((a, b) => (a.text > b.text ? 1 : -1));
+const functionsExports = parser
+	.getModuleExports('@gltf-transform/functions')
+	.map(createExport)
+	.sort((a, b) => (a.text > b.text ? 1 : -1));
 
 interface Export {
 	text: string;
@@ -98,6 +107,22 @@ export const load: LayoutServerLoad = () => {
 							title: 'Vendor Extensions',
 							items: extensionsExports.filter(
 								({ text, kind }) => text.startsWith('EXT') && kind === 'ClassDeclaration'
+							)
+						}
+					]
+				},
+				{
+					title: '@gltf-transform/functions',
+					items: [],
+					subsections: [
+						{
+							title: 'Transforms',
+							items: functionsExports.filter(({ category }) => category === 'Transforms')
+						},
+						{
+							title: 'Functions',
+							items: functionsExports.filter(
+								({ category, kind }) => category !== 'Transforms' && kind === 'FunctionDeclaration'
 							)
 						}
 					]
