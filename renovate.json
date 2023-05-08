@@ -1,1 +1,10 @@
-{"extends": ["github>donmccurdy/renovate-config"]}
+{
+	"extends": ["github>donmccurdy/renovate-config"],
+	"packageRules": [
+		{
+			"description": "TypeScript support missing in marked-highlight. Also see https://github.com/donmccurdy/greendoc/issues/19.",
+			"matchPackageNames": ["marked"],
+			"enabled": false
+		}
+	]
+}
