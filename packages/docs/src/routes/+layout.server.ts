@@ -39,9 +39,9 @@ export const load: LayoutServerLoad = () => {
 						}
 					]
 				},
-				...parser.packages.map((pkg) => ({
-					title: pkg.name,
-					items: pkg.exports.map((item) => ({
+				...parser.modules.map((module) => ({
+					title: module.name,
+					items: module.exports.map((item) => ({
 						text: item.name,
 						href: item.path
 					}))

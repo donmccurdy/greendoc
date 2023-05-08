@@ -39,17 +39,23 @@ export class Freddy extends Dog {
 `
 );
 
-test('packages', (t) => {
-	const parser = new Parser(project).addPackageFromFile('my-package', file).init();
-	const pkg = parser.packages[0];
+test('modules', (t) => {
+	const parser = new Parser(project)
+		.addModule({
+			name: 'my-package',
+			slug: 'my-package',
+			entry: file
+		})
+		.init();
+	const pkg = parser.modules[0];
 	t.is(pkg.name, 'my-package', 'package name');
 	t.deepEqual(
 		pkg.exports,
 		[
-			{ name: 'Animal', path: '/classes/my-package.Animal.html' },
-			{ name: 'Dog', path: '/classes/my-package.Dog.html' },
-			{ name: 'Snake', path: '/classes/my-package.Snake.html' },
-			{ name: 'Freddy', path: '/classes/my-package.Freddy.html' }
+			{ name: 'Animal', path: '/modules/my-package/classes/Animal.html' },
+			{ name: 'Dog', path: '/modules/my-package/classes/Dog.html' },
+			{ name: 'Snake', path: '/modules/my-package/classes/Snake.html' },
+			{ name: 'Freddy', path: '/modules/my-package/classes/Freddy.html' }
 		],
 		'package exports'
 	);
@@ -57,8 +63,14 @@ test('packages', (t) => {
 
 test('encoder', (t) => {
 	const encoder = new Encoder();
-	const parser = new Parser(project).addPackageFromFile('my-package', file).init();
-	const dog = parser.getItemBySlug('my-package.Dog.html') as ClassDeclaration;
+	const parser = new Parser(project)
+		.addModule({
+			name: 'my-package',
+			slug: 'my-package',
+			entry: file
+		})
+		.init();
+	const dog = parser.getItemBySlug('Dog.html') as ClassDeclaration;
 	t.deepEqual(
 		encoder.encodeItem(parser, dog),
 		{
@@ -71,7 +83,7 @@ test('encoder', (t) => {
 			comment: '<p>Description of Dog.</p>\n',
 			extendsTypes: [
 				{
-					path: '/classes/my-package.Animal.html',
+					path: '/modules/my-package/classes/Animal.html',
 					name: 'Animal',
 					kind: 'Class'
 				}

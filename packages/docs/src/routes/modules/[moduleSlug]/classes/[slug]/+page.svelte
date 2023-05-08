@@ -4,4 +4,4 @@
 	export let data: PageData;
 </script>
 
-<Class data={data.class} />
+<Class data={data.export} />
