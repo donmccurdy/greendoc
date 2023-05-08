@@ -6,15 +6,20 @@
 	export let data: GD.ApiClass;
 </script>
 
-<section class="tsd-panel tsd-comment">
-	<Comment data={data.comment} />
-</section>
+{#if data.comment}
+	<section class="tsd-panel tsd-comment">
+		<h1>{data.name}</h1>
+		<Comment data={data.comment} />
+	</section>
+{/if}
 
 {#if data.staticProperties.length}
 	<section class="tsd-panel-group tsd-member-group ">
 		<h2>Static properties</h2>
 		{#each data.staticProperties as property}
-			<Property data={property} />
+			{#if !property.isProtected}
+				<Property data={property} />
+			{/if}
 		{/each}
 	</section>
 {/if}
@@ -23,7 +28,9 @@
 	<section class="tsd-panel-group tsd-member-group ">
 		<h2>Static methods</h2>
 		{#each data.staticMethods as method}
-			<Method data={method} />
+			{#if !method.isProtected}
+				<Method data={method} />
+			{/if}
 		{/each}
 	</section>
 {/if}
@@ -32,7 +39,9 @@
 	<section class="tsd-panel-group tsd-member-group ">
 		<h2>Properties</h2>
 		{#each data.properties as property}
-			<Property data={property} />
+			{#if !property.isProtected}
+				<Property data={property} />
+			{/if}
 		{/each}
 	</section>
 {/if}
@@ -41,7 +50,9 @@
 	<section class="tsd-panel-group tsd-member-group ">
 		<h2>Methods</h2>
 		{#each data.methods as method}
-			<Method data={method} />
+			{#if !method.isProtected}
+				<Method data={method} />
+			{/if}
 		{/each}
 	</section>
 {/if}

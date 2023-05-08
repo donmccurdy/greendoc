@@ -13,7 +13,8 @@ export class Parser {
 	readonly packages: Package[] = [];
 	readonly itemToSlug = new Map<Node, string>();
 	readonly slugToItem = new Map<string, Node>();
-	readonly canonicalReferenceToItem = new Map<string, Node>();
+	private rootPath: string = '';
+	private baseURL: string = '';
 
 	constructor(project = new Project()) {
 		this.project = project;
@@ -37,6 +38,14 @@ export class Parser {
 			}
 		}
 		return this;
+	}
+
+	public setRootPath(path: string) {
+		this.rootPath = path;
+	}
+
+	public setBaseURL(url: string) {
+		this.baseURL = url;
 	}
 
 	public addPackageFromFile(name: string, sourceFile: SourceFile): this {

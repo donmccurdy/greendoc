@@ -29,7 +29,7 @@ export namespace GD {
 		// TODO: resolved & unresolved generics?
 		// TODO: interfaces implemented?
 		kind: ApiItemKind.CLASS;
-		comment: string; // → IntlText
+		comment?: string; // → IntlText
 		extendsTypes: Reference[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
@@ -40,7 +40,7 @@ export namespace GD {
 
 	export interface ApiInterface extends ApiItem {
 		kind: ApiItemKind.INTERFACE;
-		comment: string;
+		comment?: string;
 		extendsTypes: Reference[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
@@ -48,11 +48,11 @@ export namespace GD {
 
 	export interface ApiMember extends ApiItem {
 		kind: ApiItemKind.METHOD | ApiItemKind.PROPERTY;
-		isStatic: boolean;
-		isProtected: boolean;
-		isOptional: boolean;
+		isStatic?: boolean;
+		isProtected?: boolean;
+		isOptional?: boolean;
 		overwrite?: Reference;
-		comment: string;
+		comment?: string;
 	}
 
 	export interface ApiMethod extends ApiMember {
@@ -77,12 +77,12 @@ export namespace GD {
 
 	export interface ApiEnum extends ApiItem {
 		kind: ApiItemKind.ENUM;
-		comment: string;
+		comment?: string;
 	}
 
 	export interface ApiEnumMember extends ApiItem {
 		kind: ApiItemKind.ENUM_MEMBER;
-		comment: string;
+		comment?: string;
 	}
 
 	export type Token = string | Reference;

@@ -70,7 +70,7 @@ export class Encoder {
 			case SyntaxKind.PropertyDeclaration:
 				return GD.ApiItemKind.PROPERTY;
 			default:
-				throw new Error(`SyntaxKind "${kind}" not implemented.`);
+				throw new Error(`SyntaxKind.${getKindName(kind)} not implemented.`);
 		}
 	}
 
@@ -84,13 +84,11 @@ export class Encoder {
 			staticProperties: item
 				.getStaticProperties()
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
-			properties: item
-				.getInstanceProperties()
+			properties: getInheritedInstanceMembers(item, SyntaxKind.PropertyDeclaration)
 				.filter((prop) => prop.getScope() !== Scope.Private)
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
 			staticMethods: item.getStaticMethods().map((method) => this._encodeMethod(parser, method)),
-			methods: item
-				.getInstanceMethods()
+			methods: getInheritedInstanceMembers(item, SyntaxKind.MethodDeclaration)
 				.filter((method) => method.getScope() !== Scope.Private)
 				.map((method) => this._encodeMethod(parser, method))
 		} as GD.ApiClass;
@@ -102,8 +100,6 @@ export class Encoder {
 			path: parser.getPath(item),
 			packageName: '', // item.getAssociatedPackage()!.name,
 			comment: this._encodeComment(parser, item.getJsDocs().pop()),
-			sourceUrl: '', // item.sourceLocation.fileUrl,
-			sourceUrlPath: '', // item.fileUrlPath,
 			extendsTypes: [], // item.extendsTypes.map(({ excerpt }) => this._encodeExcerpt(parser, excerpt)),
 			properties: item.getProperties().map((prop) => this._encodeProperty(parser, prop as any)),
 			methods: item.getMethods().map((method) => this._encodeMethod(parser, method as any))
@@ -114,9 +110,7 @@ export class Encoder {
 		return {
 			...this._encodeItem(parser, item),
 			comment: '', //this._encodeComment(parser, item.tsdocComment),
-			members: [], // item.members.map((item) => this.encodeItem(parser, item)),
-			sourceUrl: '', // item.sourceLocation.fileUrl,
-			sourceUrlPath: '' // item.fileUrlPath
+			members: [] // item.members.map((item) => this.encodeItem(parser, item)),
 		} as GD.ApiEnum;
 	}
 	protected _encodeEnumMember(parser: Parser, item: EnumMember): GD.ApiEnumMember {
@@ -162,18 +156,22 @@ export class Encoder {
 		parser: Parser,
 		item: MethodDeclaration | PropertyDeclaration
 	): GD.ApiMember {
-		return {
+		const data = {
 			...this._encodeItem(parser, item),
 			kind:
 				item.getKind() === SyntaxKind.MethodDeclaration
 					? GD.ApiItemKind.METHOD
-					: GD.ApiItemKind.PROPERTY,
-			isStatic: item.isStatic(),
-			isProtected: item.getScope() === Scope.Protected,
-			isOptional: false,
+					: GD.ApiItemKind.PROPERTY
 			// overwrite?: Reference,
-			comment: this._encodeComment(parser, item.getJsDocs().pop())
-		};
+		} as Partial<GD.ApiMember>;
+
+		const comment = item.getJsDocs().pop();
+
+		if (item.isStatic()) data.isStatic = true;
+		if (item.getScope() === Scope.Protected) data.isProtected = true;
+		if (comment) data.comment = this._encodeComment(parser, comment);
+
+		return data as GD.ApiMember;
 	}
 
 	protected _encodeMethod(parser: Parser, item: MethodDeclaration): GD.ApiMethod {
@@ -262,11 +260,13 @@ export class Encoder {
 		// return Object.values(inheritedMembers);
 	}
 
-	// protected _resolveInheritedMember<T extends GD.ApiMember>(
+	// protected _resolveInheritedMethod(
 	// 	parser: Parser,
-	// 	member: MethodDeclaration | PropertyDeclaration,
-	// 	target: Partial<T> | null
-	// ): T {
+	// 	member: MethodDeclaration,
+	// 	parent: ClassDeclaration,
+	// 	target: Partial<GD.ApiMethod> | null
+	// ): GD.ApiMethod {
+	// 	const base = member instanceof ClassDeclaration ? member.getBaseClass()
 	// 	const parent = member.parent as ApiClass | ApiInterface | undefined;
 	// 	if (!parent) {
 	// 		throw new Error(`Unexpected detached member of type "${member.kind}"`);
@@ -318,4 +318,51 @@ export class Encoder {
 	// 		? this._resolveInheritedMember(parser, nextMember as ApiMethod | ApiProperty, target)
 	// 		: (target as T);
 	// }
+}
+
+function getInheritedInstanceMembers<T extends MethodDeclaration>(
+	child: ClassDeclaration,
+	kind: SyntaxKind.MethodDeclaration
+): T[];
+function getInheritedInstanceMembers<T extends PropertyDeclaration>(
+	child: ClassDeclaration,
+	kind: SyntaxKind.PropertyDeclaration
+): T[];
+function getInheritedInstanceMembers<T extends MethodDeclaration | PropertyDeclaration>(
+	child: ClassDeclaration,
+	kind: SyntaxKind.MethodDeclaration | SyntaxKind.PropertyDeclaration
+): T[] {
+	const members: T[] = [];
+	const memberSet = new Set<string>();
+
+	for (const member of kind === SyntaxKind.MethodDeclaration
+		? child.getMethods()
+		: child.getProperties()) {
+		memberSet.add(member.getName());
+		members.push(member as T);
+	}
+
+	let current = child;
+	while ((current = current.getBaseClass())) {
+		for (const member of kind === SyntaxKind.MethodDeclaration
+			? current.getMethods()
+			: current.getProperties()) {
+			if (memberSet.has(member.getName())) continue;
+			memberSet.add(member.getName());
+			members.push(member as T);
+		}
+	}
+
+	return members.sort((a, b) => (a.getName() > b.getName() ? 1 : -1));
+}
+
+let _kindNameCache: Record<number, string> | undefined;
+function getKindName(kind: SyntaxKind): string {
+	if (!_kindNameCache) {
+		_kindNameCache = {};
+		for (const key in SyntaxKind) {
+			_kindNameCache[SyntaxKind[key]] = key;
+		}
+	}
+	return _kindNameCache[kind];
 }

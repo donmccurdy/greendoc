@@ -19,6 +19,8 @@
 				data={data.type}
 			/>{/if}
 	</div>
-	<Comment data={data.comment} />
+	{#if data.comment}
+		<Comment data={data.comment} />
+	{/if}
 	<Sources {data} />
 </section>

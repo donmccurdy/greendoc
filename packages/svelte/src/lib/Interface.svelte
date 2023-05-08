@@ -7,7 +7,9 @@
 </script>
 
 <section class="tsd-panel tsd-comment">
-	<Comment data={data.comment} />
+	{#if data.comment}
+		<Comment data={data.comment} />
+	{/if}
 </section>
 
 <section class="tsd-panel-group tsd-member-group ">

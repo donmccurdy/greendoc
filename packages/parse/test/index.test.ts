@@ -8,7 +8,8 @@ const file = project.createSourceFile(
 	`
 /** Description of Animal. */
 export class Animal {
-    name: string;
+    private name: string;
+    /** Description of Animal#getName. */
     getName(): string {
         return this.name;
     }
@@ -16,6 +17,7 @@ export class Animal {
 
 /** Description of Dog. */
 export class Dog extends Animal {
+    /** Description of Dog#getLegs. */
     getLegs(): number {
         return 4;
     }
@@ -23,8 +25,15 @@ export class Dog extends Animal {
 
 /** Description of Cat. */
 export class Snake extends Animal {
+    /** Description of Snake#getFangs. */
     getFangs(): number {
         return 2;
+    }
+}
+
+export class Freddy extends Dog {
+    getName(): string {
+        return 'Freddy';
     }
 }
 `
@@ -39,7 +48,8 @@ test('packages', (t) => {
 		[
 			{ name: 'Animal', path: '/classes/my-package.Animal.html' },
 			{ name: 'Dog', path: '/classes/my-package.Dog.html' },
-			{ name: 'Snake', path: '/classes/my-package.Snake.html' }
+			{ name: 'Snake', path: '/classes/my-package.Snake.html' },
+			{ name: 'Freddy', path: '/classes/my-package.Freddy.html' }
 		],
 		'package exports'
 	);
@@ -71,14 +81,22 @@ test('encoder', (t) => {
 			staticMethods: [],
 			methods: [
 				{
-					comment: '',
-					isOptional: false,
-					isProtected: false,
-					isStatic: false,
+					comment: '<p>Description of Dog#getLegs.</p>\n',
 					kind: GD.ApiItemKind.METHOD,
 					name: 'getLegs',
 					params: [],
 					returns: 'number',
+					source: {
+						text: 'node.ts',
+						url: '/Users/donmccurdy/Documents/Projects/greendoc/packages/parse/node.ts'
+					}
+				},
+				{
+					comment: '<p>Description of Animal#getName.</p>\n',
+					kind: GD.ApiItemKind.METHOD,
+					name: 'getName',
+					params: [],
+					returns: 'string',
 					source: {
 						text: 'node.ts',
 						url: '/Users/donmccurdy/Documents/Projects/greendoc/packages/parse/node.ts'

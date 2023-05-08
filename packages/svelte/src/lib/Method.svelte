@@ -34,7 +34,9 @@
 	</ul>
 	<ul class="tsd-descriptions">
 		<li class="tsd-description">
-			<Comment data={data.comment} />
+			{#if data.comment}
+				<Comment data={data.comment} />
+			{/if}
 			<Sources {data} />
 		</li>
 	</ul>
