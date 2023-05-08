@@ -4,7 +4,7 @@ import { ClassDeclaration, Project } from 'ts-morph';
 
 const project = new Project();
 const file = project.createSourceFile(
-	'node.ts',
+	'/path/to/node.ts',
 	`
 /** Description of Animal. */
 export class Animal {
@@ -50,13 +50,8 @@ test('modules', (t) => {
 	const pkg = parser.modules[0];
 	t.is(pkg.name, 'my-package', 'package name');
 	t.deepEqual(
-		pkg.exports,
-		[
-			{ name: 'Animal', path: '/modules/my-package/classes/Animal.html' },
-			{ name: 'Dog', path: '/modules/my-package/classes/Dog.html' },
-			{ name: 'Snake', path: '/modules/my-package/classes/Snake.html' },
-			{ name: 'Freddy', path: '/modules/my-package/classes/Freddy.html' }
-		],
+		parser.getModuleExports(pkg.name).map((item) => (item as any).getName()),
+		['Animal', 'Dog', 'Snake', 'Freddy'],
 		'package exports'
 	);
 });
@@ -64,6 +59,8 @@ test('modules', (t) => {
 test('encoder', (t) => {
 	const encoder = new Encoder();
 	const parser = new Parser(project)
+		.setRootPath('/path/to')
+		.setBaseURL('https://example.com/api')
 		.addModule({
 			name: 'my-package',
 			slug: 'my-package',
@@ -78,7 +75,7 @@ test('encoder', (t) => {
 			name: 'Dog',
 			source: {
 				text: 'node.ts',
-				url: '/Users/donmccurdy/Documents/Projects/greendoc/packages/parse/node.ts'
+				url: 'https://example.com/api/node.ts'
 			},
 			comment: '<p>Description of Dog.</p>\n',
 			extendsTypes: [
@@ -100,7 +97,7 @@ test('encoder', (t) => {
 					returns: 'number',
 					source: {
 						text: 'node.ts',
-						url: '/Users/donmccurdy/Documents/Projects/greendoc/packages/parse/node.ts'
+						url: 'https://example.com/api/node.ts'
 					}
 				},
 				{
@@ -111,7 +108,7 @@ test('encoder', (t) => {
 					returns: 'string',
 					source: {
 						text: 'node.ts',
-						url: '/Users/donmccurdy/Documents/Projects/greendoc/packages/parse/node.ts'
+						url: 'https://example.com/api/node.ts'
 					}
 				}
 			]
