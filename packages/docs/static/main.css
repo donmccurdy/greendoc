@@ -1798,6 +1798,9 @@ ul.greendoc-type-parameters .greendoc-comment {
 .greendoc-widget.options,
 .greendoc-widget.menu {
 	display: none;
+	background: none;
+	outline: none;
+	border: none;
 }
 @media (max-width: 900px) {
 	.greendoc-widget.options,

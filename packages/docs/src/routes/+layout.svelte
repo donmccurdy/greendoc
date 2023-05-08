@@ -2,6 +2,10 @@
 	import type { LayoutData } from './$types';
 
 	export let data: LayoutData;
+
+	function toggleNav() {
+		document.body.classList.toggle('toggle-nav');
+	}
 </script>
 
 <header>
@@ -23,14 +27,16 @@
 					</a>
 				</div>
 				<div class="table-cell" id="greendoc-widgets">
-					<div id="greendoc-filter">
+					<!-- <div id="greendoc-filter">
 						<a href="#" class="greendoc-widget options no-caption" data-toggle="options">Options</a>
 						<div class="greendoc-filter-group">
 							<input type="checkbox" id="greendoc-filter-inherited" checked />
 							<label class="greendoc-widget" for="greendoc-filter-inherited">Inherited</label>
 						</div>
-					</div>
-					<a href="javascript:;" id="greendoc-menu" class="greendoc-widget menu no-caption">Menu</a>
+					</div> -->
+					<button id="greendoc-menu" class="greendoc-widget menu no-caption" on:click={toggleNav}
+						>Menu</button
+					>
 				</div>
 			</div>
 		</div>
@@ -42,11 +48,7 @@
 			// Show/hide navigation sidebar (mobile).
 			const menuEl = document.querySelector('#greendoc-menu');
 			menuEl.addEventListener('click', function () {
-				if (bodyEl.classList.contains('toggle-nav')) {
-					bodyEl.classList.remove('toggle-nav');
-				} else {
-					bodyEl.classList.add('toggle-nav');
-				}
+
 			});
 
 			// Show/hide inherited members.
