@@ -1,4 +1,4 @@
-import { Node, Project, SourceFile, SyntaxKind } from 'ts-morph';
+import { JSDocableNode, Node, Project, SourceFile, SyntaxKind } from 'ts-morph';
 
 type $StringLike = { toString: () => string };
 
@@ -21,6 +21,7 @@ export class Parser {
 	readonly modules: Module[] = [];
 	readonly itemToSlug = new Map<Node, string>();
 	readonly slugToItem = new Map<string, Node>();
+	readonly exportToItem = new Map<string, Node>();
 	private rootPath: string = '';
 	private baseURL: string = '';
 
@@ -59,9 +60,12 @@ export class Parser {
 
 		for (const [name, declarations] of module.entry.getExportedDeclarations()) {
 			for (const declaration of declarations) {
+				if (this.isHidden(declaration)) continue;
+
 				const slug = `${name}.html`;
 				this.itemToSlug.set(declaration, slug);
 				this.slugToItem.set(slug, declaration);
+				this.exportToItem.set(name, declaration);
 				const path = this.getPath(declaration);
 				if (path) {
 					module.exports.push({ name, path });
@@ -78,6 +82,13 @@ export class Parser {
 		const item = this.slugToItem.get(slug);
 		if (item) return item;
 		throw new Error(`Item for "${slug}" not found`);
+	}
+
+	/** @internal */
+	getItemByExportName(name: string): Node {
+		const item = this.exportToItem.get(name);
+		if (item) return item;
+		throw new Error(`Item for "${name}" not found`);
 	}
 
 	/** @internal */
@@ -101,6 +112,8 @@ export class Parser {
 		const module = this.getModule(item);
 		if (!module) return null;
 
+		if (this.isHidden(item)) return null;
+
 		switch (item.getKind()) {
 			case SyntaxKind.ClassDeclaration:
 				return `/modules/${module.slug}/classes/${this.getSlug(item)}`;
@@ -120,6 +133,7 @@ export class Parser {
 	getModule(item: Node): Module | null {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return null;
+		if (file.isDeclarationFile()) return null;
 
 		const filePath = file.getFilePath();
 		for (const module of this.modules) {
@@ -146,6 +160,17 @@ export class Parser {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return '';
 		return file.getFilePath();
+	}
+
+	isHidden(item: Node): boolean {
+		if (item instanceof JSDocableNode) {
+			for (const doc of (item as unknown as JSDocableNode).getJsDocs()) {
+				for (const tag of doc.getTags()) {
+					if (tag.getTagName() === 'hidden') return true;
+				}
+			}
+		}
+		return false;
 	}
 }
 

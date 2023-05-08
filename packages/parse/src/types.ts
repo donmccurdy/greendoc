@@ -85,11 +85,13 @@ export namespace GD {
 
 	export interface ApiEnum extends ApiItem {
 		kind: ApiItemKind.ENUM;
+		members: ApiEnumMember[];
 		comment?: string;
 	}
 
 	export interface ApiEnumMember extends ApiItem {
 		kind: ApiItemKind.ENUM_MEMBER;
+		type?: Token;
 		comment?: string;
 	}
 

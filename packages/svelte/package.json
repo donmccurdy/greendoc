@@ -20,6 +20,12 @@
 			"Comment.svelte": [
 				"./dist/dist/Comment.d.ts"
 			],
+			"Enum.svelte": [
+				"./dist/dist/Enum.d.ts"
+			],
+			"EnumMember.svelte": [
+				"./dist/dist/EnumMember.d.ts"
+			],
 			"Function.svelte": [
 				"./dist/dist/Function.d.ts"
 			],

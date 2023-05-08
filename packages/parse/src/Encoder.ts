@@ -70,6 +70,8 @@ export class Encoder {
 				return GD.ApiItemKind.INTERFACE;
 			case SyntaxKind.EnumDeclaration:
 				return GD.ApiItemKind.ENUM;
+			case SyntaxKind.EnumMember:
+				return GD.ApiItemKind.ENUM_MEMBER;
 			case SyntaxKind.FunctionDeclaration:
 				return GD.ApiItemKind.FUNCTION;
 			case SyntaxKind.MethodDeclaration:
@@ -116,11 +118,15 @@ export class Encoder {
 	}
 
 	protected _encodeEnum(parser: Parser, item: EnumDeclaration): GD.ApiEnum {
-		return {
+		const data = {
 			...this._encodeItem(parser, item),
-			comment: '', //this._encodeComment(parser, item.tsdocComment),
-			members: [] // item.members.map((item) => this.encodeItem(parser, item)),
+			members: item.getMembers().map((item) => this._encodeEnumMember(parser, item))
 		} as GD.ApiEnum;
+
+		const comment = item.getJsDocs().pop();
+		if (comment) data.comment = this._encodeComment(parser, comment);
+
+		return data;
 	}
 	protected _encodeFunction(parser: Parser, item: FunctionDeclaration): GD.ApiFunction {
 		const data = {
@@ -141,6 +147,7 @@ export class Encoder {
 	protected _encodeEnumMember(parser: Parser, item: EnumMember): GD.ApiEnumMember {
 		return {
 			...this._encodeItem(parser, item),
+			type: this._encodeType(parser, item.getType()),
 			comment: this._encodeComment(parser, item.getJsDocs().pop())
 		} as GD.ApiEnumMember;
 	}
@@ -172,9 +179,19 @@ export class Encoder {
 
 	protected _encodeComment(parser: Parser, comment?: JSDoc): string {
 		if (!comment) return '';
-		const md = comment.getCommentText();
-		const html = md ? renderMarkdown(md) : '';
-		return html;
+
+		let md = comment.getCommentText();
+		if (!md) return '';
+
+		md = md.replaceAll(/{@link ([\S]+)\s*(\S+)?\s*}/g, (_, anchorRef, anchorText) => {
+			const [exportName, fragment] = anchorRef.split('.');
+			const item = parser.getItemByExportName(exportName);
+			const text = anchorText || anchorRef;
+			const href = parser.getPath(item) + (fragment ? `#${fragment}` : '');
+			return `[${text}](${href})`;
+		});
+
+		return renderMarkdown(md) || '';
 	}
 
 	protected _encodeMember(
