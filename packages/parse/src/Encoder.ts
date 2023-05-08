@@ -86,12 +86,10 @@ export class Encoder {
 	}
 
 	protected _encodeClass(parser: Parser, item: ClassDeclaration): GD.ApiClass {
-		return {
+		const data = {
 			...this._encodeItem(parser, item),
 			comment: this._encodeComment(parser, item.getJsDocs().pop()),
-			extendsTypes: item.getBaseClass()
-				? [this._encodeReference(parser, item.getBaseClass()!)]
-				: [],
+			extendsTypes: [],
 			staticProperties: item
 				.getStaticProperties()
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
@@ -103,6 +101,14 @@ export class Encoder {
 				.filter((method) => method.getScope() !== Scope.Private)
 				.map((method) => this._encodeMethod(parser, method))
 		} as GD.ApiClass;
+
+		let base = item;
+		while ((base = base.getBaseClass())) {
+			data.extendsTypes.push(this._encodeReference(parser, base));
+		}
+		data.extendsTypes.reverse();
+
+		return data;
 	}
 
 	protected _encodeInterface(parser: Parser, item: InterfaceDeclaration): GD.ApiInterface {

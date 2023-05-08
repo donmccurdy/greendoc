@@ -3,6 +3,7 @@
 	import Method from './Method.svelte';
 	import Property from './Property.svelte';
 	import Comment from './Comment.svelte';
+	import Reference from './Reference.svelte';
 	export let data: GD.ApiClass;
 </script>
 
@@ -12,6 +13,22 @@
 		<Comment data={data.comment} />
 	{/if}
 </section>
+
+{#if data.extendsTypes.length}
+	<section class="tsd-panel tsd-hierarchy">
+		<h3>Hierarchy</h3>
+		<ul class="tsd-hierarchy">
+			{#each data.extendsTypes as extendsType}
+				<li>
+					<Reference data={extendsType} />
+				</li>
+			{/each}
+			<li>
+				<Reference data={{ name: data.name, kind: data.kind }} />
+			</li>
+		</ul>
+	</section>
+{/if}
 
 {#if data.staticProperties.length}
 	<section class="tsd-panel-group tsd-member-group ">

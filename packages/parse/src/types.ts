@@ -98,9 +98,9 @@ export namespace GD {
 	export type Token = string | Reference;
 
 	export interface Reference {
-		path: string | null;
 		name: string;
 		kind: ApiItemKind;
+		path?: string;
 	}
 
 	export interface Source {
