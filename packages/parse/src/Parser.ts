@@ -62,7 +62,7 @@ export class Parser {
 			for (const item of items) {
 				if (this.isHidden(item)) continue;
 
-				const slug = `${name}.html`;
+				const slug = name;
 				this.itemToSlug.set(item, slug);
 				this.slugToItem.set(slug, item);
 				this.exportToItem.set(name, item);
