@@ -7,7 +7,7 @@
 	export let data: GD.ApiClass;
 </script>
 
-<section class="tsd-panel tsd-comment">
+<section class="greendoc-panel greendoc-comment">
 	<h1>{data.name}</h1>
 	{#if data.comment}
 		<Comment data={data.comment} />
@@ -15,9 +15,9 @@
 </section>
 
 {#if data.extendsTypes.length}
-	<section class="tsd-panel tsd-hierarchy">
+	<section class="greendoc-panel greendoc-hierarchy">
 		<h3>Hierarchy</h3>
-		<ul class="tsd-hierarchy">
+		<ul class="greendoc-hierarchy">
 			{#each data.extendsTypes as extendsType}
 				<li>
 					<Reference data={extendsType} />
@@ -31,7 +31,7 @@
 {/if}
 
 {#if data.staticProperties.length}
-	<section class="tsd-panel-group tsd-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group ">
 		<h2>Static properties</h2>
 		{#each data.staticProperties as property}
 			{#if !property.isProtected}
@@ -42,7 +42,7 @@
 {/if}
 
 {#if data.staticMethods.length}
-	<section class="tsd-panel-group tsd-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group ">
 		<h2>Static methods</h2>
 		{#each data.staticMethods as method}
 			{#if !method.isProtected}
@@ -53,7 +53,7 @@
 {/if}
 
 {#if data.properties.length}
-	<section class="tsd-panel-group tsd-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group ">
 		<h2>Properties</h2>
 		{#each data.properties as property}
 			{#if !property.isProtected}
@@ -64,7 +64,7 @@
 {/if}
 
 {#if data.methods.length}
-	<section class="tsd-panel-group tsd-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group ">
 		<h2>Methods</h2>
 		{#each data.methods as method}
 			{#if !method.isProtected}

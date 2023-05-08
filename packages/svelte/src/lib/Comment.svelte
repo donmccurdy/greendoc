@@ -2,7 +2,7 @@
 	export let data: string;
 </script>
 
-<div class="tsd-comment tsd-typography">
+<div class="greendoc-comment greendoc-typography">
 	<div class="lead">
 		{@html data}
 	</div>

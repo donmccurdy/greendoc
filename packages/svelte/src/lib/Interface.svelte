@@ -6,7 +6,7 @@
 	export let data: GD.ApiInterface;
 </script>
 
-<section class="tsd-panel tsd-comment">
+<section class="greendoc-panel greendoc-comment">
 	<h1>{data.name}</h1>
 	{#if data.comment}
 		<Comment data={data.comment} />
@@ -14,7 +14,7 @@
 </section>
 
 {#if data.properties.length}
-	<section class="tsd-panel-group tsd-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group ">
 		<h2>Properties</h2>
 		{#each data.properties as property}
 			<Property data={property} />
@@ -23,7 +23,7 @@
 {/if}
 
 {#if data.methods.length}
-	<section class="tsd-panel-group tsd-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group ">
 		<h2>Methods</h2>
 		{#each data.methods as method}
 			<Method data={method} />

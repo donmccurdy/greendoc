@@ -6,12 +6,12 @@
 	export let data: GD.ApiEnumMember;
 </script>
 
-<section class="tsd-panel tsd-member tsd-kind-property">
+<section class="greendoc-panel greendoc-member greendoc-kind-property">
 	<!-- svelte-ignore a11y-missing-content -->
-	<a id={data.name} class="tsd-anchor" />
-	<div class="tsd-signature tsd-kind-icon">
+	<a id={data.name} class="greendoc-anchor" />
+	<div class="greendoc-signature greendoc-kind-icon">
 		{data.name}{#if typeof data.type === 'string'}:
-			<span class="tsd-signature-symbol">{data.type}</span>{:else if data.type}: <Reference
+			<span class="greendoc-signature-symbol">{data.type}</span>{:else if data.type}: <Reference
 				data={data.type}
 			/>{/if}
 	</div>

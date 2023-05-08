@@ -5,7 +5,7 @@
 	export let data: GD.ApiEnum;
 </script>
 
-<section class="tsd-panel tsd-comment">
+<section class="greendoc-panel greendoc-comment">
 	<h1>{data.name}</h1>
 	{#if data.comment}
 		<Comment data={data.comment} />
@@ -13,7 +13,7 @@
 </section>
 
 {#if data.members.length}
-	<section class="tsd-panel-group tsd-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group ">
 		<h2>Members</h2>
 		{#each data.members as member}
 			<EnumMember data={member} />

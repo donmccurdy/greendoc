@@ -5,8 +5,8 @@
 
 <span>
 	{#if data.path}
-		<a href={data.path} class="tsd-signature-type">{data.name}</a>
+		<a href={data.path} class="greendoc-signature-type">{data.name}</a>
 	{:else}
-		<span class="tsd-signature-type">{data.name}</span>
+		<span class="greendoc-signature-type">{data.name}</span>
 	{/if}
 </span>

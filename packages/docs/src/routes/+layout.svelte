@@ -5,7 +5,7 @@
 </script>
 
 <header>
-	<div class="tsd-page-toolbar">
+	<div class="greendoc-page-toolbar">
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
@@ -22,15 +22,15 @@
 						/>
 					</a>
 				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+				<div class="table-cell" id="greendoc-widgets">
+					<div id="greendoc-filter">
+						<a href="#" class="greendoc-widget options no-caption" data-toggle="options">Options</a>
+						<div class="greendoc-filter-group">
+							<input type="checkbox" id="greendoc-filter-inherited" checked />
+							<label class="greendoc-widget" for="greendoc-filter-inherited">Inherited</label>
 						</div>
 					</div>
-					<a href="javascript:;" id="tsd-menu" class="tsd-widget menu no-caption">Menu</a>
+					<a href="javascript:;" id="greendoc-menu" class="greendoc-widget menu no-caption">Menu</a>
 				</div>
 			</div>
 		</div>
@@ -40,7 +40,7 @@
 			const bodyEl = document.body;
 
 			// Show/hide navigation sidebar (mobile).
-			const menuEl = document.querySelector('#tsd-menu');
+			const menuEl = document.querySelector('#greendoc-menu');
 			menuEl.addEventListener('click', function () {
 				if (bodyEl.classList.contains('toggle-nav')) {
 					bodyEl.classList.remove('toggle-nav');
@@ -51,7 +51,7 @@
 
 			// Show/hide inherited members.
 			if (location.href.includes('classes')) {
-				const inheritedInputEl = document.querySelector('#tsd-filter-inherited');
+				const inheritedInputEl = document.querySelector('#greendoc-filter-inherited');
 				inheritedInputEl.addEventListener('change', function () {
 					if (inheritedInputEl.checked) {
 						bodyEl.classList.remove('toggle-inherited');
@@ -60,21 +60,21 @@
 					}
 				});
 			} else {
-				const filterEl = document.querySelector('#tsd-filter');
+				const filterEl = document.querySelector('#greendoc-filter');
 				filterEl.style.display = 'none';
 			}
 		})();
 	</script> -->
 </header>
-<nav class="tsd-navigation secondary">
+<nav class="greendoc-navigation secondary">
 	{#each data.navigation.sections as section}
 		<h4>{section.title}</h4>
 		<ul>
 			{#each section.items as item}
-				<li class="tsd-kind-namespace">
+				<li class="greendoc-kind-namespace">
 					<a
 						href={item.href}
-						class="tsd-kind-icon"
+						class="greendoc-kind-icon"
 						target={item.external ? '_blank' : ''}
 						rel={item.external ? 'noreferrer' : ''}
 					>

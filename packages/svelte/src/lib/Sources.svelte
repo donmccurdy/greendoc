@@ -9,7 +9,7 @@
 		| GD.ApiFunction;
 </script>
 
-<aside class="tsd-sources">
+<aside class="greendoc-sources">
 	{#if (data.kind === 'Method' || data.kind === 'Property') && data.overwrite}
 		<p>
 			Overrides
