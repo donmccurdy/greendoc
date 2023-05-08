@@ -1,7 +1,29 @@
 import type { LayoutServerLoad } from './$types';
 import { parser } from '$lib/server/model';
+import type { Node } from 'ts-morph';
 
 // export const prerender = true;
+
+const coreExports = parser.getModuleExports('@gltf-transform/core').map(createExport);
+const extensionsExports = parser.getModuleExports('@gltf-transform/extensions').map(createExport);
+const functionsExports = parser.getModuleExports('@gltf-transform/functions').map(createExport);
+
+interface Export {
+	text: string;
+	href: string;
+	kind: string;
+	category?: string;
+	external?: boolean;
+}
+
+function createExport(item: Node): Export {
+	return {
+		text: parser.getName(item),
+		href: parser.getPath(item)!,
+		kind: item.getKindName(),
+		category: parser.getTag(item, 'category') || undefined
+	};
+}
 
 export const load: LayoutServerLoad = () => {
 	return {
@@ -37,15 +59,49 @@ export const load: LayoutServerLoad = () => {
 							external: true,
 							href: 'https://github.com/donmccurdy/glTF-Transform/blob/main/CHANGELOG.md'
 						}
+					],
+					subsections: []
+				},
+				{
+					title: '@gltf-transform/core',
+					items: [],
+					subsections: [
+						{
+							title: 'Documents',
+							items: coreExports.filter(({ category }) => category === 'Documents')
+						},
+						{
+							title: 'I/O',
+							items: coreExports.filter(({ category }) => category === 'I/O')
+						},
+						{
+							title: 'Properties',
+							items: coreExports.filter(({ category }) => category === 'Properties')
+						},
+						{
+							title: 'Utilities',
+							items: coreExports.filter(({ category }) => category === 'Utilities')
+						}
 					]
 				},
-				...parser.modules.map((module) => ({
-					title: module.name,
-					items: module.exports.map((item) => ({
-						text: item.name,
-						href: item.path
-					}))
-				}))
+				{
+					title: '@gltf-transform/extensions',
+					items: [],
+					subsections: [
+						{
+							title: 'Khronos Extensions',
+							items: extensionsExports.filter(
+								({ text, kind }) => text.startsWith('KHR') && kind === 'ClassDeclaration'
+							)
+						},
+						{
+							title: 'Vendor Extensions',
+							items: extensionsExports.filter(
+								({ text, kind }) => text.startsWith('EXT') && kind === 'ClassDeclaration'
+							)
+						}
+					]
+				}
 			]
 		}
 	};

@@ -7,7 +7,6 @@ interface Module {
 	slug: string;
 	rootDirectory: string;
 	entry: SourceFile;
-	exports: { name: string; path: string; category?: string }[];
 }
 
 export interface ModuleConfig {
@@ -53,28 +52,33 @@ export class Parser {
 			name: config.name,
 			slug: config.slug,
 			rootDirectory: fs.dirname(entry.getFilePath()),
-			entry: entry,
-			exports: []
+			entry: entry
 		};
 		this.modules.push(module);
 
-		for (const [name, declarations] of module.entry.getExportedDeclarations()) {
-			for (const declaration of declarations) {
-				if (this.isHidden(declaration)) continue;
+		for (const [name, items] of module.entry.getExportedDeclarations()) {
+			for (const item of items) {
+				if (this.isHidden(item)) continue;
 
 				const slug = `${name}.html`;
-				this.itemToSlug.set(declaration, slug);
-				this.slugToItem.set(slug, declaration);
-				this.exportToItem.set(name, declaration);
-				const path = this.getPath(declaration);
-				if (path) {
-					module.exports.push({ name, path });
-				} else {
-					console.warn(`No path for export, "${name}".`);
-				}
+				this.itemToSlug.set(item, slug);
+				this.slugToItem.set(slug, item);
+				this.exportToItem.set(name, item);
 			}
 		}
 		return this;
+	}
+
+	public getModuleExports(name: string): Node[] {
+		const module = this.modules.find((module) => module.name === name);
+		const exports = [];
+		for (const [name, items] of module.entry.getExportedDeclarations()) {
+			for (const item of items) {
+				if (this.isHidden(item)) continue;
+				exports.push(item);
+			}
+		}
+		return exports;
 	}
 
 	/** @internal */
@@ -143,6 +147,19 @@ export class Parser {
 		}
 
 		throw new Error(`Module not found for path "${filePath}".`);
+	}
+
+	getTag(item: Node, tagName: string): string | null {
+		if ((item as unknown as JSDocableNode).getJsDocs) {
+			for (const doc of (item as unknown as JSDocableNode).getJsDocs()) {
+				for (const tag of doc.getTags()) {
+					if (tag.getTagName() === tagName) {
+						return tag.getCommentText();
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	getName(item: Node): string {

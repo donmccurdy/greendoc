@@ -37,21 +37,44 @@
 </header>
 <nav class="greendoc-navigation secondary">
 	{#each data.navigation.sections as section}
-		<h4>{section.title}</h4>
-		<ul>
-			{#each section.items as item}
-				<li class="greendoc-kind-namespace">
-					<a
-						href={item.href}
-						class="greendoc-kind-icon"
-						target={item.external ? '_blank' : ''}
-						rel={item.external ? 'noreferrer' : ''}
-					>
-						{item.text}
-					</a>
-				</li>
-			{/each}
-		</ul>
+		<section>
+			<h4>{section.title}</h4>
+			<ul>
+				{#each section.items as item}
+					<li class="greendoc-kind-namespace">
+						<a
+							href={item.href}
+							class="greendoc-kind-icon"
+							target={item.external ? '_blank' : ''}
+							rel={item.external ? 'noreferrer' : ''}
+						>
+							{item.text}
+						</a>
+					</li>
+				{/each}
+			</ul>
+			{#if section.subsections.length}
+				{#each section.subsections as subsection}
+					<section>
+						<h5>{subsection.title}</h5>
+						<ul>
+							{#each subsection.items as item}
+								<li class="greendoc-kind-namespace">
+									<a
+										href={item.href}
+										class="greendoc-kind-icon"
+										target={item.external ? '_blank' : ''}
+										rel={item.external ? 'noreferrer' : ''}
+									>
+										{item.text}
+									</a>
+								</li>
+							{/each}
+						</ul>
+					</section>
+				{/each}
+			{/if}
+		</section>
 	{/each}
 </nav>
 

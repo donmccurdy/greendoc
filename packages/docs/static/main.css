@@ -1259,6 +1259,10 @@ footer .greendoc-legend {
 .greendoc-navigation li {
 	padding: 0;
 }
+.greendoc-navigation > section:not(:last-child) {
+	padding-bottom: 1em;
+	border-bottom: 1px solid #ccc;
+}
 
 .greendoc-navigation.primary {
 	padding-bottom: 40px;
@@ -1514,6 +1518,10 @@ footer .greendoc-legend {
 	font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;
 	font-size: 14px;
 	overflow-x: auto;
+}
+.greendoc-kind-namespace a {
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 .greendoc-signature.greendoc-kind-icon {
 	padding-left: 30px;
