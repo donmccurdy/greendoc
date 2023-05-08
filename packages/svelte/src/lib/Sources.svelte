@@ -1,6 +1,12 @@
 <script lang="ts">
 	import type { GD } from '@greendoc/parse';
-	export let data: GD.ApiClass | GD.ApiInterface | GD.ApiProperty | GD.ApiMethod | GD.ApiEnum;
+	export let data:
+		| GD.ApiClass
+		| GD.ApiInterface
+		| GD.ApiProperty
+		| GD.ApiMethod
+		| GD.ApiEnum
+		| GD.ApiFunction;
 </script>
 
 <aside class="tsd-sources">

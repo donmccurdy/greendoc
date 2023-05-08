@@ -46,6 +46,13 @@ export namespace GD {
 		methods: ApiMethod[];
 	}
 
+	export interface ApiFunction extends ApiItem {
+		kind: ApiItemKind.FUNCTION;
+		comment?: string;
+		params: ApiParameter[];
+		returns: ApiReturnType;
+	}
+
 	export interface ApiMember extends ApiItem {
 		kind: ApiItemKind.METHOD | ApiItemKind.PROPERTY;
 		isStatic?: boolean;
@@ -57,17 +64,17 @@ export namespace GD {
 
 	export interface ApiMethod extends ApiMember {
 		kind: ApiItemKind.METHOD;
-		params: ApiMethodParam[];
-		returns: ApiMethodReturnType;
+		params: ApiParameter[];
+		returns: ApiReturnType;
 	}
 
-	export type ApiMethodParam = {
+	export type ApiParameter = {
 		name: string;
 		type?: Token;
 		optional?: boolean;
 	};
 
-	export type ApiMethodReturnType = Token;
+	export type ApiReturnType = Token;
 
 	export interface ApiProperty extends ApiMember {
 		kind: ApiItemKind.PROPERTY;

@@ -5,6 +5,7 @@ import {
 	ClassDeclaration,
 	EnumDeclaration,
 	EnumMember,
+	FunctionDeclaration,
 	InterfaceDeclaration,
 	JSDoc,
 	MethodDeclaration,
@@ -33,6 +34,8 @@ export class Encoder {
 				return this._encodeInterface(parser, item as InterfaceDeclaration);
 			case SyntaxKind.EnumDeclaration:
 				return this._encodeEnum(parser, item as EnumDeclaration);
+			case SyntaxKind.FunctionDeclaration:
+				return this._encodeFunction(parser, item as FunctionDeclaration);
 			case SyntaxKind.EnumMember:
 				return this._encodeEnumMember(parser, item as EnumMember);
 			case SyntaxKind.TypeAliasDeclaration:
@@ -65,6 +68,8 @@ export class Encoder {
 				return GD.ApiItemKind.INTERFACE;
 			case SyntaxKind.EnumDeclaration:
 				return GD.ApiItemKind.ENUM;
+			case SyntaxKind.FunctionDeclaration:
+				return GD.ApiItemKind.FUNCTION;
 			case SyntaxKind.MethodDeclaration:
 				return GD.ApiItemKind.METHOD;
 			case SyntaxKind.PropertyDeclaration:
@@ -112,6 +117,22 @@ export class Encoder {
 			comment: '', //this._encodeComment(parser, item.tsdocComment),
 			members: [] // item.members.map((item) => this.encodeItem(parser, item)),
 		} as GD.ApiEnum;
+	}
+	protected _encodeFunction(parser: Parser, item: FunctionDeclaration): GD.ApiFunction {
+		const data = {
+			...this._encodeItem(parser, item),
+			kind: GD.ApiItemKind.FUNCTION,
+			params: item.getParameters().map((param) => ({
+				name: param.getName(),
+				type: this._encodeType(parser, param.getType(), param.getTypeNode()),
+				optional: param.isOptional() || undefined
+			})),
+			returns: this._encodeType(parser, item.getReturnType(), item.getReturnTypeNode())
+		} as Partial<GD.ApiFunction>;
+
+		const comment = item.getJsDocs().pop();
+		if (comment) data.comment = this._encodeComment(parser, comment);
+		return data as GD.ApiFunction;
 	}
 	protected _encodeEnumMember(parser: Parser, item: EnumMember): GD.ApiEnumMember {
 		return {
