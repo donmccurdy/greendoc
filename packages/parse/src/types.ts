@@ -1,23 +1,38 @@
-import type { ApiItemKind } from '@microsoft/api-extractor-model';
-
 // TODO(design): Clean up API from an end-user perspective.
 export namespace GD {
+	// export enum ApiExportKind {
+	// 	CLASS = 'Class',
+	// 	INTERFACE = 'Interface',
+	// 	ENUM = 'Enum',
+	// 	FUNCTION = 'Function',
+	// 	VARIABLE = 'Variable'
+	// }
+
+	export enum ApiItemKind {
+		CLASS = 'Class',
+		INTERFACE = 'Interface',
+		ENUM = 'Enum',
+		ENUM_MEMBER = 'EnumMember',
+		FUNCTION = 'Function',
+		VARIABLE = 'Variable',
+		METHOD = 'Method',
+		METHOD_SIGNATURE = 'MethodSignature',
+		PROPERTY = 'Property',
+		PROPERTY_SIGNATURE = 'PropertySignature'
+	}
+
 	export interface ApiItem {
 		name: string;
 		kind: ApiItemKind;
+		source?: Source;
 	}
 
 	export interface ApiClass extends ApiItem {
 		// TODO: resolved & unresolved generics?
 		// TODO: interfaces implemented?
-		kind: ApiItemKind.Class;
-		path: string | null;
-		packageName: string; // → package
-		comment: string; // → IntlText
-		sourceUrl: string; // remove
-		sourceUrlPath: string; // → sourcePath
-		extendsType: Excerpt | null; // → extends;
-		// TODO: hierarchy (up/down)
+		kind: ApiItemKind.CLASS;
+		comment?: string; // → IntlText
+		extendsTypes: Reference[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
 		// TODO: overloads?
@@ -26,60 +41,72 @@ export namespace GD {
 	}
 
 	export interface ApiInterface extends ApiItem {
-		kind: ApiItemKind.Interface;
-		path: string | null;
-		packageName: string;
-		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
-		extendsTypes: Excerpt[];
+		kind: ApiItemKind.INTERFACE;
+		comment?: string;
+		extendsTypes: Reference[];
 		properties: ApiProperty[];
 		methods: ApiMethod[];
-		staticProperties: ApiProperty[];
-		staticMethods: ApiMethod[];
+	}
+
+	export interface ApiFunction extends ApiItem {
+		kind: ApiItemKind.FUNCTION;
+		comment?: string;
+		params: ApiParameter[];
+		returns: ApiReturnType;
 	}
 
 	export interface ApiMember extends ApiItem {
-		kind: ApiItemKind.Method;
-		isStatic: boolean;
-		isProtected: boolean;
-		isOptional: boolean;
+		kind: ApiItemKind.METHOD | ApiItemKind.PROPERTY;
+		isStatic?: boolean;
+		isProtected?: boolean;
+		isOptional?: boolean;
 		overwrite?: Reference;
-		excerpt: Excerpt;
-		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
+		comment?: string;
 	}
 
-	export interface ApiMethod extends ApiMember {}
+	export interface ApiMethod extends ApiMember {
+		kind: ApiItemKind.METHOD;
+		params: ApiParameter[];
+		returns: ApiReturnType;
+	}
+
+	export type ApiParameter = {
+		name: string;
+		type?: Token;
+		optional?: boolean;
+	};
+
+	export type ApiReturnType = Token;
 
 	export interface ApiProperty extends ApiMember {
+		kind: ApiItemKind.PROPERTY;
+		type?: Token;
 		isReadonly: boolean;
 	}
 
 	export interface ApiEnum extends ApiItem {
-		kind: ApiItemKind.Enum;
-		comment: string;
-		sourceUrl: string;
-		sourceUrlPath: string;
+		kind: ApiItemKind.ENUM;
+		members: ApiEnumMember[];
+		comment?: string;
 	}
 
 	export interface ApiEnumMember extends ApiItem {
-		kind: ApiItemKind.EnumMember;
-		comment: string;
-		excerpt: Excerpt;
-	}
-
-	export interface Excerpt {
-		tokens: Token[];
+		kind: ApiItemKind.ENUM_MEMBER;
+		type?: Token;
+		comment?: string;
 	}
 
 	export type Token = string | Reference;
 
 	export interface Reference {
-		path: string | null;
 		name: string;
 		kind: ApiItemKind;
+		path?: string;
+	}
+
+	export interface Source {
+		text: string;
+		url: string;
 	}
 
 	export interface ApiTypeAlias extends ApiItem {}

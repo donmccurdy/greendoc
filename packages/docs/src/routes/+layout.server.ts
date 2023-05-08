@@ -1,28 +1,57 @@
 import type { LayoutServerLoad } from './$types';
 import { parser } from '$lib/server/model';
-import { ApiItemKind, type ApiEntryPoint, type ApiPackage } from '@microsoft/api-extractor-model';
+import type { Node } from 'ts-morph';
 
 export const prerender = true;
 
-const core = parser.packages.find(
-	(pkg) => pkg.displayName === '@gltf-transform/core'
-) as ApiPackage;
-const coreEntry = core.members[0] as ApiEntryPoint;
+const coreExports = parser
+	.getModuleExports('@gltf-transform/core')
+	.map(createExport)
+	.sort((a, b) => (a.text > b.text ? 1 : -1));
+const extensionsExports = parser
+	.getModuleExports('@gltf-transform/extensions')
+	.map(createExport)
+	.sort((a, b) => (a.text > b.text ? 1 : -1));
+const functionsExports = parser
+	.getModuleExports('@gltf-transform/functions')
+	.map(createExport)
+	.sort((a, b) => (a.text > b.text ? 1 : -1));
+
+interface Export {
+	text: string;
+	href: string;
+	kind: string;
+	category?: string;
+	external?: boolean;
+}
+
+function createExport(item: Node): Export {
+	return {
+		text: parser.getName(item),
+		href: parser.getPath(item)!,
+		kind: item.getKindName(),
+		category: parser.getTag(item, 'category') || undefined
+	};
+}
 
 export const load: LayoutServerLoad = () => {
 	return {
+		metadata: {
+			title: 'glTF Transform',
+			snippet: ''
+		},
 		navigation: {
 			sections: [
 				{
 					title: 'Introduction',
 					items: [
 						// { text: 'Home ', href: '/' },
-						// { text: 'Concepts ', href: '/concepts.html' },
-						{ text: 'Extensions ', href: '/extensions.html' },
-						// { text: 'Functions ', href: '/functions.html' },
-						// { text: 'CLI ', href: '/cli.html' },
-						// { text: 'Contributing ', href: '/contributing.html' },
-						// { text: 'Credits ', href: '/credits.html' },
+						// { text: 'Concepts ', href: '/concepts' },
+						{ text: 'Extensions ', href: '/extensions' },
+						// { text: 'Functions ', href: '/functions' },
+						// { text: 'CLI ', href: '/cli' },
+						// { text: 'Contributing ', href: '/contributing' },
+						// { text: 'Credits ', href: '/credits' },
 						{
 							text: 'GitHub',
 							external: true,
@@ -43,24 +72,64 @@ export const load: LayoutServerLoad = () => {
 							external: true,
 							href: 'https://github.com/donmccurdy/glTF-Transform/blob/main/CHANGELOG.md'
 						}
+					],
+					subsections: []
+				},
+				{
+					title: '@gltf-transform/core',
+					items: [],
+					subsections: [
+						{
+							title: 'Documents',
+							items: coreExports.filter(({ category }) => category === 'Documents')
+						},
+						{
+							title: 'I/O',
+							items: coreExports.filter(({ category }) => category === 'I/O')
+						},
+						{
+							title: 'Properties',
+							items: coreExports.filter(({ category }) => category === 'Properties')
+						},
+						{
+							title: 'Utilities',
+							items: coreExports.filter(({ category }) => category === 'Utilities')
+						}
 					]
 				},
 				{
-					title: 'Documents',
-					items: coreEntry.members
-						.filter((member) => member.kind === ApiItemKind.Class)
-						.map((member) => ({
-							text: member.displayName,
-							href: `/classes/core.${member.displayName.toLowerCase()}.html`
-						}))
+					title: '@gltf-transform/extensions',
+					items: [],
+					subsections: [
+						{
+							title: 'Khronos Extensions',
+							items: extensionsExports.filter(
+								({ text, kind }) => text.startsWith('KHR') && kind === 'ClassDeclaration'
+							)
+						},
+						{
+							title: 'Vendor Extensions',
+							items: extensionsExports.filter(
+								({ text, kind }) => text.startsWith('EXT') && kind === 'ClassDeclaration'
+							)
+						}
+					]
 				},
 				{
-					title: 'I/O',
-					items: []
-				},
-				{
-					title: 'Properties',
-					items: []
+					title: '@gltf-transform/functions',
+					items: [],
+					subsections: [
+						{
+							title: 'Transforms',
+							items: functionsExports.filter(({ category }) => category === 'Transforms')
+						},
+						{
+							title: 'Functions',
+							items: functionsExports.filter(
+								({ category, kind }) => category !== 'Transforms' && kind === 'FunctionDeclaration'
+							)
+						}
+					]
 				}
 			]
 		}

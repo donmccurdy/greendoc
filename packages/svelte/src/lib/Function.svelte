@@ -3,19 +3,13 @@
 	import Comment from './Comment.svelte';
 	import Sources from './Sources.svelte';
 	import Reference from './Reference.svelte';
-	export let data: GD.ApiMethod;
+	export let data: GD.ApiFunction;
 </script>
 
-<section
-	class="greendoc-panel greendoc-member greendoc-kind-method"
-	class:greendoc-is-protected={data.isProtected}
->
+<section class="greendoc-panel greendoc-member greendoc-kind-function">
 	<!-- svelte-ignore a11y-missing-content -->
 	<a id={data.name} class="greendoc-anchor" />
-	<ul
-		class="greendoc-signatures greendoc-kind-method"
-		class:greendoc-is-protected={data.isProtected}
-	>
+	<ul class="greendoc-signatures greendoc-kind-function">
 		<li class="greendoc-signature greendoc-kind-icon">
 			{data.name}({#each data.params as param, i}{param.name}{#if param.optional}?{/if}{#if typeof param.type === 'string'}:
 					<span class="greendoc-signature-symbol">{param.type}</span>{:else if param.type}: <Reference

@@ -2,7 +2,9 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
 	return {
-		title: 'glTF Transform',
-		content: 'Lorem ipsum dolor sit amet...'
+		metadata: {
+			title: 'glTF Transform',
+			snippet: 'glTF 2.0 SDK for JavaScript and TypeScript, on Web and Node.js.'
+		}
 	};
 };

@@ -13,20 +13,28 @@
 	},
 	"repository": "https://github.com/donmccurdy/greendoc",
 	"author": "Don McCurdy <dm@donmccurdy.com>",
-	"license": "MIT",
+	"license": "UNLICENSED",
 	"scripts": {
 		"dev": "yarn watch",
 		"watch": "microbundle watch --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
 		"build": "microbundle --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
-		"test": "echo \"Tests not yet implemented\"",
+		"test": "ava test/*.test.ts",
 		"preversion": "yarn build && yarn test",
 		"version": "rimraf dist/* && yarn build && git add -u",
-		"postversion": "git push && git push --tags && npm publish"
+		"postversion": "git push && git push --tags && npm publish",
+		"clean": "rimraf dist/*"
 	},
 	"dependencies": {
-		"@microsoft/api-extractor-model": "^7.25.2",
-		"@microsoft/tsdoc": "^0.14.2",
 		"highlight.js": "^11.6.0",
-		"marked": "^4.2.3"
+		"marked": "^4.2.3",
+		"ts-morph": "^18.0.0"
+	},
+	"ava": {
+		"extensions": {
+			"ts": "module"
+		},
+		"nodeArguments": [
+			"--loader=ts-node/esm"
+		]
 	}
 }

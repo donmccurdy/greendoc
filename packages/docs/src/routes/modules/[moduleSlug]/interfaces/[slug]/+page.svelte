@@ -4,4 +4,4 @@
 	export let data: PageData;
 </script>
 
-<Interface data={data.interface} />
+<Interface data={data.export} />

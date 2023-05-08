@@ -3,7 +3,7 @@
 	import Comment from './Comment.svelte';
 	import Sources from './Sources.svelte';
 	import Reference from './Reference.svelte';
-	export let data: GD.ApiProperty;
+	export let data: GD.ApiEnumMember;
 </script>
 
 <section class="greendoc-panel greendoc-member greendoc-kind-property">
@@ -18,5 +18,4 @@
 	{#if data.comment}
 		<Comment data={data.comment} />
 	{/if}
-	<Sources {data} />
 </section>

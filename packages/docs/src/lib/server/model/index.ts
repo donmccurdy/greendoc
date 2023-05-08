@@ -1,22 +1,46 @@
-import { Encoder, Parser } from '@greendoc/parse';
-import { TSDocConfiguration, TSDocTagDefinition, TSDocTagSyntaxKind } from '@microsoft/tsdoc';
-import core from './core.api.json';
-import extensions from './extensions.api.json';
-import functions from './functions.api.json';
+import { Encoder, GD, Parser } from '@greendoc/parse';
+import { Project } from 'ts-morph';
+import he from 'he';
 
-const tsdocConfiguration = new TSDocConfiguration();
+const BASE = '/Users/donmccurdy/Documents/Projects/glTF-Transform';
 
-const categoryTag = new TSDocTagDefinition({
-	tagName: '@category',
-	syntaxKind: TSDocTagSyntaxKind.InlineTag
+const corePath = `${BASE}/packages/core/src/core.ts`;
+const extensionsPath = `${BASE}/packages/extensions/src/extensions.ts`;
+const functionsPath = `${BASE}/packages/functions/src/index.ts`;
+
+const project = new Project({
+	compilerOptions: {
+		paths: {
+			'@gltf-transform/core': [corePath],
+			'@gltf-transform/extensions': [extensionsPath],
+			'@gltf-transform/functions': [functionsPath]
+		}
+	}
 });
-tsdocConfiguration.addTagDefinition(categoryTag);
-tsdocConfiguration.setSupportForTag(categoryTag, true);
 
-export const parser = new Parser()
-	.addPackage('core.api.json', core, tsdocConfiguration)
-	.addPackage('extensions.api.json', extensions, tsdocConfiguration)
-	.addPackage('functions.api.json', functions, tsdocConfiguration)
+export const parser = new Parser(project)
+	.addModule({ name: '@gltf-transform/core', slug: 'core', entry: corePath })
+	.addModule({ name: '@gltf-transform/extensions', slug: 'extensions', entry: extensionsPath })
+	.addModule({ name: '@gltf-transform/functions', slug: 'functions', entry: functionsPath })
+	.setRootPath(BASE)
+	.setBaseURL('https://github.com/donmccurdy/glTF-Transform/tree/main')
 	.init();
 
 export const encoder = new Encoder();
+
+export function getMetadata(item: GD.ApiClass | GD.ApiInterface | GD.ApiEnum | GD.ApiFunction): {
+	title: string;
+	snippet: string;
+} {
+	return {
+		title: item.name,
+		snippet: item.comment ? getSnippet(item.comment) : ''
+	};
+}
+
+export function getSnippet(html: string): string {
+	const text = he.decode(html.replace(/(<([^>]+)>)/gi, ''));
+	const words = text.split(/\s+/);
+	if (words.length < 50) return text;
+	return words.slice(0, 50).join(' ') + '…';
+}

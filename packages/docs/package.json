@@ -4,26 +4,30 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev --force",
-		"watch": "yarn dev --force",
+		"watch": "vite dev --force",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --plugin-search-dir . --check .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"format": "prettier --plugin-search-dir . --write .",
+		"clean": "rimraf build/*"
 	},
 	"dependencies": {
 		"@greendoc/parse": "*",
-		"@greendoc/svelte": "*"
+		"@greendoc/svelte": "*",
+		"@types/he": "^1.2.0",
+		"he": "^1.2.0",
+		"ts-morph": "^18.0.0"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "next",
-		"@sveltejs/adapter-static": "^1.0.0-next.48",
-		"@sveltejs/kit": "next",
+		"@sveltejs/adapter-auto": "2.0.1",
+		"@sveltejs/adapter-static": "^2.0.2",
+		"@sveltejs/kit": "1.16.2",
 		"mdsvex": "^0.10.6",
-		"svelte": "^3.44.0",
-		"svelte-check": "^2.7.1",
-		"svelte-preprocess": "^4.10.6"
+		"svelte": "^3.59.0",
+		"svelte-check": "^3.3.1",
+		"svelte-preprocess": "^5.0.3"
 	},
 	"type": "module"
 }

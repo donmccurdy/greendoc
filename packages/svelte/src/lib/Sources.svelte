@@ -1,9 +1,15 @@
 <script lang="ts">
 	import type { GD } from '@greendoc/parse';
-	export let data: GD.ApiClass | GD.ApiInterface | GD.ApiProperty | GD.ApiMethod | GD.ApiEnum;
+	export let data:
+		| GD.ApiClass
+		| GD.ApiInterface
+		| GD.ApiProperty
+		| GD.ApiMethod
+		| GD.ApiEnum
+		| GD.ApiFunction;
 </script>
 
-<aside class="tsd-sources">
+<aside class="greendoc-sources">
 	{#if (data.kind === 'Method' || data.kind === 'Property') && data.overwrite}
 		<p>
 			Overrides
@@ -12,12 +18,15 @@
 			</a>
 		</p>
 	{/if}
-	{#if data.sourceUrl}
+	{#if data.source}
 		<ul>
 			<li>
-				Defined in <a href={data.sourceUrl} target="_blank" rel="noreferrer"
-					>{data.sourceUrlPath || data.sourceUrl}</a
-				>
+				Defined in
+				{#if data.source.url}
+					<a href={data.source.url} target="_blank" rel="noreferrer">{data.source.text}</a>
+				{:else}
+					<i>{data.source.text}</i>
+				{/if}
 			</li>
 		</ul>
 	{/if}
