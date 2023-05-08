@@ -34,10 +34,12 @@ export class Parser {
 
 	public setRootPath(path: string) {
 		this.rootPath = path;
+		return this;
 	}
 
 	public setBaseURL(url: string) {
 		this.baseURL = url;
+		return this;
 	}
 
 	public addModule(config: ModuleConfig): this {
@@ -176,14 +178,19 @@ export class Parser {
 	getSourceURL(item: Node): string {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return '';
-		return file.getFilePath();
+		let url = file.getFilePath() as string;
+		if (url.startsWith(this.rootPath)) {
+			url = this.baseURL + url.replace(this.rootPath, '');
+		}
+		return url;
 	}
 
 	isHidden(item: Node): boolean {
-		if (item instanceof JSDocableNode) {
+		if ((item as unknown as JSDocableNode).getJsDocs) {
 			for (const doc of (item as unknown as JSDocableNode).getJsDocs()) {
 				for (const tag of doc.getTags()) {
 					if (tag.getTagName() === 'hidden') return true;
+					if (tag.getTagName() === 'internal') return true;
 				}
 			}
 		}

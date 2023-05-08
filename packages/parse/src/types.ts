@@ -16,6 +16,7 @@ export namespace GD {
 		FUNCTION = 'Function',
 		VARIABLE = 'Variable',
 		METHOD = 'Method',
+		METHOD_SIGNATURE = 'MethodSignature',
 		PROPERTY = 'Property',
 		PROPERTY_SIGNATURE = 'PropertySignature'
 	}

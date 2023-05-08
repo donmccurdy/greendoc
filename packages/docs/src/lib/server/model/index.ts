@@ -21,6 +21,8 @@ export const parser = new Parser(project)
 	.addModule({ name: '@gltf-transform/core', slug: 'core', entry: corePath })
 	.addModule({ name: '@gltf-transform/extensions', slug: 'extensions', entry: extensionsPath })
 	.addModule({ name: '@gltf-transform/functions', slug: 'functions', entry: functionsPath })
+	.setRootPath(BASE)
+	.setBaseURL('https://github.com/donmccurdy/glTF-Transform/tree/main')
 	.init();
 
 export const encoder = new Encoder();

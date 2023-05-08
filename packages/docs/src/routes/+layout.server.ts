@@ -2,7 +2,7 @@ import type { LayoutServerLoad } from './$types';
 import { parser } from '$lib/server/model';
 import type { Node } from 'ts-morph';
 
-// export const prerender = true;
+export const prerender = true;
 
 const coreExports = parser
 	.getModuleExports('@gltf-transform/core')

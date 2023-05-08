@@ -76,6 +76,8 @@ export class Encoder {
 				return GD.ApiItemKind.FUNCTION;
 			case SyntaxKind.MethodDeclaration:
 				return GD.ApiItemKind.METHOD;
+			case SyntaxKind.MethodSignature:
+				return GD.ApiItemKind.METHOD_SIGNATURE;
 			case SyntaxKind.PropertyDeclaration:
 				return GD.ApiItemKind.PROPERTY;
 			case SyntaxKind.PropertySignature:
@@ -92,13 +94,19 @@ export class Encoder {
 			extendsTypes: [],
 			staticProperties: item
 				.getStaticProperties()
+				.filter((prop) => !parser.isHidden(prop))
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
 			properties: getInheritedInstanceMembers(item, SyntaxKind.PropertyDeclaration)
 				.filter((prop) => prop.getScope() !== Scope.Private)
+				.filter((prop) => !parser.isHidden(prop))
 				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
-			staticMethods: item.getStaticMethods().map((method) => this._encodeMethod(parser, method)),
+			staticMethods: item
+				.getStaticMethods()
+				.filter((method) => !parser.isHidden(method))
+				.map((method) => this._encodeMethod(parser, method)),
 			methods: getInheritedInstanceMembers(item, SyntaxKind.MethodDeclaration)
 				.filter((method) => method.getScope() !== Scope.Private)
+				.filter((method) => !parser.isHidden(method))
 				.map((method) => this._encodeMethod(parser, method))
 		} as GD.ApiClass;
 
@@ -118,15 +126,24 @@ export class Encoder {
 			packageName: '', // item.getAssociatedPackage()!.name,
 			comment: this._encodeComment(parser, item.getJsDocs().pop()),
 			extendsTypes: [], // item.extendsTypes.map(({ excerpt }) => this._encodeExcerpt(parser, excerpt)),
-			properties: item.getProperties().map((prop) => this._encodeProperty(parser, prop as any)),
-			methods: item.getMethods().map((method) => this._encodeMethod(parser, method as any))
+			properties: item
+				.getProperties()
+				.filter((prop) => !parser.isHidden(prop))
+				.map((prop) => this._encodeProperty(parser, prop as any)),
+			methods: item
+				.getMethods()
+				.filter((method) => !parser.isHidden(method))
+				.map((method) => this._encodeMethod(parser, method as any))
 		} as GD.ApiInterface;
 	}
 
 	protected _encodeEnum(parser: Parser, item: EnumDeclaration): GD.ApiEnum {
 		const data = {
 			...this._encodeItem(parser, item),
-			members: item.getMembers().map((item) => this._encodeEnumMember(parser, item))
+			members: item
+				.getMembers()
+				.filter((item) => !parser.isHidden(item))
+				.map((item) => this._encodeEnumMember(parser, item))
 		} as GD.ApiEnum;
 
 		const comment = item.getJsDocs().pop();
