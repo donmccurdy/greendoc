@@ -172,12 +172,18 @@ export class Parser {
 	getSourceText(item: Node): string {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return 'external';
-		return file.getBaseName();
+		if (file.isDeclarationFile()) return 'external';
+		const url = file.getFilePath() as string;
+		if (url.startsWith(this.rootPath)) {
+			return url.replace(this.rootPath + '/', '');
+		}
+		return url;
 	}
 
 	getSourceURL(item: Node): string {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return '';
+		if (file.isDeclarationFile()) return '';
 		let url = file.getFilePath() as string;
 		if (url.startsWith(this.rootPath)) {
 			url = this.baseURL + url.replace(this.rootPath, '');
