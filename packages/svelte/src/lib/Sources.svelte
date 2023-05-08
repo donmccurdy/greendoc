@@ -21,7 +21,12 @@
 	{#if data.source}
 		<ul>
 			<li>
-				Defined in <a href={data.source.url} target="_blank" rel="noreferrer">{data.source.text}</a>
+				Defined in
+				{#if data.source.url}
+					<a href={data.source.url} target="_blank" rel="noreferrer">{data.source.text}</a>
+				{:else}
+					<i>{data.source.text}</i>
+				{/if}
 			</li>
 		</ul>
 	{/if}

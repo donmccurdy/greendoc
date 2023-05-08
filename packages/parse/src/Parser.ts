@@ -1,4 +1,11 @@
-import { Node, Project, SourceFile, SyntaxKind } from 'ts-morph';
+import {
+	ClassDeclaration,
+	MethodDeclaration,
+	Node,
+	Project,
+	SourceFile,
+	SyntaxKind
+} from 'ts-morph';
 
 type $StringLike = { toString: () => string };
 
@@ -82,7 +89,10 @@ export class Parser {
 	getSlug(item: Node): string {
 		const slug = this.itemToSlug.get(item);
 		if (slug) return slug;
-		throw new Error(`Slug for "${item.toString()}" not found`);
+
+		throw new Error(
+			`Slug for "${item.getKindName()}" from "${item.getSourceFile().getBaseName()}" not found`
+		);
 	}
 
 	// TODO(design): URL paths should be an application-level decision.
@@ -104,11 +114,20 @@ export class Parser {
 		}
 	}
 
+	getName(item: Node): string {
+		if ((item as any).getName) return (item as any).getName();
+		return '';
+	}
+
 	getSourceText(item: Node): string {
-		return item.getSourceFile().getBaseName();
+		const file = item.getSourceFile();
+		if (file.isFromExternalLibrary()) return 'external';
+		return file.getBaseName();
 	}
 
 	getSourceURL(item: Node): string {
-		return item.getSourceFile().getFilePath();
+		const file = item.getSourceFile();
+		if (file.isFromExternalLibrary()) return '';
+		return file.getFilePath();
 	}
 }

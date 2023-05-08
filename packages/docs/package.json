@@ -15,7 +15,8 @@
 	},
 	"dependencies": {
 		"@greendoc/parse": "*",
-		"@greendoc/svelte": "*"
+		"@greendoc/svelte": "*",
+		"ts-morph": "^18.0.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "2.0.1",
