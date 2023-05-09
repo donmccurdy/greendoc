@@ -6,6 +6,10 @@
 	export let data: GD.ApiFunction;
 </script>
 
+<section class="greendoc-panel greendoc-comment">
+	<h1>{data.name}</h1>
+</section>
+
 <section class="greendoc-panel greendoc-member greendoc-kind-function">
 	<!-- svelte-ignore a11y-missing-content -->
 	<a id={data.name} class="greendoc-anchor" />
