@@ -1,4 +1,5 @@
 import { JSDocableNode, Node, Project, SourceFile, SyntaxKind } from 'ts-morph';
+import { markedFormatter } from './format';
 
 type $StringLike = { toString: () => string };
 
@@ -23,6 +24,7 @@ export class Parser {
 	readonly exportToItem = new Map<string, Node>();
 	private rootPath: string = '';
 	private baseURL: string = '';
+	private formatter: (md: string) => string = markedFormatter;
 
 	constructor(project = new Project()) {
 		this.project = project;
@@ -39,6 +41,11 @@ export class Parser {
 
 	public setBaseURL(url: string) {
 		this.baseURL = url;
+		return this;
+	}
+
+	public setMarkdownRenderer(formatter: ((md: string) => string) | null): this {
+		this.formatter = formatter || markedFormatter;
 		return this;
 	}
 
@@ -201,6 +208,10 @@ export class Parser {
 			}
 		}
 		return false;
+	}
+
+	renderMarkdown(md: string): string {
+		return this.formatter(md);
 	}
 }
 

@@ -1,4 +1,3 @@
-import { renderMarkdown } from './format';
 import { GD } from './types';
 import { Parser } from './Parser';
 import {
@@ -215,7 +214,7 @@ export class Encoder {
 			return `[${text}](${href})`;
 		});
 
-		return renderMarkdown(md) || '';
+		return parser.renderMarkdown(md) || '';
 	}
 
 	protected _encodeMember(
