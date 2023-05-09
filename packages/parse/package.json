@@ -8,6 +8,7 @@
 	"main": "./dist/greendoc-parse.cjs",
 	"module": "./dist/greendoc-parse.esm.js",
 	"exports": {
+		"types": "./dist/index.d.ts",
 		"require": "./dist/greendoc-parse.cjs",
 		"default": "./dist/greendoc-parse.modern.js"
 	},
