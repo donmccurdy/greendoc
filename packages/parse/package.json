@@ -1,6 +1,6 @@
 {
 	"name": "@greendoc/parse",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"type": "module",
 	"sideEffects": false,
 	"source": "./src/index.ts",
@@ -41,5 +41,5 @@
 			"--loader=ts-node/esm"
 		]
 	},
-	"gitHead": "a09256178671f1c216247415b460e477f3968eb9"
+	"gitHead": "1ddba3500dbe33855f88497f1f97d13dc7a05f27"
 }
