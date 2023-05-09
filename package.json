@@ -10,7 +10,9 @@
 		"watch": "lerna run watch --parallel --stream",
 		"build": "lerna run build",
 		"test": "lerna run test --parallel",
-		"clean": "lerna run clean --parallel"
+		"clean": "lerna run clean --parallel",
+		"preversion": "yarn clean && yarn build && yarn test",
+		"postpublish": "git push && git push --tags"
 	},
 	"devDependencies": {
 		"@types/node": "^20.1.1",
