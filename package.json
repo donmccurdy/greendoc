@@ -11,6 +11,7 @@
 		"build": "lerna run build",
 		"test": "lerna run test --parallel",
 		"clean": "lerna run clean --parallel",
+		"lint": "lerna run lint --parallel",
 		"preversion": "yarn clean && yarn build && yarn test",
 		"postpublish": "git push && git push --tags"
 	},
