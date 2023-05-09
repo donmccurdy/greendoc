@@ -12,6 +12,9 @@
 		"require": "./dist/greendoc-parse.cjs",
 		"default": "./dist/greendoc-parse.modern.js"
 	},
+	"files": [
+		"dist/"
+	],
 	"repository": "https://github.com/donmccurdy/greendoc",
 	"author": "Don McCurdy <dm@donmccurdy.com>",
 	"license": "UNLICENSED",
@@ -38,5 +41,5 @@
 			"--loader=ts-node/esm"
 		]
 	},
-	"gitHead": "b22283d17e48135dc5ce83e2c945a87f3620ba93"
+	"gitHead": "6db584c0c27746b2364a8e5dde7feb9b9b237e90"
 }
