@@ -15,37 +15,37 @@
 	"typesVersions": {
 		">4.0": {
 			"Class.svelte": [
-				"./dist/dist/Class.d.ts"
+				"./dist/Class.d.ts"
 			],
 			"Comment.svelte": [
-				"./dist/dist/Comment.d.ts"
+				"./dist/Comment.d.ts"
 			],
 			"Enum.svelte": [
-				"./dist/dist/Enum.d.ts"
+				"./dist/Enum.d.ts"
 			],
 			"EnumMember.svelte": [
-				"./dist/dist/EnumMember.d.ts"
+				"./dist/EnumMember.d.ts"
 			],
 			"Function.svelte": [
-				"./dist/dist/Function.d.ts"
+				"./dist/Function.d.ts"
 			],
 			"Interface.svelte": [
-				"./dist/dist/Interface.d.ts"
+				"./dist/Interface.d.ts"
 			],
 			"Method.svelte": [
-				"./dist/dist/Method.d.ts"
+				"./dist/Method.d.ts"
 			],
 			"Property.svelte": [
-				"./dist/dist/Property.d.ts"
+				"./dist/Property.d.ts"
 			],
 			"Reference.svelte": [
-				"./dist/dist/Reference.d.ts"
+				"./dist/Reference.d.ts"
 			],
 			"Sources.svelte": [
-				"./dist/dist/Sources.d.ts"
+				"./dist/Sources.d.ts"
 			],
 			"index": [
-				"./dist/dist/index.d.ts"
+				"./dist/index.d.ts"
 			]
 		}
 	},
@@ -79,5 +79,5 @@
 	"files": [
 		"dist"
 	],
-	"gitHead": "6db584c0c27746b2364a8e5dde7feb9b9b237e90"
+	"gitHead": "a09256178671f1c216247415b460e477f3968eb9"
 }

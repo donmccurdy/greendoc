@@ -1,3 +1,7 @@
 # Extensions
 
 Lorem ipsum dolorem...
+
+```html
+lorem ipsum
+```
