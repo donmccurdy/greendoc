@@ -6,7 +6,6 @@
 </script>
 
 <section class="greendoc-panel greendoc-comment">
-	<h1>{data.name}</h1>
 	{#if data.comment}
 		<Comment data={data.comment} />
 	{/if}
