@@ -2,5 +2,6 @@
 	import type { PageData } from './$types';
 </script>
 
-<h1>glTF Transform</h1>
-<p>Lorem ipsum</p>
+<h1>🌿 greendoc</h1>
+
+<i>An adaptable system for generating documentation of TypeScript APIs.</i>

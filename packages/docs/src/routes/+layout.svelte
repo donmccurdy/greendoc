@@ -10,10 +10,10 @@
 </script>
 
 <svelte:head>
-	<title>MaterialsSpecular | glTF-Transform</title>
+	<title>{$page.data.metadata.title}</title>
 	<meta name="description" content={$page.data.metadata.snippet} />
 
-	<meta property="og:site_name" content="glTF-Transform" />
+	<meta property="og:site_name" content="greendoc" />
 	<meta property="og:title" content={$page.data.metadata.title} />
 	<meta property="og:description" content={$page.data.metadata.snippet} />
 	<meta property="og:url" content={$page.url.href} />
@@ -43,16 +43,16 @@
 		<div class="container">
 			<div class="table-wrap">
 				<div class="table-cell">
-					<strong><a href="/">glTF-Transform</a></strong>
+					<strong><a href="/">greendoc</a></strong>
 					<a
 						class="header-badge"
 						target="_blank"
-						href="https://github.com/donmccurdy/glTF-Transform"
+						href="https://github.com/donmccurdy/greendoc"
 						rel="noreferrer"
 					>
 						<img
 							alt="GitHub stars"
-							src="https://img.shields.io/github/stars/donmccurdy/glTF-Transform?style=social"
+							src="https://img.shields.io/github/stars/donmccurdy/greendoc?style=social"
 						/>
 					</a>
 				</div>
@@ -69,38 +69,42 @@
 	{#each data.navigation.sections as section}
 		<section>
 			<h4>{section.title}</h4>
-			<ul>
-				{#each section.items as item}
-					<li class="greendoc-kind-namespace">
-						<a
-							href={item.href}
-							class="greendoc-kind-icon"
-							target={item.external ? '_blank' : ''}
-							rel={item.external ? 'noreferrer' : ''}
-						>
-							{item.text}
-						</a>
-					</li>
-				{/each}
-			</ul>
-			{#if section.subsections.length}
+			{#if section.items?.length}
+				<ul>
+					{#each section.items as item}
+						<li class="greendoc-kind-namespace">
+							<a
+								href={item.href}
+								class="greendoc-kind-icon"
+								target={item.external ? '_blank' : ''}
+								rel={item.external ? 'noreferrer' : ''}
+							>
+								{item.text}
+							</a>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+			{#if section.subsections?.length}
 				{#each section.subsections as subsection}
 					<section>
 						<h5>{subsection.title}</h5>
-						<ul>
-							{#each subsection.items as item}
-								<li class="greendoc-kind-namespace">
-									<a
-										href={item.href}
-										class="greendoc-kind-icon"
-										target={item.external ? '_blank' : ''}
-										rel={item.external ? 'noreferrer' : ''}
-									>
-										{item.text}
-									</a>
-								</li>
-							{/each}
-						</ul>
+						{#if subsection.items?.length}
+							<ul>
+								{#each subsection.items as item}
+									<li class="greendoc-kind-namespace">
+										<a
+											href={item.href}
+											class="greendoc-kind-icon"
+											target={item.external ? '_blank' : ''}
+											rel={item.external ? 'noreferrer' : ''}
+										>
+											{item.text}
+										</a>
+									</li>
+								{/each}
+							</ul>
+						{/if}
 					</section>
 				{/each}
 			{/if}

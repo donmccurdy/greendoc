@@ -2,28 +2,22 @@ import { Encoder, GD, Parser } from '@greendoc/parse';
 import { Project } from 'ts-morph';
 import he from 'he';
 
-const BASE = '/Users/donmccurdy/Documents/Projects/glTF-Transform';
+const BASE = new URL('../../../../../../', import.meta.url).pathname.replace(/\/$/, '');
 
-const corePath = `${BASE}/packages/core/src/core.ts`;
-const extensionsPath = `${BASE}/packages/extensions/src/extensions.ts`;
-const functionsPath = `${BASE}/packages/functions/src/index.ts`;
+const entryPath = `${BASE}/packages/parse/src/index.ts`;
 
 const project = new Project({
 	compilerOptions: {
 		paths: {
-			'@gltf-transform/core': [corePath],
-			'@gltf-transform/extensions': [extensionsPath],
-			'@gltf-transform/functions': [functionsPath]
+			'@greendoc/parse': [entryPath]
 		}
 	}
 });
 
 export const parser = new Parser(project)
-	.addModule({ name: '@gltf-transform/core', slug: 'core', entry: corePath })
-	.addModule({ name: '@gltf-transform/extensions', slug: 'extensions', entry: extensionsPath })
-	.addModule({ name: '@gltf-transform/functions', slug: 'functions', entry: functionsPath })
+	.addModule({ name: '@greendoc/parse', slug: 'parse', entry: entryPath })
 	.setRootPath(BASE)
-	.setBaseURL('https://github.com/donmccurdy/glTF-Transform/tree/main')
+	.setBaseURL('https://github.com/donmccurdy/greendoc/tree/main')
 	.init();
 
 export const encoder = new Encoder();

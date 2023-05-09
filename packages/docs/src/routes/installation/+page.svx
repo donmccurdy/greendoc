@@ -1,4 +1,4 @@
-# Extensions
+# Installation
 
 Lorem ipsum dolorem...
 

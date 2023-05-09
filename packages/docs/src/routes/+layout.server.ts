@@ -4,18 +4,10 @@ import type { Node } from 'ts-morph';
 
 export const prerender = true;
 
-const coreExports = parser
-	.getModuleExports('@gltf-transform/core')
+const parseExports = parser
+	.getModuleExports('@greendoc/parse')
 	.map(createExport)
-	.sort((a, b) => (a.text > b.text ? 1 : -1));
-const extensionsExports = parser
-	.getModuleExports('@gltf-transform/extensions')
-	.map(createExport)
-	.sort((a, b) => (a.text > b.text ? 1 : -1));
-const functionsExports = parser
-	.getModuleExports('@gltf-transform/functions')
-	.map(createExport)
-	.sort((a, b) => (a.text > b.text ? 1 : -1));
+	.sort((a: Export, b: Export) => (a.text > b.text ? 1 : -1));
 
 interface Export {
 	text: string;
@@ -23,6 +15,17 @@ interface Export {
 	kind: string;
 	category?: string;
 	external?: boolean;
+}
+
+interface Section {
+	title: string;
+	items?: Export[];
+	subsections?: Subsection[];
+}
+
+interface Subsection {
+	title: string;
+	items?: Export[];
 }
 
 function createExport(item: Node): Export {
@@ -37,101 +40,34 @@ function createExport(item: Node): Export {
 export const load: LayoutServerLoad = () => {
 	return {
 		metadata: {
-			title: 'glTF Transform',
+			title: 'greendoc',
 			snippet: ''
 		},
 		navigation: {
 			sections: [
 				{
-					title: 'Introduction',
+					title: 'Getting Started',
 					items: [
-						// { text: 'Home ', href: '/' },
-						// { text: 'Concepts ', href: '/concepts' },
-						{ text: 'Extensions ', href: '/extensions' },
-						// { text: 'Functions ', href: '/functions' },
-						// { text: 'CLI ', href: '/cli' },
-						// { text: 'Contributing ', href: '/contributing' },
-						// { text: 'Credits ', href: '/credits' },
+						{ text: 'Home', href: '/' },
+						{ text: 'Installation', href: '/installation' },
 						{
 							text: 'GitHub',
 							external: true,
-							href: 'https://github.com/donmccurdy/glTF-Transform'
+							href: 'https://github.com/donmccurdy/greendoc'
 						},
 						{
 							text: 'NPM',
 							external: true,
-							href: 'https://www.npmjs.com/search?q=%40gltf-transform'
-						},
-						{
-							text: 'Discussions',
-							external: true,
-							href: 'https://github.com/donmccurdy/glTF-Transform/discussions'
-						},
-						{
-							text: 'Changelog',
-							external: true,
-							href: 'https://github.com/donmccurdy/glTF-Transform/blob/main/CHANGELOG.md'
+							href: 'https://www.npmjs.com/search?q=%40greendoc'
 						}
 					],
 					subsections: []
 				},
 				{
-					title: '@gltf-transform/core',
-					items: [],
-					subsections: [
-						{
-							title: 'Documents',
-							items: coreExports.filter(({ category }) => category === 'Documents')
-						},
-						{
-							title: 'I/O',
-							items: coreExports.filter(({ category }) => category === 'I/O')
-						},
-						{
-							title: 'Properties',
-							items: coreExports.filter(({ category }) => category === 'Properties')
-						},
-						{
-							title: 'Utilities',
-							items: coreExports.filter(({ category }) => category === 'Utilities')
-						}
-					]
-				},
-				{
-					title: '@gltf-transform/extensions',
-					items: [],
-					subsections: [
-						{
-							title: 'Khronos Extensions',
-							items: extensionsExports.filter(
-								({ text, kind }) => text.startsWith('KHR') && kind === 'ClassDeclaration'
-							)
-						},
-						{
-							title: 'Vendor Extensions',
-							items: extensionsExports.filter(
-								({ text, kind }) => text.startsWith('EXT') && kind === 'ClassDeclaration'
-							)
-						}
-					]
-				},
-				{
-					title: '@gltf-transform/functions',
-					items: [],
-					subsections: [
-						{
-							title: 'Transforms',
-							items: functionsExports.filter(({ category }) => category === 'Transforms')
-						},
-						{
-							title: 'Functions',
-							items: functionsExports.filter(
-								({ category, kind }) => category !== 'Transforms' && kind === 'FunctionDeclaration'
-							)
-						}
-					]
+					title: '@greendoc/parse',
+					items: parseExports
 				}
-			]
+			] as Section[]
 		}
 	};
 };
