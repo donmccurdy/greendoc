@@ -15,3 +15,7 @@ _An adaptable system for generating documentation of TypeScript APIs._
 - [`@greendoc/svelte`](./packages/svelte): _Renders the API model in HTML, using [Svelte](https://svelte.dev/)._
 - `@greendoc/react`: _Renders the API model in HTML, using [React](https://reactjs.org/)._
 - `@greendoc/i18n`: _Provides [internationalization (i18n)](https://web.dev/learn/design/internationalization/) support._
+
+## License
+
+Published under [Prosperity Public License 3.0](/LICENSE.md), which allows you to use and share this software for noncommercial purposes for free and to try this software for commercial purposes for thirty days. Commercial licenses available upon request.

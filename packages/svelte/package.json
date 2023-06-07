@@ -3,7 +3,7 @@
 	"version": "0.1.5",
 	"repository": "https://github.com/donmccurdy/greendoc",
 	"author": "Don McCurdy <dm@donmccurdy.com>",
-	"license": "UNLICENSED",
+	"license": "Prosperity-3.0.0",
 	"type": "module",
 	"sideEffects": false,
 	"exports": {

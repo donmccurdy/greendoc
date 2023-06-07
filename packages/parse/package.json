@@ -17,7 +17,7 @@
 	],
 	"repository": "https://github.com/donmccurdy/greendoc",
 	"author": "Don McCurdy <dm@donmccurdy.com>",
-	"license": "UNLICENSED",
+	"license": "Prosperity-3.0.0",
 	"scripts": {
 		"dev": "yarn watch",
 		"watch": "microbundle watch --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
