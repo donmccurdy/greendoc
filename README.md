@@ -1,6 +1,7 @@
 # 🌿 greendoc
 
 [![Latest NPM release](https://img.shields.io/npm/v/@greendoc/parse.svg)](https://www.npmjs.com/package/@greendoc/parse)
+[![License](https://img.shields.io/badge/license-Prosperity--3.0.0-007ec6.svg)](https://github.com/donmccurdy/greendoc/blob/main/LICENSE.md)
 [![Build Status](https://github.com/donmccurdy/greendoc/workflows/CI/badge.svg?branch=main&event=push)](https://github.com/donmccurdy/greendoc/actions?query=workflow%3ACI)
 
 > WORK IN PROGRESS / NOT READY FOR USE
