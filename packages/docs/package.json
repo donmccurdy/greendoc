@@ -18,7 +18,7 @@
 		"@greendoc/svelte": "^0.2.0",
 		"@types/he": "^1.2.0",
 		"he": "^1.2.0",
-		"ts-morph": "^18.0.0"
+		"ts-morph": "^19.0.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "2.1.0",
