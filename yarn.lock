@@ -1823,10 +1823,10 @@
   resolved "https://registry.yarnpkg.com/@sveltejs/adapter-static/-/adapter-static-2.0.2.tgz#49afd27787fb73d789017d002a91031088494139"
   integrity sha512-9wYtf6s6ew7DHUHMrt55YpD1FgV7oWql2IGsW5BXquLxqcY9vjrqCFo0TzzDpo+ZPZkW/v77k0eOP6tsAb8HmQ==
 
-"@sveltejs/kit@1.20.2":
-  version "1.20.2"
-  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.20.2.tgz#4167cdc04387c67216b7b3d5875c3553c7315e78"
-  integrity sha512-MtR1i+HtmYWcRgtubw1GQqT/+CWXL/z24PegE0xYAdObbhdr7YtEfmoe705D/JZMtMmoPXrmSk4W0MfL5A3lYw==
+"@sveltejs/kit@1.20.4":
+  version "1.20.4"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-1.20.4.tgz#5082de689ef5ae49dc0185344968c065682cfe0d"
+  integrity sha512-MmAzIuMrP7A+8fqDVbxm6ekGHRHL/+Fk8sQPAzPG4G2TxUDtHdn/WcIxeEqHzARMf0OtGSC+VPyOSFuw2Cy2Mg==
   dependencies:
     "@sveltejs/vite-plugin-svelte" "^2.4.1"
     "@types/cookie" "^0.5.1"
@@ -1839,7 +1839,6 @@
     sade "^1.8.1"
     set-cookie-parser "^2.6.0"
     sirv "^2.0.2"
-    tiny-glob "^0.2.9"
     undici "~5.22.0"
 
 "@sveltejs/package@^2.0.0":
@@ -2042,7 +2041,7 @@ acorn-walk@^8.1.1, acorn-walk@^8.2.0:
   resolved "https://registry.npmjs.org/acorn-walk/-/acorn-walk-8.2.0.tgz"
   integrity sha512-k+iyHEuPgSw6SbuDpGQM+06HQUa04DZ3o+F6CSzXMvvI5KMvnaEqXe+YVe555R9nn6GPt404fos4wcgpw12SDA==
 
-acorn@^8.4.1, acorn@^8.8.2:
+acorn@^8.4.1:
   version "8.8.2"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.8.2.tgz#1b2f25db02af965399b9776b0c2c391276d37c4a"
   integrity sha512-xjIYgE8HBrkpd/sJqOGNspf8uHG+NOHGOw6a/Urj8taM2EXfdNAH2oFcPeIFfsv3+kz/mJrS5VuMqbNLjCa2vw==
@@ -2051,6 +2050,11 @@ acorn@^8.5.0:
   version "8.8.1"
   resolved "https://registry.npmjs.org/acorn/-/acorn-8.8.1.tgz"
   integrity sha512-7zFpHzhnqYKrkYdUjF1HI1bzd0VygEGX8lFk4k5zVMqHEoES+P+7TKI+EvLO9WVMJ8eekdO0aDEK044xTXwPPA==
+
+acorn@^8.8.2:
+  version "8.9.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.9.0.tgz#78a16e3b2bcc198c10822786fa6679e245db5b59"
+  integrity sha512-jaVNAFBHNLXspO543WnNNPZFRtavh3skAkITqD0/2aeMkKZTN+254PyhwxFYrk3vQ1xfY+2wbesJMs/JC8/PwQ==
 
 add-stream@^1.0.0:
   version "1.0.0"
@@ -2264,9 +2268,9 @@ autoprefixer@^10.1.0:
     postcss-value-parser "^4.2.0"
 
 ava@^5.2.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/ava/-/ava-5.3.0.tgz#b5c9e6b92f97cb0d4f9bf09be51daa4101ff21cf"
-  integrity sha512-QYvBdyygl1LGX13IuYsC4bkwVCzZeovMGbxYkD73i7DVJxNlWnFa06YgrBOTbjw2QvSKUl5fOJ92Kj5WK9hSeg==
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/ava/-/ava-5.3.1.tgz#335737dd963b7941b90214836cea2e8de1f4d5f4"
+  integrity sha512-Scv9a4gMOXB6+ni4toLuhAm9KYWEjsgBglJl+kMGI5+IVDt120CCDZyB5HNU9DjmLI2t4I0GbnxGLmmRfGTJGg==
   dependencies:
     acorn "^8.8.2"
     acorn-walk "^8.2.0"
@@ -4098,9 +4102,9 @@ globby@11.1.0, globby@^11.0.1:
     slash "^3.0.0"
 
 globby@^13.1.4:
-  version "13.1.4"
-  resolved "https://registry.yarnpkg.com/globby/-/globby-13.1.4.tgz#2f91c116066bcec152465ba36e5caa4a13c01317"
-  integrity sha512-iui/IiiW+QrJ1X1hKH5qwlMQyv34wJAYwH1vrf8b9kBA4sNiif3gKsMHa+BrdnOpEudWjpotfa7LrTzB1ERS/g==
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/globby/-/globby-13.2.0.tgz#7dd5678d765c4680c2e6d106230d86cb727cb1af"
+  integrity sha512-jWsQfayf13NvqKUIL3Ta+CIqMnvlaIDFveWE/dpOZ9+3AMEJozsxDvKA02zync9UuvOM8rOXzsD5GqKP4OnWPQ==
   dependencies:
     dir-glob "^3.0.1"
     fast-glob "^3.2.11"
@@ -7295,9 +7299,9 @@ semver@^6.0.0, semver@^6.1.1, semver@^6.1.2, semver@^6.3.0:
   integrity sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==
 
 semver@^7.3.2:
-  version "7.5.1"
-  resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.1.tgz#c90c4d631cf74720e46b21c1d37ea07edfab91ec"
-  integrity sha512-Wvss5ivl8TMRZXXESstBA4uR5iXgEN/VC5/sOcuXdVLzcdkz4HWetIoRfG5gb5X+ij/G9rw9YoGn3QoQ8OCSpw==
+  version "7.5.2"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.2.tgz#5b851e66d1be07c1cdaf37dfc856f543325a2beb"
+  integrity sha512-SoftuTROv/cRjCze/scjGyiDtcUyxw1rgYQSZY7XTmtR5hX+dm76iDbTH8TkLPHCQmlbQVSSbNZCPM2hb0knnQ==
   dependencies:
     lru-cache "^6.0.0"
 
@@ -7883,7 +7887,7 @@ time-zone@^1.0.0:
   resolved "https://registry.yarnpkg.com/time-zone/-/time-zone-1.0.0.tgz#99c5bf55958966af6d06d83bdf3800dc82faec5d"
   integrity sha512-TIsDdtKo6+XrPtiTm1ssmMngN1sAhyKnTO2kunQWqNPWIVvCm15Wmw4SWInwTVgJ5u/Tr04+8Ei9TNcw4x4ONA==
 
-tiny-glob@^0.2.8, tiny-glob@^0.2.9:
+tiny-glob@^0.2.8:
   version "0.2.9"
   resolved "https://registry.npmjs.org/tiny-glob/-/tiny-glob-0.2.9.tgz"
   integrity sha512-g/55ssRPUjShh+xkfx9UPDXqhckHEsHr4Vd9zX55oSdGZc/MD0m3sferOkwWtp98bv+kcVfEHtRJgBVJzelrzg==
