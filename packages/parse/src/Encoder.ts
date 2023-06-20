@@ -1,13 +1,15 @@
 import { GD } from './types';
 import { Parser } from './Parser';
 import * as TS from 'ts-morph';
+import { SortFn, createDefaultSort } from './sort';
 
-// // TODO(feat): Sort results.
 /**
  * Encodes a serialized representation of an exported item in the API, such as
  * a class, enum, or function.
  */
 export class Encoder {
+	private _sort = createDefaultSort();
+
 	encodeItem(parser: Parser, item: TS.EnumDeclaration): GD.ApiEnum;
 	encodeItem(parser: Parser, item: TS.InterfaceDeclaration): GD.ApiInterface;
 	encodeItem(parser: Parser, item: TS.ClassDeclaration): GD.ApiClass;
@@ -36,6 +38,11 @@ export class Encoder {
 				console.log(item);
 				throw new Error(`Unsupported encoded type, "${item.getKindName()}"`);
 		}
+	}
+
+	setSort(sort: SortFn): this {
+		this._sort = sort;
+		return this;
 	}
 
 	protected _encodeItem(parser: Parser, item: TS.Node): GD.ApiItem {
@@ -79,22 +86,24 @@ export class Encoder {
 			...this._encodeItem(parser, item),
 			comment: this._encodeComment(parser, item.getJsDocs().pop()),
 			extendsTypes: [],
-			staticProperties: item
-				.getStaticProperties()
+			staticProperties: getInheritedMembers(item, TS.SyntaxKind.PropertyDeclaration, true)
 				.filter((prop) => !parser.isHidden(prop))
-				.map((prop) => this._encodeProperty(parser, prop as TS.PropertyDeclaration)),
-			properties: getInheritedInstanceMembers(item, TS.SyntaxKind.PropertyDeclaration)
+				.map((prop) => this._encodeProperty(parser, prop as TS.PropertyDeclaration))
+				.sort(this._sort),
+			properties: getInheritedMembers(item, TS.SyntaxKind.PropertyDeclaration, false)
 				.filter((prop) => prop.getScope() !== TS.Scope.Private)
 				.filter((prop) => !parser.isHidden(prop))
-				.map((prop) => this._encodeProperty(parser, prop as TS.PropertyDeclaration)),
-			staticMethods: item
-				.getStaticMethods()
+				.map((prop) => this._encodeProperty(parser, prop as TS.PropertyDeclaration))
+				.sort(this._sort),
+			staticMethods: getInheritedMembers(item, TS.SyntaxKind.MethodDeclaration, true)
 				.filter((method) => !parser.isHidden(method))
-				.map((method) => this._encodeMethod(parser, method)),
-			methods: getInheritedInstanceMembers(item, TS.SyntaxKind.MethodDeclaration)
+				.map((method) => this._encodeMethod(parser, method))
+				.sort(this._sort),
+			methods: getInheritedMembers(item, TS.SyntaxKind.MethodDeclaration, false)
 				.filter((method) => method.getScope() !== TS.Scope.Private)
 				.filter((method) => !parser.isHidden(method))
 				.map((method) => this._encodeMethod(parser, method))
+				.sort(this._sort)
 		} as GD.ApiClass;
 
 		let base = item;
@@ -116,11 +125,13 @@ export class Encoder {
 			properties: item
 				.getProperties()
 				.filter((prop) => !parser.isHidden(prop))
-				.map((prop) => this._encodeProperty(parser, prop as any)),
+				.map((prop) => this._encodeProperty(parser, prop as any))
+				.sort(this._sort),
 			methods: item
 				.getMethods()
 				.filter((method) => !parser.isHidden(method))
 				.map((method) => this._encodeMethod(parser, method as any))
+				.sort(this._sort)
 		} as GD.ApiInterface;
 	}
 
@@ -131,6 +142,7 @@ export class Encoder {
 				.getMembers()
 				.filter((item) => !parser.isHidden(item))
 				.map((item) => this._encodeEnumMember(parser, item))
+				.sort(this._sort)
 		} as GD.ApiEnum;
 
 		const comment = item.getJsDocs().pop();
@@ -380,33 +392,38 @@ export class Encoder {
 	// }
 }
 
-function getInheritedInstanceMembers<T extends TS.MethodDeclaration>(
+function getInheritedMembers<T extends TS.MethodDeclaration>(
 	child: TS.ClassDeclaration,
-	kind: TS.SyntaxKind.MethodDeclaration
+	kind: TS.SyntaxKind.MethodDeclaration,
+	_static: boolean
 ): T[];
-function getInheritedInstanceMembers<T extends TS.PropertyDeclaration>(
+function getInheritedMembers<T extends TS.PropertyDeclaration>(
 	child: TS.ClassDeclaration,
-	kind: TS.SyntaxKind.PropertyDeclaration
+	kind: TS.SyntaxKind.PropertyDeclaration,
+	_static: boolean
 ): T[];
-function getInheritedInstanceMembers<T extends TS.MethodDeclaration | TS.PropertyDeclaration>(
+function getInheritedMembers<T extends TS.MethodDeclaration | TS.PropertyDeclaration>(
 	child: TS.ClassDeclaration,
-	kind: TS.SyntaxKind.MethodDeclaration | TS.SyntaxKind.PropertyDeclaration
+	kind: TS.SyntaxKind.MethodDeclaration | TS.SyntaxKind.PropertyDeclaration,
+	_static: boolean
 ): T[] {
 	const members: T[] = [];
 	const memberSet = new Set<string>();
 
-	for (const member of kind === TS.SyntaxKind.MethodDeclaration
-		? child.getMethods()
-		: child.getProperties()) {
+	const baseMembers =
+		kind === TS.SyntaxKind.MethodDeclaration ? child.getMethods() : child.getProperties();
+	for (const member of baseMembers) {
+		if (member.isStatic() !== _static) continue;
 		memberSet.add(member.getName());
 		members.push(member as T);
 	}
 
 	let current = child;
 	while ((current = current.getBaseClass())) {
-		for (const member of kind === TS.SyntaxKind.MethodDeclaration
-			? current.getMethods()
-			: current.getProperties()) {
+		const inheritedMembers =
+			kind === TS.SyntaxKind.MethodDeclaration ? current.getMethods() : current.getProperties();
+		for (const member of inheritedMembers) {
+			if (member.isStatic() !== _static) continue;
 			if (memberSet.has(member.getName())) continue;
 			memberSet.add(member.getName());
 			members.push(member as T);
