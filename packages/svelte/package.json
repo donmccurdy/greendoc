@@ -50,8 +50,7 @@
 		}
 	},
 	"scripts": {
-		"dev": "vite dev --force",
-		"watch": "svelte-kit sync && svelte-package -o dist --watch",
+		"dev:disabled": "vite dev --force",
 		"build": "svelte-kit sync && svelte-package -o dist",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

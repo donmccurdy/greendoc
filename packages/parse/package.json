@@ -19,8 +19,6 @@
 	"author": "Don McCurdy <dm@donmccurdy.com>",
 	"license": "Prosperity-3.0.0",
 	"scripts": {
-		"dev": "yarn watch",
-		"watch": "microbundle watch --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
 		"build": "microbundle --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
 		"test": "ava test/*.test.ts",
 		"preversion": "yarn build && yarn test",
