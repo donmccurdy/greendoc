@@ -1,49 +1,36 @@
 import { GD } from './types';
 import { Parser } from './Parser';
-import {
-	ClassDeclaration,
-	EnumDeclaration,
-	EnumMember,
-	FunctionDeclaration,
-	InterfaceDeclaration,
-	JSDoc,
-	MethodDeclaration,
-	MethodSignature,
-	Node,
-	PropertyDeclaration,
-	PropertySignature,
-	Scope,
-	SyntaxKind,
-	Type,
-	TypeAliasDeclaration,
-	TypeNode
-} from 'ts-morph';
+import * as TS from 'ts-morph';
 
 // // TODO(feat): Sort results.
+/**
+ * Encodes a serialized representation of an exported item in the API, such as
+ * a class, enum, or function.
+ */
 export class Encoder {
-	encodeItem(parser: Parser, item: EnumDeclaration): GD.ApiEnum;
-	encodeItem(parser: Parser, item: InterfaceDeclaration): GD.ApiInterface;
-	encodeItem(parser: Parser, item: ClassDeclaration): GD.ApiClass;
-	encodeItem(parser: Parser, item: EnumDeclaration): GD.ApiEnum;
-	encodeItem(parser: Parser, item: EnumMember): GD.ApiEnumMember;
-	encodeItem(parser: Parser, item: TypeAliasDeclaration): GD.ApiTypeAlias;
-	encodeItem(parser: Parser, item: FunctionDeclaration): GD.ApiFunction;
-	encodeItem(parser: Parser, item: Node): GD.ApiItem {
+	encodeItem(parser: Parser, item: TS.EnumDeclaration): GD.ApiEnum;
+	encodeItem(parser: Parser, item: TS.InterfaceDeclaration): GD.ApiInterface;
+	encodeItem(parser: Parser, item: TS.ClassDeclaration): GD.ApiClass;
+	encodeItem(parser: Parser, item: TS.EnumDeclaration): GD.ApiEnum;
+	encodeItem(parser: Parser, item: TS.EnumMember): GD.ApiEnumMember;
+	encodeItem(parser: Parser, item: TS.TypeAliasDeclaration): GD.ApiTypeAlias;
+	encodeItem(parser: Parser, item: TS.FunctionDeclaration): GD.ApiFunction;
+	encodeItem(parser: Parser, item: TS.Node): GD.ApiItem {
 		switch (item.getKind()) {
-			case SyntaxKind.ClassDeclaration:
-				return this._encodeClass(parser, item as ClassDeclaration);
-			case SyntaxKind.InterfaceDeclaration:
-				return this._encodeInterface(parser, item as InterfaceDeclaration);
-			case SyntaxKind.EnumDeclaration:
-				return this._encodeEnum(parser, item as EnumDeclaration);
-			case SyntaxKind.FunctionDeclaration:
-				return this._encodeFunction(parser, item as FunctionDeclaration);
-			case SyntaxKind.EnumMember:
-				return this._encodeEnumMember(parser, item as EnumMember);
-			case SyntaxKind.TypeAliasDeclaration:
-				return this._encodeTypeAlias(parser, item as TypeAliasDeclaration);
-			case SyntaxKind.PropertyDeclaration:
-			case SyntaxKind.MethodDeclaration:
+			case TS.SyntaxKind.ClassDeclaration:
+				return this._encodeClass(parser, item as TS.ClassDeclaration);
+			case TS.SyntaxKind.InterfaceDeclaration:
+				return this._encodeInterface(parser, item as TS.InterfaceDeclaration);
+			case TS.SyntaxKind.EnumDeclaration:
+				return this._encodeEnum(parser, item as TS.EnumDeclaration);
+			case TS.SyntaxKind.FunctionDeclaration:
+				return this._encodeFunction(parser, item as TS.FunctionDeclaration);
+			case TS.SyntaxKind.EnumMember:
+				return this._encodeEnumMember(parser, item as TS.EnumMember);
+			case TS.SyntaxKind.TypeAliasDeclaration:
+				return this._encodeTypeAlias(parser, item as TS.TypeAliasDeclaration);
+			case TS.SyntaxKind.PropertyDeclaration:
+			case TS.SyntaxKind.MethodDeclaration:
 				throw new Error(`Unexpected detached type, "${item.getKindName()}"`);
 			default:
 				console.log(item);
@@ -51,7 +38,7 @@ export class Encoder {
 		}
 	}
 
-	protected _encodeItem(parser: Parser, item: Node): GD.ApiItem {
+	protected _encodeItem(parser: Parser, item: TS.Node): GD.ApiItem {
 		return {
 			kind: this._encodeKind(item.getKind()),
 			name: (item as any).getName ? (item as any).getName() : '',
@@ -62,32 +49,32 @@ export class Encoder {
 		};
 	}
 
-	protected _encodeKind(kind: SyntaxKind): GD.ApiItemKind {
+	protected _encodeKind(kind: TS.SyntaxKind): GD.ApiItemKind {
 		switch (kind) {
-			case SyntaxKind.ClassDeclaration:
+			case TS.SyntaxKind.ClassDeclaration:
 				return GD.ApiItemKind.CLASS;
-			case SyntaxKind.InterfaceDeclaration:
+			case TS.SyntaxKind.InterfaceDeclaration:
 				return GD.ApiItemKind.INTERFACE;
-			case SyntaxKind.EnumDeclaration:
+			case TS.SyntaxKind.EnumDeclaration:
 				return GD.ApiItemKind.ENUM;
-			case SyntaxKind.EnumMember:
+			case TS.SyntaxKind.EnumMember:
 				return GD.ApiItemKind.ENUM_MEMBER;
-			case SyntaxKind.FunctionDeclaration:
+			case TS.SyntaxKind.FunctionDeclaration:
 				return GD.ApiItemKind.FUNCTION;
-			case SyntaxKind.MethodDeclaration:
+			case TS.SyntaxKind.MethodDeclaration:
 				return GD.ApiItemKind.METHOD;
-			case SyntaxKind.MethodSignature:
+			case TS.SyntaxKind.MethodSignature:
 				return GD.ApiItemKind.METHOD_SIGNATURE;
-			case SyntaxKind.PropertyDeclaration:
+			case TS.SyntaxKind.PropertyDeclaration:
 				return GD.ApiItemKind.PROPERTY;
-			case SyntaxKind.PropertySignature:
+			case TS.SyntaxKind.PropertySignature:
 				return GD.ApiItemKind.PROPERTY_SIGNATURE;
 			default:
 				throw new Error(`SyntaxKind.${getKindName(kind)} not implemented.`);
 		}
 	}
 
-	protected _encodeClass(parser: Parser, item: ClassDeclaration): GD.ApiClass {
+	protected _encodeClass(parser: Parser, item: TS.ClassDeclaration): GD.ApiClass {
 		const data = {
 			...this._encodeItem(parser, item),
 			comment: this._encodeComment(parser, item.getJsDocs().pop()),
@@ -95,17 +82,17 @@ export class Encoder {
 			staticProperties: item
 				.getStaticProperties()
 				.filter((prop) => !parser.isHidden(prop))
-				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
-			properties: getInheritedInstanceMembers(item, SyntaxKind.PropertyDeclaration)
-				.filter((prop) => prop.getScope() !== Scope.Private)
+				.map((prop) => this._encodeProperty(parser, prop as TS.PropertyDeclaration)),
+			properties: getInheritedInstanceMembers(item, TS.SyntaxKind.PropertyDeclaration)
+				.filter((prop) => prop.getScope() !== TS.Scope.Private)
 				.filter((prop) => !parser.isHidden(prop))
-				.map((prop) => this._encodeProperty(parser, prop as PropertyDeclaration)),
+				.map((prop) => this._encodeProperty(parser, prop as TS.PropertyDeclaration)),
 			staticMethods: item
 				.getStaticMethods()
 				.filter((method) => !parser.isHidden(method))
 				.map((method) => this._encodeMethod(parser, method)),
-			methods: getInheritedInstanceMembers(item, SyntaxKind.MethodDeclaration)
-				.filter((method) => method.getScope() !== Scope.Private)
+			methods: getInheritedInstanceMembers(item, TS.SyntaxKind.MethodDeclaration)
+				.filter((method) => method.getScope() !== TS.Scope.Private)
 				.filter((method) => !parser.isHidden(method))
 				.map((method) => this._encodeMethod(parser, method))
 		} as GD.ApiClass;
@@ -119,7 +106,7 @@ export class Encoder {
 		return data;
 	}
 
-	protected _encodeInterface(parser: Parser, item: InterfaceDeclaration): GD.ApiInterface {
+	protected _encodeInterface(parser: Parser, item: TS.InterfaceDeclaration): GD.ApiInterface {
 		return {
 			...this._encodeItem(parser, item),
 			path: parser.getPath(item),
@@ -137,7 +124,7 @@ export class Encoder {
 		} as GD.ApiInterface;
 	}
 
-	protected _encodeEnum(parser: Parser, item: EnumDeclaration): GD.ApiEnum {
+	protected _encodeEnum(parser: Parser, item: TS.EnumDeclaration): GD.ApiEnum {
 		const data = {
 			...this._encodeItem(parser, item),
 			members: item
@@ -151,7 +138,7 @@ export class Encoder {
 
 		return data;
 	}
-	protected _encodeFunction(parser: Parser, item: FunctionDeclaration): GD.ApiFunction {
+	protected _encodeFunction(parser: Parser, item: TS.FunctionDeclaration): GD.ApiFunction {
 		const data = {
 			...this._encodeItem(parser, item),
 			kind: GD.ApiItemKind.FUNCTION,
@@ -167,18 +154,18 @@ export class Encoder {
 		if (comment) data.comment = this._encodeComment(parser, comment);
 		return data as GD.ApiFunction;
 	}
-	protected _encodeEnumMember(parser: Parser, item: EnumMember): GD.ApiEnumMember {
+	protected _encodeEnumMember(parser: Parser, item: TS.EnumMember): GD.ApiEnumMember {
 		return {
 			...this._encodeItem(parser, item),
 			type: this._encodeType(parser, item.getType()),
 			comment: this._encodeComment(parser, item.getJsDocs().pop())
 		} as GD.ApiEnumMember;
 	}
-	protected _encodeTypeAlias(parser: Parser, item: TypeAliasDeclaration): GD.ApiTypeAlias {
+	protected _encodeTypeAlias(parser: Parser, item: TS.TypeAliasDeclaration): GD.ApiTypeAlias {
 		return this._encodeItem(parser, item) as GD.ApiTypeAlias;
 	}
 
-	protected _encodeReference(parser: Parser, item: Node): GD.Reference | null {
+	protected _encodeReference(parser: Parser, item: TS.Node): GD.Reference | null {
 		return {
 			path: parser.getPath(item),
 			name: (item as any).getName ? (item as any).getName() : '',
@@ -186,7 +173,7 @@ export class Encoder {
 		};
 	}
 
-	protected _encodeType(parser: Parser, type: Type, typeNode?: TypeNode): GD.Token {
+	protected _encodeType(parser: Parser, type: TS.Type, typeNode?: TS.TypeNode): GD.Token {
 		const symbol = type.getSymbol();
 		if (symbol) {
 			for (const decl of symbol.getDeclarations()) {
@@ -200,7 +187,7 @@ export class Encoder {
 		return type.getText();
 	}
 
-	protected _encodeComment(parser: Parser, comment?: JSDoc): string {
+	protected _encodeComment(parser: Parser, comment?: TS.JSDoc): string {
 		if (!comment) return '';
 
 		let md = comment.getCommentText();
@@ -219,20 +206,20 @@ export class Encoder {
 
 	protected _encodeMember(
 		parser: Parser,
-		item: MethodDeclaration | MethodSignature | PropertyDeclaration | PropertySignature
+		item: TS.MethodDeclaration | TS.MethodSignature | TS.PropertyDeclaration | TS.PropertySignature
 	): GD.ApiMember {
 		const data = {
 			...this._encodeItem(parser, item),
 			kind:
-				item.getKind() === SyntaxKind.MethodDeclaration
+				item.getKind() === TS.SyntaxKind.MethodDeclaration
 					? GD.ApiItemKind.METHOD
 					: GD.ApiItemKind.PROPERTY
 			// overwrite?: Reference,
 		} as Partial<GD.ApiMember>;
 
-		if (item instanceof MethodDeclaration || item instanceof PropertyDeclaration) {
+		if (item instanceof TS.MethodDeclaration || item instanceof TS.PropertyDeclaration) {
 			if (item.isStatic()) data.isStatic = true;
-			if (item.getScope() === Scope.Protected) data.isProtected = true;
+			if (item.getScope() === TS.Scope.Protected) data.isProtected = true;
 		}
 
 		const comment = item.getJsDocs().pop();
@@ -241,7 +228,10 @@ export class Encoder {
 		return data as GD.ApiMember;
 	}
 
-	protected _encodeMethod(parser: Parser, item: MethodDeclaration | MethodSignature): GD.ApiMethod {
+	protected _encodeMethod(
+		parser: Parser,
+		item: TS.MethodDeclaration | TS.MethodSignature
+	): GD.ApiMethod {
 		return {
 			...this._encodeMember(parser, item),
 			kind: GD.ApiItemKind.METHOD,
@@ -256,7 +246,7 @@ export class Encoder {
 
 	protected _encodeProperty(
 		parser: Parser,
-		item: PropertyDeclaration | PropertySignature
+		item: TS.PropertyDeclaration | TS.PropertySignature
 	): GD.ApiProperty {
 		return {
 			...this._encodeMember(parser, item),
@@ -268,24 +258,24 @@ export class Encoder {
 
 	protected _encodeInheritedMembers<T extends GD.ApiMethod>(
 		parser: Parser,
-		childItem: ClassDeclaration | InterfaceDeclaration,
-		kind: SyntaxKind.MethodDeclaration
+		childItem: TS.ClassDeclaration | TS.InterfaceDeclaration,
+		kind: TS.SyntaxKind.MethodDeclaration
 	): T[];
 	protected _encodeInheritedMembers<T extends GD.ApiProperty>(
 		parser: Parser,
-		childItem: ClassDeclaration | InterfaceDeclaration,
-		kind: SyntaxKind.PropertyDeclaration
+		childItem: TS.ClassDeclaration | TS.InterfaceDeclaration,
+		kind: TS.SyntaxKind.PropertyDeclaration
 	): T[];
 	protected _encodeInheritedMembers<T extends GD.ApiMethod | GD.ApiProperty>(
 		parser: Parser,
-		childItem: ClassDeclaration | InterfaceDeclaration,
-		kind: SyntaxKind.MethodDeclaration | SyntaxKind.PropertyDeclaration
+		childItem: TS.ClassDeclaration | TS.InterfaceDeclaration,
+		kind: TS.SyntaxKind.MethodDeclaration | TS.SyntaxKind.PropertyDeclaration
 	): T[] {
 		// (1) Obtain leaf member.
 		// (2) Walk up tree until missing info resolved and a direct override found, if exists.
 		// (3) Return resolved member.
 		const members =
-			kind === SyntaxKind.MethodDeclaration ? childItem.getMethods() : childItem.getProperties();
+			kind === TS.SyntaxKind.MethodDeclaration ? childItem.getMethods() : childItem.getProperties();
 
 		const encodedMembers = [] as T[];
 		for (const member of members) {
@@ -390,22 +380,22 @@ export class Encoder {
 	// }
 }
 
-function getInheritedInstanceMembers<T extends MethodDeclaration>(
-	child: ClassDeclaration,
-	kind: SyntaxKind.MethodDeclaration
+function getInheritedInstanceMembers<T extends TS.MethodDeclaration>(
+	child: TS.ClassDeclaration,
+	kind: TS.SyntaxKind.MethodDeclaration
 ): T[];
-function getInheritedInstanceMembers<T extends PropertyDeclaration>(
-	child: ClassDeclaration,
-	kind: SyntaxKind.PropertyDeclaration
+function getInheritedInstanceMembers<T extends TS.PropertyDeclaration>(
+	child: TS.ClassDeclaration,
+	kind: TS.SyntaxKind.PropertyDeclaration
 ): T[];
-function getInheritedInstanceMembers<T extends MethodDeclaration | PropertyDeclaration>(
-	child: ClassDeclaration,
-	kind: SyntaxKind.MethodDeclaration | SyntaxKind.PropertyDeclaration
+function getInheritedInstanceMembers<T extends TS.MethodDeclaration | TS.PropertyDeclaration>(
+	child: TS.ClassDeclaration,
+	kind: TS.SyntaxKind.MethodDeclaration | TS.SyntaxKind.PropertyDeclaration
 ): T[] {
 	const members: T[] = [];
 	const memberSet = new Set<string>();
 
-	for (const member of kind === SyntaxKind.MethodDeclaration
+	for (const member of kind === TS.SyntaxKind.MethodDeclaration
 		? child.getMethods()
 		: child.getProperties()) {
 		memberSet.add(member.getName());
@@ -414,7 +404,7 @@ function getInheritedInstanceMembers<T extends MethodDeclaration | PropertyDecla
 
 	let current = child;
 	while ((current = current.getBaseClass())) {
-		for (const member of kind === SyntaxKind.MethodDeclaration
+		for (const member of kind === TS.SyntaxKind.MethodDeclaration
 			? current.getMethods()
 			: current.getProperties()) {
 			if (memberSet.has(member.getName())) continue;
@@ -427,11 +417,11 @@ function getInheritedInstanceMembers<T extends MethodDeclaration | PropertyDecla
 }
 
 let _kindNameCache: Record<number, string> | undefined;
-function getKindName(kind: SyntaxKind): string {
+function getKindName(kind: TS.SyntaxKind): string {
 	if (!_kindNameCache) {
 		_kindNameCache = {};
-		for (const key in SyntaxKind) {
-			_kindNameCache[SyntaxKind[key]] = key;
+		for (const key in TS.SyntaxKind) {
+			_kindNameCache[TS.SyntaxKind[key]] = key;
 		}
 	}
 	return _kindNameCache[kind];
