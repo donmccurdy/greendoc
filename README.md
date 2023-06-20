@@ -8,7 +8,7 @@ _An adaptable system for generating documentation of TypeScript APIs._
 
 > ⚠️ **NOTICE:** WORK IN PROGRESS / NOT READY FOR USE
 
-> ⚠️ **NOTICE:** This project is shared under [Prosperity Public License 3.0](/LICENSE.md), a "source available" license. Noncommercial use is prohibitted, outside of a 30-day commerial trial period. Please contact me if you require a license for commercial use.
+> ⚠️ **NOTICE:** This project is shared under [Prosperity Public License 3.0](/LICENSE.md), a "source available" license. Noncommercial use is prohibited, outside of a 30-day commercial trial period. Please contact me if you require a license for commercial use.
 
 ## Packages
 
