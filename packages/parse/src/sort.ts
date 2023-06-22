@@ -1,6 +1,6 @@
 import { GD } from './types';
 
-export type SortFn = (a: GD.ApiItem, b: GD.ApiItem) => number;
+export type SortFn = (a: GD.ApiItemBase, b: GD.ApiItemBase) => number;
 
 export function createDefaultSort(): SortFn {
 	return (a, b) => (a.name > b.name ? 1 : -1);

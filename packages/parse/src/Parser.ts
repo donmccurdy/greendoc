@@ -1,4 +1,4 @@
-import { JSDocableNode, Node, Project, SourceFile, SyntaxKind } from 'ts-morph';
+import * as TS from 'ts-morph';
 import { markedFormatter } from './format';
 
 type $StringLike = { toString: () => string };
@@ -7,26 +7,27 @@ interface Module {
 	name: string;
 	slug: string;
 	rootDirectory: string;
-	entry: SourceFile;
+	entry: TS.SourceFile;
 }
 
 export interface ModuleConfig {
 	name: string;
 	slug: string;
-	entry: SourceFile | string;
+	entry: TS.SourceFile | string;
 }
 
 export class Parser {
-	readonly project: Project;
+	readonly project: TS.Project;
 	readonly modules: Module[] = [];
-	readonly itemToSlug = new Map<Node, string>();
-	readonly slugToItem = new Map<string, Node>();
-	readonly exportToItem = new Map<string, Node>();
+	readonly itemToSlug = new Map<TS.Node, string>();
+	readonly slugToItem = new Map<string, TS.Node>();
+	readonly exportToItem = new Map<string, TS.Node>();
+	// TODO(design): Clarify if/that this is a URL path, not a path on disk.
 	private rootPath: string = '';
 	private baseURL: string = '';
 	private formatter: (md: string) => string = markedFormatter;
 
-	constructor(project = new Project()) {
+	constructor(project = new TS.Project()) {
 		this.project = project;
 	}
 
@@ -50,8 +51,8 @@ export class Parser {
 	}
 
 	public addModule(config: ModuleConfig): this {
-		let entry: SourceFile;
-		if (config.entry instanceof SourceFile) {
+		let entry: TS.SourceFile;
+		if (config.entry instanceof TS.SourceFile) {
 			entry = config.entry;
 		} else {
 			entry = this.project.addSourceFileAtPath(config.entry);
@@ -78,7 +79,7 @@ export class Parser {
 		return this;
 	}
 
-	public getModuleExports(name: string): Node[] {
+	public getModuleExports(name: string): TS.Node[] {
 		const module = this.modules.find((module) => module.name === name);
 		const exports = [];
 		for (const [name, items] of module.entry.getExportedDeclarations()) {
@@ -91,26 +92,26 @@ export class Parser {
 	}
 
 	/** @internal */
-	getItemBySlug(slug: string): Node {
+	getItemBySlug(slug: string): TS.Node {
 		const item = this.slugToItem.get(slug);
 		if (item) return item;
 		throw new Error(`Item for "${slug}" not found`);
 	}
 
 	/** @internal */
-	getItemByExportName(name: string): Node {
+	getItemByExportName(name: string): TS.Node {
 		const item = this.exportToItem.get(name);
 		if (item) return item;
 		throw new Error(`Item for "${name}" not found`);
 	}
 
 	/** @internal */
-	hasItem(item: Node): boolean {
+	hasItem(item: TS.Node): boolean {
 		return this.itemToSlug.has(item);
 	}
 
 	/** @internal */
-	getSlug(item: Node): string {
+	getSlug(item: TS.Node): string {
 		const slug = this.itemToSlug.get(item);
 		if (slug) return slug;
 
@@ -121,29 +122,29 @@ export class Parser {
 
 	// TODO(design): URL paths should be an application-level decision.
 	/** @internal */
-	getPath(item: Node): string | null {
+	getPath(item: TS.Node): string | null {
 		const module = this.getModule(item);
 		if (!module) return null;
 
 		if (this.isHidden(item)) return null;
 
 		switch (item.getKind()) {
-			case SyntaxKind.ClassDeclaration:
+			case TS.SyntaxKind.ClassDeclaration:
 				return `/modules/${module.slug}/classes/${this.getSlug(item)}`;
-			case SyntaxKind.InterfaceDeclaration:
+			case TS.SyntaxKind.InterfaceDeclaration:
 				return `/modules/${module.slug}/interfaces/${this.getSlug(item)}`;
-			case SyntaxKind.EnumDeclaration:
+			case TS.SyntaxKind.EnumDeclaration:
 				return `/modules/${module.slug}/enums/${this.getSlug(item)}`;
-			case SyntaxKind.FunctionDeclaration:
+			case TS.SyntaxKind.FunctionDeclaration:
 				return `/modules/${module.slug}/functions/${this.getSlug(item)}`;
-			// case SyntaxKind.VariableDeclaration:
+			// case TS.SyntaxKind.VariableDeclaration:
 			// 	return `/modules/${module.slug}/constants/${this.getSlug(item)}`;
 			default:
 				return null;
 		}
 	}
 
-	getModule(item: Node): Module | null {
+	getModule(item: TS.Node): Module | null {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return null;
 		if (file.isDeclarationFile()) return null;
@@ -158,9 +159,9 @@ export class Parser {
 		throw new Error(`Module not found for path "${filePath}".`);
 	}
 
-	getTag(item: Node, tagName: string): string | null {
-		if ((item as unknown as JSDocableNode).getJsDocs) {
-			for (const doc of (item as unknown as JSDocableNode).getJsDocs()) {
+	getTag(item: TS.Node, tagName: string): string | null {
+		if ((item as unknown as TS.JSDocableNode).getJsDocs) {
+			for (const doc of (item as unknown as TS.JSDocableNode).getJsDocs()) {
 				for (const tag of doc.getTags()) {
 					if (tag.getTagName() === tagName) {
 						return tag.getCommentText();
@@ -171,12 +172,12 @@ export class Parser {
 		return null;
 	}
 
-	getName(item: Node): string {
+	getName(item: TS.Node): string {
 		if ((item as any).getName) return (item as any).getName();
 		return '';
 	}
 
-	getSourceText(item: Node): string {
+	getSourceText(item: TS.Node): string {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return 'external';
 		if (file.isDeclarationFile()) return 'external';
@@ -187,7 +188,7 @@ export class Parser {
 		return url;
 	}
 
-	getSourceURL(item: Node): string {
+	getSourceURL(item: TS.Node): string {
 		const file = item.getSourceFile();
 		if (file.isFromExternalLibrary()) return '';
 		if (file.isDeclarationFile()) return '';
@@ -198,9 +199,9 @@ export class Parser {
 		return url;
 	}
 
-	isHidden(item: Node): boolean {
-		if ((item as unknown as JSDocableNode).getJsDocs) {
-			for (const doc of (item as unknown as JSDocableNode).getJsDocs()) {
+	isHidden(item: TS.Node): boolean {
+		if ((item as unknown as TS.JSDocableNode).getJsDocs) {
+			for (const doc of (item as unknown as TS.JSDocableNode).getJsDocs()) {
 				for (const tag of doc.getTags()) {
 					if (tag.getTagName() === 'hidden') return true;
 					if (tag.getTagName() === 'internal') return true;

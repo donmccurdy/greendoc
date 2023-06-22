@@ -22,13 +22,13 @@ export const parser = new Parser(project)
 
 export const encoder = new Encoder();
 
-export function getMetadata(item: GD.ApiClass | GD.ApiInterface | GD.ApiEnum | GD.ApiFunction): {
+export function getMetadata(item: GD.ApiItem): {
 	title: string;
 	snippet: string;
 } {
 	return {
 		title: item.name,
-		snippet: item.comment ? getSnippet(item.comment) : ''
+		snippet: (item as any).comment ? getSnippet((item as any).comment) : ''
 	};
 }
 

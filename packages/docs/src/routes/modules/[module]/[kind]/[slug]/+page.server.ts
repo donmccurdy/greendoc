@@ -2,10 +2,11 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { parser, encoder, getMetadata } from '$lib/server/model';
 import type { GD } from '@greendoc/parse';
-import type { FunctionDeclaration } from 'ts-morph';
+import type { Node } from 'ts-morph';
 
-export const load: PageServerLoad<{ export: GD.ApiFunction }> = async ({ params }) => {
-	const item = parser.getItemBySlug(params.slug) as FunctionDeclaration;
+export const load: PageServerLoad<{ export: GD.ApiItem }> = async ({ params }) => {
+	const slug = params.slug.replace(/\.html$/, '');
+	const item = parser.getItemBySlug(slug);
 	const encodedItem = encoder.encodeItem(parser, item);
 	if (item && encodedItem) {
 		return {

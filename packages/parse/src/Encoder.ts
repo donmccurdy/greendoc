@@ -17,6 +17,7 @@ export class Encoder {
 	encodeItem(parser: Parser, item: TS.EnumMember): GD.ApiEnumMember;
 	encodeItem(parser: Parser, item: TS.TypeAliasDeclaration): GD.ApiTypeAlias;
 	encodeItem(parser: Parser, item: TS.FunctionDeclaration): GD.ApiFunction;
+	encodeItem(parser: Parser, item: TS.Node): GD.ApiItem;
 	encodeItem(parser: Parser, item: TS.Node): GD.ApiItem {
 		switch (item.getKind()) {
 			case TS.SyntaxKind.ClassDeclaration:
@@ -30,7 +31,7 @@ export class Encoder {
 			case TS.SyntaxKind.EnumMember:
 				return this._encodeEnumMember(parser, item as TS.EnumMember);
 			case TS.SyntaxKind.TypeAliasDeclaration:
-				return this._encodeTypeAlias(parser, item as TS.TypeAliasDeclaration);
+				return this._encodeTypeAlias(parser, item as TS.TypeAliasDeclaration) as any; // TODO(cleanup)
 			case TS.SyntaxKind.PropertyDeclaration:
 			case TS.SyntaxKind.MethodDeclaration:
 				throw new Error(`Unexpected detached type, "${item.getKindName()}"`);
@@ -47,7 +48,7 @@ export class Encoder {
 
 	protected _encodeItem(parser: Parser, item: TS.Node): GD.ApiItem {
 		return {
-			kind: this._encodeKind(item.getKind()),
+			kind: this._encodeKind(item.getKind()) as any, // TODO(cleanup)
 			name: (item as any).getName ? (item as any).getName() : '',
 			source: {
 				text: parser.getSourceText(item),
@@ -118,8 +119,6 @@ export class Encoder {
 	protected _encodeInterface(parser: Parser, item: TS.InterfaceDeclaration): GD.ApiInterface {
 		return {
 			...this._encodeItem(parser, item),
-			path: parser.getPath(item),
-			packageName: '', // item.getAssociatedPackage()!.name,
 			comment: this._encodeComment(parser, item.getJsDocs().pop()),
 			extendsTypes: [], // item.extendsTypes.map(({ excerpt }) => this._encodeExcerpt(parser, excerpt)),
 			properties: item

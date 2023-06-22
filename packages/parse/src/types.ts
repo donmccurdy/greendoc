@@ -21,13 +21,22 @@ export namespace GD {
 		PROPERTY_SIGNATURE = 'PropertySignature'
 	}
 
-	export interface ApiItem {
+	export type ApiItem =
+		| ApiClass
+		| ApiInterface
+		| ApiFunction
+		| ApiMember
+		| ApiMethod
+		| ApiEnum
+		| ApiEnumMember;
+
+	export interface ApiItemBase {
 		name: string;
 		kind: ApiItemKind;
 		source?: Source;
 	}
 
-	export interface ApiClass extends ApiItem {
+	export interface ApiClass extends ApiItemBase {
 		// TODO: resolved & unresolved generics?
 		// TODO: interfaces implemented?
 		kind: ApiItemKind.CLASS;
@@ -40,7 +49,7 @@ export namespace GD {
 		staticMethods: ApiMethod[];
 	}
 
-	export interface ApiInterface extends ApiItem {
+	export interface ApiInterface extends ApiItemBase {
 		kind: ApiItemKind.INTERFACE;
 		comment?: string;
 		extendsTypes: Reference[];
@@ -48,14 +57,14 @@ export namespace GD {
 		methods: ApiMethod[];
 	}
 
-	export interface ApiFunction extends ApiItem {
+	export interface ApiFunction extends ApiItemBase {
 		kind: ApiItemKind.FUNCTION;
 		comment?: string;
 		params: ApiParameter[];
 		returns: ApiReturnType;
 	}
 
-	export interface ApiMember extends ApiItem {
+	export interface ApiMember extends ApiItemBase {
 		kind: ApiItemKind.METHOD | ApiItemKind.PROPERTY;
 		isStatic?: boolean;
 		isProtected?: boolean;
@@ -84,13 +93,13 @@ export namespace GD {
 		isReadonly: boolean;
 	}
 
-	export interface ApiEnum extends ApiItem {
+	export interface ApiEnum extends ApiItemBase {
 		kind: ApiItemKind.ENUM;
 		members: ApiEnumMember[];
 		comment?: string;
 	}
 
-	export interface ApiEnumMember extends ApiItem {
+	export interface ApiEnumMember extends ApiItemBase {
 		kind: ApiItemKind.ENUM_MEMBER;
 		type?: Token;
 		comment?: string;
@@ -109,5 +118,5 @@ export namespace GD {
 		url: string;
 	}
 
-	export interface ApiTypeAlias extends ApiItem {}
+	export interface ApiTypeAlias extends ApiItemBase {}
 }
