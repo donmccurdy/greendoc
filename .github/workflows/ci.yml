@@ -8,15 +8,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [18.x]
-
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     env:
       CI: true
-      COVERAGE: ${{ matrix.node-version == '18.x' && true || false }}
 
     steps:
       - uses: actions/checkout@v3
