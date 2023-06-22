@@ -7,7 +7,7 @@ import type { Node } from 'ts-morph';
 export const load: PageServerLoad<{ export: GD.ApiItem }> = async ({ params }) => {
 	const slug = params.slug.replace(/\.html$/, '');
 	const item = parser.getItemBySlug(slug);
-	const encodedItem = encoder.encodeItem(parser, item);
+	const encodedItem = encoder.encodeItem(item);
 	if (item && encodedItem) {
 		return {
 			metadata: getMetadata(encodedItem),

@@ -17,6 +17,9 @@
 			"Class.svelte": [
 				"./dist/Class.d.ts"
 			],
+			"Constructor.svelte": [
+				"./dist/Constructor.d.ts"
+			],
 			"Comment.svelte": [
 				"./dist/Comment.d.ts"
 			],

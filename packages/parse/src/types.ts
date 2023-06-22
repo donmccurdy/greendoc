@@ -1,4 +1,7 @@
 // TODO(design): Clean up API from an end-user perspective.
+// TODO(design): Consider reading through the ECMAScript type annotations proposal,
+// and fitting this design to its goals. If a feature is supported in TypeScript but
+// not in JavaScript, I might consider omitting it here.
 export namespace GD {
 	// export enum ApiExportKind {
 	// 	CLASS = 'Class',
@@ -15,6 +18,7 @@ export namespace GD {
 		ENUM_MEMBER = 'EnumMember',
 		FUNCTION = 'Function',
 		VARIABLE = 'Variable',
+		CONSTRUCTOR = 'Constructor',
 		METHOD = 'Method',
 		METHOD_SIGNATURE = 'MethodSignature',
 		PROPERTY = 'Property',
@@ -42,6 +46,7 @@ export namespace GD {
 		kind: ApiItemKind.CLASS;
 		comment?: string; // → IntlText
 		extendsTypes: Reference[];
+		constructor?: ApiConstructor;
 		properties: ApiProperty[];
 		methods: ApiMethod[];
 		// TODO: overloads?
@@ -65,7 +70,7 @@ export namespace GD {
 	}
 
 	export interface ApiMember extends ApiItemBase {
-		kind: ApiItemKind.METHOD | ApiItemKind.PROPERTY;
+		kind: ApiItemKind.CONSTRUCTOR | ApiItemKind.METHOD | ApiItemKind.PROPERTY;
 		isStatic?: boolean;
 		isProtected?: boolean;
 		isOptional?: boolean;
@@ -86,6 +91,14 @@ export namespace GD {
 	};
 
 	export type ApiReturnType = Token;
+
+	export interface ApiConstructor extends ApiMember {
+		kind: ApiItemKind.CONSTRUCTOR;
+		isStatic: false;
+		name: 'constructor';
+		params: ApiParameter[];
+		returns: ApiReturnType;
+	}
 
 	export interface ApiProperty extends ApiMember {
 		kind: ApiItemKind.PROPERTY;

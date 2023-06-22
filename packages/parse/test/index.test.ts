@@ -26,7 +26,6 @@ test('parser.modules', (t) => {
 });
 
 test('class serialization', (t) => {
-	const encoder = new Encoder();
 	const parser = createParser(
 		'my-package',
 		`
@@ -62,9 +61,12 @@ export class Freddy extends Dog {
 }
 	`
 	);
+
+	const encoder = new Encoder(parser);
 	const dog = parser.getItemBySlug('Dog') as ClassDeclaration;
+	const encodedDog = trim(encoder.encodeItem(dog));
 	t.deepEqual(
-		encoder.encodeItem(parser, dog),
+		encodedDog,
 		{
 			kind: 'Class',
 			name: 'Dog',
@@ -112,6 +114,45 @@ export class Freddy extends Dog {
 	);
 });
 
+test('constructors', (t) => {
+	const parser = createParser(
+		'my-package',
+		`
+	export class A {
+		constructor(a: string, b: string) {
+			// ...
+		}
+	}
+	`
+	);
+
+	const encoder = new Encoder(parser);
+	let a = encoder.encodeItem(parser.getItemBySlug('A') as ClassDeclaration);
+	a = trim(a);
+
+	t.deepEqual(
+		a.constructor,
+		{
+			kind: GD.ApiItemKind.CONSTRUCTOR,
+			name: 'constructor',
+			params: [
+				{ name: 'a', type: 'string' },
+				{ name: 'b', type: 'string' }
+			],
+			returns: {
+				kind: 'Class',
+				name: 'A',
+				path: '/modules/my-package/classes/A'
+			},
+			source: {
+				text: 'source.ts',
+				url: 'https://example.com/api/source.ts'
+			}
+		},
+		'a.constructor'
+	);
+});
+
 test('inherited members', (t) => {
 	const parser = createParser(
 		'my-package',
@@ -132,9 +173,9 @@ test('inherited members', (t) => {
 	`
 	);
 
-	const encoder = new Encoder();
-	const a = encoder.encodeItem(parser, parser.getItemBySlug('A') as ClassDeclaration);
-	const b = encoder.encodeItem(parser, parser.getItemBySlug('B') as ClassDeclaration);
+	const encoder = new Encoder(parser);
+	const a = encoder.encodeItem(parser.getItemBySlug('A') as ClassDeclaration);
+	const b = encoder.encodeItem(parser.getItemBySlug('B') as ClassDeclaration);
 
 	// methods
 	t.deepEqual(a.methods.map(toName), ['parentMethod'], 'a.methods');
@@ -160,6 +201,11 @@ test('inherited members', (t) => {
 		'b.staticProperties'
 	);
 });
+
+/** Trims properties that JSON serialization would exclude. */
+function trim<T extends {}>(object: T): T {
+	return JSON.parse(JSON.stringify(object));
+}
 
 function toName(object: { name: string }): string {
 	return object.name;

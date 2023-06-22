@@ -23,7 +23,7 @@ export const parser = new Parser(project)
 	.setBaseURL('https://github.com/donmccurdy/greendoc/tree/main')
 	.init();
 
-export const encoder = new Encoder();
+export const encoder = new Encoder(parser);
 
 export function getMetadata(item: GD.ApiItem): {
 	title: string;

@@ -1,5 +1,6 @@
 // Reexport your entry components here
 export { default as Class } from './Class.svelte';
+export { default as Constructor } from './Constructor.svelte';
 export { default as Comment } from './Comment.svelte';
 export { default as Enum } from './Enum.svelte';
 export { default as EnumMember } from './EnumMember.svelte';
