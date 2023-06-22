@@ -1,12 +1,15 @@
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Encoder, GD, Parser } from '@greendoc/parse';
-import { Project } from 'ts-morph';
+import * as TS from 'ts-morph';
 import he from 'he';
 
-const BASE = new URL('../../../../../../', import.meta.url).pathname.replace(/\/$/, '');
+const ROOT_DELTA = '../../../../../../';
+const ROOT_PATH = resolve(dirname(fileURLToPath(import.meta.url)), ROOT_DELTA);
 
-const entryPath = `${BASE}/packages/parse/src/index.ts`;
+const entryPath = resolve(ROOT_PATH, 'packages/parse/src/index.ts');
 
-const project = new Project({
+const project = new TS.Project({
 	compilerOptions: {
 		paths: {
 			'@greendoc/parse': [entryPath]
@@ -16,7 +19,7 @@ const project = new Project({
 
 export const parser = new Parser(project)
 	.addModule({ name: '@greendoc/parse', slug: 'parse', entry: entryPath })
-	.setRootPath(BASE)
+	.setRootPath(ROOT_PATH)
 	.setBaseURL('https://github.com/donmccurdy/greendoc/tree/main')
 	.init();
 
