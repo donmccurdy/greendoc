@@ -127,11 +127,11 @@ test('constructors', (t) => {
 	);
 
 	const encoder = new Encoder(parser);
-	let a = encoder.encodeItem(parser.getItemBySlug('A') as ClassDeclaration);
-	a = trim(a);
+	const classA = parser.getItemBySlug('A') as ClassDeclaration;
+	const encodedClassA = trim(encoder.encodeItem(classA));
 
 	t.deepEqual(
-		a.constructor,
+		encodedClassA.constructor,
 		{
 			kind: GD.ApiItemKind.CONSTRUCTOR,
 			name: 'constructor',
@@ -139,15 +139,8 @@ test('constructors', (t) => {
 				{ name: 'a', type: 'string' },
 				{ name: 'b', type: 'string' }
 			],
-			returns: {
-				kind: 'Class',
-				name: 'A',
-				path: '/modules/my-package/classes/A'
-			},
-			source: {
-				text: 'source.ts',
-				url: 'https://example.com/api/source.ts'
-			}
+			returns: { kind: 'Class', name: 'A', path: '/modules/my-package/classes/A' },
+			source: { text: 'source.ts', url: 'https://example.com/api/source.ts' }
 		},
 		'a.constructor'
 	);
