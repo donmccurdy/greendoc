@@ -1,5 +1,5 @@
 import test from 'ava';
-import { Encoder, GD, Parser } from '@greendoc/parse';
+import { Encoder, GD, Parser, createDefaultSort, createPrefixSort } from '@greendoc/parse';
 import { ClassDeclaration, Project } from 'ts-morph';
 
 const MOCK_ROOT_PATH = '/path/to';
@@ -199,6 +199,48 @@ test('inherited members', (t) => {
 		b.staticProperties.map(toName),
 		['childStaticProperty', 'parentStaticProperty'],
 		'b.staticProperties'
+	);
+});
+
+test('custom sort', (t) => {
+	const parser = createParser(
+		'my-package',
+		`
+	export class A {
+		a() {}
+		getA() {}
+		setA() {}
+		listA() {}
+		b() {}
+		getB() {}
+		setB() {}
+		listB() {}
+	}
+	`
+	);
+
+	const encoder = new Encoder(parser);
+	const a = parser.getItemBySlug('A') as ClassDeclaration;
+
+	let encodedA = encoder.encodeItem(a);
+	t.deepEqual(
+		encodedA.methods.map(toName),
+		['a', 'b', 'getA', 'getB', 'listA', 'listB', 'setA', 'setB'],
+		'default sort'
+	);
+
+	encodedA = encoder.setSort(createPrefixSort()).encodeItem(a);
+	t.deepEqual(
+		encodedA.methods.map(toName),
+		['a', 'getA', 'listA', 'setA', 'b', 'getB', 'listB', 'setB'],
+		'prefix sort'
+	);
+
+	encodedA = encoder.setSort(createDefaultSort()).encodeItem(a);
+	t.deepEqual(
+		encodedA.methods.map(toName),
+		['a', 'b', 'getA', 'getB', 'listA', 'listB', 'setA', 'setB'],
+		'default sort (reset)'
 	);
 });
 

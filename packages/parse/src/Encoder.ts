@@ -1,7 +1,7 @@
 import { GD } from './types';
 import { Parser } from './Parser';
 import * as TS from 'ts-morph';
-import { SortFn, createDefaultSort } from './sort';
+import { SortFn, createDefaultSort } from './utils/sort';
 
 /**
  * Encodes a serialized representation of an exported item in the API, such as

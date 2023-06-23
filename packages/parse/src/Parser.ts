@@ -1,5 +1,5 @@
 import * as TS from 'ts-morph';
-import { markedFormatter } from './format';
+import { markedFormatter } from './utils/format';
 
 type $StringLike = { toString: () => string };
 
