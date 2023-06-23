@@ -24,17 +24,12 @@ export function createPrefixSort(prefixList = DEFAULT_PREFIX_LIST): SortFn {
 		const tokensA = noCase(a.name);
 		const tokensB = noCase(b.name);
 
-		const hasPrefixA = prefixSet.has(tokensA[0]);
-		const hasPrefixB = prefixSet.has(tokensB[0]);
+		const prefixA = prefixSet.has(tokensA[0]) ? tokensA.shift() : '';
+		const prefixB = prefixSet.has(tokensB[0]) ? tokensB.shift() : '';
 
-		const baseA = hasPrefixA ? tokensA[1] : tokensA[0];
-		const baseB = hasPrefixB ? tokensB[1] : tokensB[0];
+		const nameA = tokensA.join('');
+		const nameB = tokensB.join('');
 
-		if (baseA !== baseB) return baseA > baseB ? 1 : -1;
-
-		const prefixA = hasPrefixA ? tokensA[0] : '';
-		const prefixB = hasPrefixB ? tokensB[0] : '';
-
-		return prefixA > prefixB ? 1 : -1;
+		return (nameA !== nameB ? nameA > nameB : prefixA > prefixB) ? 1 : -1;
 	};
 }
