@@ -164,19 +164,22 @@ export class Encoder {
 		return data;
 	}
 	protected _encodeFunction(item: TS.FunctionDeclaration): GD.ApiFunction {
+		const comment = item.getJsDocs().pop();
 		const data = {
 			...this._encodeItem(item),
 			kind: GD.ApiItemKind.FUNCTION,
 			params: item.getParameters().map((param) => ({
 				name: param.getName(),
 				type: this._encodeType(param.getType(), param.getTypeNode()),
+				comment: comment ? this._encodeParamComment(comment, param.getName()) : undefined,
 				optional: param.isOptional() || undefined
 			})),
-			returns: this._encodeType(item.getReturnType(), item.getReturnTypeNode())
+			returns: this._encodeType(item.getReturnType(), item.getReturnTypeNode()),
+			returnsComment: comment ? this._encodeReturnsComment(comment) : undefined
 		} as Partial<GD.ApiFunction>;
 
-		const comment = item.getJsDocs().pop();
 		if (comment) data.comment = this._encodeComment(comment);
+
 		return data as GD.ApiFunction;
 	}
 	protected _encodeEnumMember(item: TS.EnumMember): GD.ApiEnumMember {
@@ -229,6 +232,29 @@ export class Encoder {
 		return this._parser.renderMarkdown(md) || '';
 	}
 
+	protected _encodeParamComment(comment: TS.JSDoc, name: string): string | undefined {
+		for (const tag of comment.getTags()) {
+			const tagName = tag.getTagName();
+			if (tagName === 'param' || tagName === 'arg' || tagName === 'argument') {
+				const paramTag = tag as TS.JSDocParameterTag;
+				if (paramTag.getName() === name) {
+					return this._encodeComment(paramTag as unknown as TS.JSDoc);
+				}
+			}
+		}
+		return undefined;
+	}
+
+	protected _encodeReturnsComment(comment?: TS.JSDoc): string | undefined {
+		for (const tag of comment.getTags()) {
+			const tagName = tag.getTagName();
+			if (tagName === 'returns' || tagName === 'return') {
+				return this._encodeComment(tag as unknown as TS.JSDoc);
+			}
+		}
+		return undefined;
+	}
+
 	protected _encodeMember(
 		item:
 			| TS.ConstructorDeclaration
@@ -272,15 +298,18 @@ export class Encoder {
 	}
 
 	protected _encodeMethod(item: TS.MethodDeclaration | TS.MethodSignature): GD.ApiMethod {
+		const comment = item.getJsDocs().pop();
 		return {
 			...this._encodeMember(item),
 			kind: GD.ApiItemKind.METHOD,
 			params: item.getParameters().map((param) => ({
 				name: param.getName(),
 				type: this._encodeType(param.getType(), param.getTypeNode()),
+				comment: comment ? this._encodeParamComment(comment, param.getName()) : undefined,
 				optional: param.isOptional() || undefined
 			})),
-			returns: this._encodeType(item.getReturnType(), item.getReturnTypeNode())
+			returns: this._encodeType(item.getReturnType(), item.getReturnTypeNode()),
+			returnsComment: comment ? this._encodeReturnsComment(comment) : undefined
 		};
 	}
 

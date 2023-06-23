@@ -67,6 +67,7 @@ export namespace GD {
 		comment?: string;
 		params: ApiParameter[];
 		returns: ApiReturnType;
+		returnsComment?: string;
 	}
 
 	export interface ApiMember extends ApiItemBase {
@@ -82,6 +83,7 @@ export namespace GD {
 		kind: ApiItemKind.METHOD;
 		params: ApiParameter[];
 		returns: ApiReturnType;
+		returnsComment?: string;
 	}
 
 	export type ApiParameter = {

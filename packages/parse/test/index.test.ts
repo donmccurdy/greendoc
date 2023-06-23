@@ -1,6 +1,6 @@
 import test from 'ava';
 import { Encoder, GD, Parser, createDefaultSort, createPrefixSort } from '@greendoc/parse';
-import { ClassDeclaration, Project } from 'ts-morph';
+import * as TS from 'ts-morph';
 
 const MOCK_ROOT_PATH = '/path/to';
 const MOCK_SOURCE_PATH = '/path/to/source.ts';
@@ -63,7 +63,7 @@ export class Freddy extends Dog {
 	);
 
 	const encoder = new Encoder(parser);
-	const dog = parser.getItemBySlug('Dog') as ClassDeclaration;
+	const dog = parser.getItemBySlug('Dog') as TS.ClassDeclaration;
 	const encodedDog = trim(encoder.encodeItem(dog));
 	t.deepEqual(
 		encodedDog,
@@ -127,7 +127,7 @@ test('constructors', (t) => {
 	);
 
 	const encoder = new Encoder(parser);
-	const classA = parser.getItemBySlug('A') as ClassDeclaration;
+	const classA = parser.getItemBySlug('A') as TS.ClassDeclaration;
 	const encodedClassA = trim(encoder.encodeItem(classA));
 
 	t.deepEqual(
@@ -167,8 +167,8 @@ test('inherited members', (t) => {
 	);
 
 	const encoder = new Encoder(parser);
-	const a = encoder.encodeItem(parser.getItemBySlug('A') as ClassDeclaration);
-	const b = encoder.encodeItem(parser.getItemBySlug('B') as ClassDeclaration);
+	const a = encoder.encodeItem(parser.getItemBySlug('A') as TS.ClassDeclaration);
+	const b = encoder.encodeItem(parser.getItemBySlug('B') as TS.ClassDeclaration);
 
 	// methods
 	t.deepEqual(a.methods.map(toName), ['parentMethod'], 'a.methods');
@@ -213,7 +213,7 @@ test('custom sort', (t) => {
 	);
 
 	const encoder = new Encoder(parser);
-	const a = parser.getItemBySlug('A') as ClassDeclaration;
+	const a = parser.getItemBySlug('A') as TS.ClassDeclaration;
 
 	let encodedA = encoder.encodeItem(a);
 	t.deepEqual(
@@ -237,6 +237,91 @@ test('custom sort', (t) => {
 	);
 });
 
+test('tsdoc comments, params, and returns', (t) => {
+	const parser = createParser(
+		'my-package',
+		`
+	/**
+	 * Concatenates two string arguments.
+	 * @param a First argument.
+	 * @param b Second argument.
+	 * @returns Concatenation of first and second arguments.
+	 */
+	export function concat(a: string, b: string): string {
+		return a + b;
+	}
+
+	/** Class that adds numbers. */
+	export class AddingMachine {
+		/**
+		 * Sums two numbers.
+		 * @param a First addend.
+		 * @param b Second addend.
+		 * @returns Sum of first and second addends.
+		 */
+		add(a: number, b: number): number {
+			return a + b;
+		}
+	}
+	`
+	);
+
+	const encoder = new Encoder(parser);
+	const concat = parser.getItemBySlug('concat') as TS.FunctionDeclaration;
+	const encodedConcat = trim(encoder.encodeItem(concat));
+
+	t.deepEqual(
+		encodedConcat,
+		{
+			kind: 'Function',
+			name: 'concat',
+			source: { text: 'source.ts', url: 'https://example.com/api/source.ts' },
+			params: [
+				{ name: 'a', type: 'string', comment: '<p>First argument.</p>\n' },
+				{ name: 'b', type: 'string', comment: '<p>Second argument.</p>\n' }
+			],
+			returns: 'string',
+			returnsComment: '<p>Concatenation of first and second arguments.</p>\n',
+			comment: '<p>Concatenates two string arguments.</p>\n'
+		},
+		'function'
+	);
+
+	const addingMachine = parser.getItemBySlug('AddingMachine') as TS.ClassDeclaration;
+	const encodedAddingMachine = trim(encoder.encodeItem(addingMachine));
+
+	t.deepEqual(
+		encodedAddingMachine,
+		{
+			kind: 'Class',
+			name: 'AddingMachine',
+			comment: '<p>Class that adds numbers.</p>\n',
+			source: { text: 'source.ts', url: 'https://example.com/api/source.ts' },
+			methods: [
+				{
+					kind: 'Method',
+					name: 'add',
+					source: { text: 'source.ts', url: 'https://example.com/api/source.ts' },
+					comment: '<p>Sums two numbers.</p>\n',
+					params: [
+						{ name: 'a', type: 'number', comment: '<p>First addend.</p>\n' },
+						{ name: 'b', type: 'number', comment: '<p>Second addend.</p>\n' }
+					],
+					returns: 'number',
+					returnsComment: '<p>Sum of first and second addends.</p>\n'
+				}
+			],
+			extendsTypes: [],
+			staticProperties: [],
+			properties: [],
+			staticMethods: []
+		},
+		'class'
+	);
+});
+
+//////////////////////// UTILITIES ////////////////////////
+
 /** Trims properties that JSON serialization would exclude. */
 function trim<T extends {}>(object: T): T {
 	return JSON.parse(JSON.stringify(object));
@@ -247,7 +332,7 @@ function toName(object: { name: string }): string {
 }
 
 function createParser(name: string, source: string) {
-	const project = new Project();
+	const project = new TS.Project();
 	const file = project.createSourceFile(MOCK_SOURCE_PATH, source);
 	return new Parser(project)
 		.setRootPath(MOCK_ROOT_PATH)
