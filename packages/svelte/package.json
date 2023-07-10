@@ -73,7 +73,7 @@
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "2.1.0",
-		"@sveltejs/kit": "1.21.0",
+		"@sveltejs/kit": "1.22.1",
 		"@sveltejs/package": "^2.0.0",
 		"svelte-check": "^3.3.2",
 		"svelte-preprocess": "^5.0.3"
