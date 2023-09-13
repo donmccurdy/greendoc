@@ -8,8 +8,8 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --plugin-search-dir . --check src",
-		"format": "prettier --plugin-search-dir . --write src",
+		"lint": "prettier --check src",
+		"format": "prettier --write src",
 		"clean": "rimraf build/*"
 	},
 	"dependencies": {
