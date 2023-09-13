@@ -320,6 +320,36 @@ test('tsdoc comments, params, and returns', (t) => {
 	);
 });
 
+test('variables', (t) => {
+	const parser = createParser(
+		'my-package',
+		`
+	/**
+	 * Description.
+	 * @type {string} name
+	 */
+	export let name = 'hello';
+	`
+	);
+
+	const encoder = new Encoder(parser);
+	const encodedVariable = trim(
+		encoder.encodeItem(parser.getItemBySlug('name') as TS.VariableDeclaration)
+	);
+
+	t.deepEqual(
+		encodedVariable,
+		{
+			kind: 'Variable',
+			name: 'name',
+			source: { text: 'source.ts', url: 'https://example.com/api/source.ts' },
+			type: 'string'
+			// comment: '<p>Description.</p>\n' // not yet supported by ts-morph
+		},
+		'variable'
+	);
+});
+
 //////////////////////// UTILITIES ////////////////////////
 
 /** Trims properties that JSON serialization would exclude. */

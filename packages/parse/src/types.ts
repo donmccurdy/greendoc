@@ -2,6 +2,7 @@
 // TODO(design): Consider reading through the ECMAScript type annotations proposal,
 // and fitting this design to its goals. If a feature is supported in TypeScript but
 // not in JavaScript, I might consider omitting it here.
+// TODO(design): Consider removing 'Api' prefix.
 export namespace GD {
 	// export enum ApiExportKind {
 	// 	CLASS = 'Class',
@@ -32,7 +33,8 @@ export namespace GD {
 		| ApiMember
 		| ApiMethod
 		| ApiEnum
-		| ApiEnumMember;
+		| ApiEnumMember
+		| ApiVariable;
 
 	export interface ApiItemBase {
 		name: string;
@@ -118,6 +120,11 @@ export namespace GD {
 		kind: ApiItemKind.ENUM_MEMBER;
 		type?: Token;
 		comment?: string;
+	}
+
+	export interface ApiVariable extends ApiItemBase {
+		type?: Token;
+		comment?: string; // not yet supported by ts-morph
 	}
 
 	export type Token = string | Reference;

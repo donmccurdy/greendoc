@@ -43,6 +43,8 @@ export class Encoder {
 			case TS.SyntaxKind.PropertyDeclaration:
 			case TS.SyntaxKind.MethodDeclaration:
 				throw new Error(`Unexpected detached type, "${item.getKindName()}"`);
+			case TS.SyntaxKind.VariableDeclaration:
+				return this._encodeVariable(item as TS.VariableDeclaration);
 			default:
 				console.log(item);
 				throw new Error(`Unsupported encoded type, "${item.getKindName()}"`);
@@ -88,6 +90,8 @@ export class Encoder {
 				return GD.ApiItemKind.PROPERTY;
 			case TS.SyntaxKind.PropertySignature:
 				return GD.ApiItemKind.PROPERTY_SIGNATURE;
+			case TS.SyntaxKind.VariableDeclaration:
+				return GD.ApiItemKind.VARIABLE;
 			default:
 				throw new Error(`SyntaxKind.${getKindName(kind)} not implemented.`);
 		}
@@ -191,6 +195,13 @@ export class Encoder {
 	}
 	protected _encodeTypeAlias(item: TS.TypeAliasDeclaration): GD.ApiTypeAlias {
 		return this._encodeItem(item) as GD.ApiTypeAlias;
+	}
+
+	protected _encodeVariable(item: TS.VariableDeclaration): GD.ApiVariable {
+		return {
+			...this._encodeItem(item),
+			type: this._encodeType(item.getType())
+		};
 	}
 
 	protected _encodeReference(item: TS.Node): GD.Reference | null {
