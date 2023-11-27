@@ -20,7 +20,7 @@
 		"@types/node": "^20.3.1",
 		"ava": "^5.2.0",
 		"concurrently": "^8.2.0",
-		"lerna": "^7.3.0",
+		"lerna": "^8.0.0",
 		"microbundle": "^0.15.1",
 		"prettier": "^3.0.3",
 		"prettier-plugin-svelte": "^3.0.3",
