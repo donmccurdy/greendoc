@@ -69,7 +69,7 @@
 		"@greendoc/parse": "^0.3.0"
 	},
 	"peerDependencies": {
-		"svelte": "^3.59.0"
+		"svelte": "^4.0.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "2.1.1",
