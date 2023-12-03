@@ -27,7 +27,7 @@
 		"clean": "rimraf dist/*"
 	},
 	"dependencies": {
-		"highlight.js": "^11.8.0",
+		"highlight.js": "^11.9.0",
 		"marked": "^4.2.3",
 		"ts-morph": "^20.0.0"
 	},

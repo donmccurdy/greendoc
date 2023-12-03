@@ -1,16 +1,29 @@
 {
-	"tasksRunnerOptions": {
-		"default": {
-			"runner": "nx/tasks-runners/default",
-			"options": {
-				"cacheableOperations": ["build", "check", "check:watch", "lint", "format", "test"]
-			}
-		}
-	},
 	"targetDefaults": {
 		"build": {
 			"dependsOn": ["^build"],
-			"outputs": ["{projectRoot}/dist", "{projectRoot}/build"]
+			"outputs": ["{projectRoot}/dist", "{projectRoot}/build"],
+			"cache": true
+		},
+		"check": {
+			"cache": true
+		},
+		"check:watch": {
+			"cache": true
+		},
+		"lint": {
+			"cache": true
+		},
+		"format": {
+			"cache": true
+		},
+		"test": {
+			"cache": true
 		}
+	},
+	"namedInputs": {
+		"default": ["{projectRoot}/**/*", "sharedGlobals"],
+		"sharedGlobals": [],
+		"production": ["default"]
 	}
 }
