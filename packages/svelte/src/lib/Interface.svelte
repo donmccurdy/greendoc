@@ -13,7 +13,7 @@
 </section>
 
 {#if data.properties.length}
-	<section class="greendoc-panel-group greendoc-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group">
 		<h2>Properties</h2>
 		{#each data.properties as property}
 			<Property data={property} />
@@ -22,7 +22,7 @@
 {/if}
 
 {#if data.methods.length}
-	<section class="greendoc-panel-group greendoc-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group">
 		<h2>Methods</h2>
 		{#each data.methods as method}
 			<Method data={method} />

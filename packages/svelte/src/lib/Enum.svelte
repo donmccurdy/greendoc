@@ -12,7 +12,7 @@
 </section>
 
 {#if data.members.length}
-	<section class="greendoc-panel-group greendoc-member-group ">
+	<section class="greendoc-panel-group greendoc-member-group">
 		<h2>Members</h2>
 		{#each data.members as member}
 			<EnumMember data={member} />

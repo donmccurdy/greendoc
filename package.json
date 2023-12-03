@@ -1,34 +1,34 @@
 {
-  "name": "root",
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "dev": "concurrently 'yarn build:watch' 'lerna run dev'",
-    "build": "lerna run build",
-    "build:watch": "lerna watch --scope=$LERNA_PACKAGE_NAME --include-dependents --no-private -- lerna run build",
-    "test": "lerna run test",
-    "test:watch": "lerna watch --scope=$LERNA_PACKAGE_NAME -- lerna run test",
-    "clean": "lerna run clean --parallel",
-    "lint": "lerna run lint --parallel",
-    "preversion": "yarn clean && yarn build && yarn test",
-    "postpublish": "git push && git push --tags"
-  },
-  "devDependencies": {
-    "@types/node": "^20.10.2",
-    "ava": "^5.2.0",
-    "concurrently": "^8.2.0",
-    "lerna": "^8.0.0",
-    "microbundle": "^0.15.1",
-    "prettier": "^3.1.0",
-    "prettier-plugin-svelte": "^3.1.2",
-    "rimraf": "^5.0.0",
-    "svelte": "^4.2.8",
-    "ts-morph": "^20.0.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.3.2",
-    "vite": "^5.0.4"
-  }
+	"name": "root",
+	"private": true,
+	"type": "module",
+	"workspaces": [
+		"packages/*"
+	],
+	"scripts": {
+		"dev": "concurrently 'yarn build:watch' 'lerna run dev'",
+		"build": "lerna run build",
+		"build:watch": "lerna watch --scope=$LERNA_PACKAGE_NAME --include-dependents --no-private -- lerna run build",
+		"test": "lerna run test",
+		"test:watch": "lerna watch --scope=$LERNA_PACKAGE_NAME -- lerna run test",
+		"clean": "lerna run clean",
+		"lint": "lerna run lint",
+		"preversion": "yarn clean && yarn build && yarn test",
+		"postpublish": "git push && git push --tags"
+	},
+	"devDependencies": {
+		"@types/node": "^20.10.2",
+		"ava": "^5.2.0",
+		"concurrently": "^8.2.0",
+		"lerna": "^8.0.0",
+		"microbundle": "^0.15.1",
+		"prettier": "^3.1.0",
+		"prettier-plugin-svelte": "^3.1.2",
+		"rimraf": "^5.0.0",
+		"svelte": "^4.2.8",
+		"ts-morph": "^20.0.0",
+		"ts-node": "^10.9.1",
+		"typescript": "^5.3.2",
+		"vite": "^5.0.4"
+	}
 }
