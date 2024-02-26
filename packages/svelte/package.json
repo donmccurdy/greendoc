@@ -3,7 +3,7 @@
 	"version": "0.3.0",
 	"repository": "https://github.com/donmccurdy/greendoc",
 	"author": "Don McCurdy <dm@donmccurdy.com>",
-	"license": "Prosperity-3.0.0",
+	"license": "BlueOak-1.0.0",
 	"type": "module",
 	"sideEffects": false,
 	"exports": {
