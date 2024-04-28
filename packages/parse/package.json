@@ -20,7 +20,7 @@
 	"license": "BlueOak-1.0.0",
 	"scripts": {
 		"build": "microbundle --format cjs,esm,modern --no-compress --define PACKAGE_VERSION=$npm_package_version",
-		"test": "ava test/*.test.ts",
+		"test": "ava --no-worker-threads test/*.test.ts",
 		"preversion": "yarn build && yarn test",
 		"version": "rimraf dist/* && yarn build && git add -u",
 		"postversion": "git push && git push --tags && npm publish",
@@ -36,7 +36,7 @@
 			"ts": "module"
 		},
 		"nodeArguments": [
-			"--loader=ts-node/esm"
+			"--import=tsx"
 		]
 	},
 	"gitHead": "276870f41d0e92060bb04b138d1ee8fbe643d1d3"
