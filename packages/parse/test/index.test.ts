@@ -25,6 +25,47 @@ test('parser.modules', (t) => {
 	);
 });
 
+test('parser.modules - tags', (t) => {
+	const parser = createParser(
+		'my-package',
+		`
+	/**
+	 * Description.
+	 * @type {string} name
+	 * @alpha
+	 * @beta
+	 * @deprecated Use something else.
+	 * @experimental
+	 */
+	export function myFunction() {}
+
+	/**
+	 * @experimental
+	 */
+	export class MyClass {}
+	`
+	);
+
+	const exports = parser.getModuleExports('my-package');
+
+	t.deepEqual(
+		exports.map((item) => [parser.getName(item), parser.getTags(item)]),
+		[
+			[
+				'myFunction',
+				{
+					alpha: true,
+					beta: true,
+					deprecated: 'Use something else.',
+					experimental: true
+				}
+			],
+			['MyClass', { experimental: true }]
+		],
+		'tags'
+	);
+});
+
 test('class serialization', (t) => {
 	const parser = createParser(
 		'my-package',
@@ -318,6 +359,57 @@ test('tsdoc comments, params, and returns', (t) => {
 		},
 		'class'
 	);
+});
+
+test('item tags', (t) => {
+	const parser = createParser(
+		'my-package',
+		`
+	/**
+	 * My class.
+	 * @public
+	 */
+	export class AddingMachine {
+		/** @deprecated Do not use this. */
+		public myProperty = 25;
+		/**
+		 * Sums two numbers.
+		 * @param a First addend.
+		 * @param b Second addend.
+		 * @returns Sum of first and second addends.
+		 * @public
+		 */
+		add(a: number, b: number): number {
+			return a + b;
+		}
+		/** @deprecated */
+		subtract(a: number, b: number): number {
+			return a - b;
+		}
+		/** @alpha */
+		multiply(a: number, b: number): number {
+			return a * b;
+		}
+	}
+	`
+	);
+
+	const encoder = new Encoder(parser);
+	const addingMachine = parser.getItemBySlug('AddingMachine') as TS.ClassDeclaration;
+	const encodedAddingMachine = trim(encoder.encodeItem(addingMachine));
+	const addMethod = encodedAddingMachine.methods.find(({ name }) => name === 'add');
+	const subtractMethod = encodedAddingMachine.methods.find(({ name }) => name === 'subtract');
+	const multiplyMethod = encodedAddingMachine.methods.find(({ name }) => name === 'multiply');
+
+	t.deepEqual(encodedAddingMachine.tags, { public: true }, 'class.tags');
+	t.deepEqual(
+		encodedAddingMachine.properties[0].tags,
+		{ deprecated: 'Do not use this.' },
+		'class.property.tags'
+	);
+	t.deepEqual(addMethod.tags, { public: true }, 'class#add.tags');
+	t.deepEqual(subtractMethod.tags, { deprecated: true }, 'class#subtract.tags');
+	t.deepEqual(multiplyMethod.tags, { alpha: true }, 'class#multiply.tags');
 });
 
 test('variables', (t) => {
