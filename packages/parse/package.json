@@ -39,5 +39,15 @@
 			"--import=tsx"
 		]
 	},
-	"gitHead": "276870f41d0e92060bb04b138d1ee8fbe643d1d3"
+	"gitHead": "276870f41d0e92060bb04b138d1ee8fbe643d1d3",
+	"devDependencies": {
+		"@types/node": "^20.12.7",
+		"ava": "^6.1.2",
+		"lerna": "^8.1.2",
+		"prettier": "^3.2.5",
+		"prettier-plugin-svelte": "^3.2.3",
+		"svelte": "^4.2.15",
+		"typescript": "^5.4.5",
+		"vite": "^5.2.10"
+	}
 }
