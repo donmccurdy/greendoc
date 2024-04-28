@@ -1070,6 +1070,37 @@ dl.greendoc-comment-tags p {
 	margin: 0;
 }
 
+/** TODO: Merge with above? */
+.tags {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.tag {
+	display: inline-block;
+	padding: 0.2em 0.5em;
+	background: rgba(0, 0, 0, 0.04);
+	height: 14px;
+	font-size: 0.8em;
+	font-family: monospace;
+	border: 1px solid #c0c0c0;
+	border-radius: 7px;
+	margin-right: 0.2em;
+}
+.tag[data-gd-tag='alpha'],
+.tag[data-gd-tag='experimental'] {
+	background-color: orangered;
+	color: #fff;
+}
+.tag[data-gd-tag='beta'] {
+	background-color: goldenrod;
+	color: #fff;
+}
+.tag[data-gd-tag='deprecated'] {
+	background-color: crimson;
+	color: #fff;
+}
+
 .greendoc-panel.greendoc-comment .lead {
 	font-size: 1.1em;
 	line-height: 1.333em;
@@ -1727,7 +1758,9 @@ ul.greendoc-type-parameters .greendoc-comment {
 	overflow: hidden;
 	opacity: 0.6;
 	height: 40px;
-	transition: opacity 0.1s, background-color 0.2s;
+	transition:
+		opacity 0.1s,
+		background-color 0.2s;
 	vertical-align: bottom;
 	cursor: pointer;
 }
@@ -1777,7 +1810,9 @@ input[type='checkbox']:checked + .greendoc-widget:before {
 	position: relative;
 	display: inline-block;
 	height: 40px;
-	transition: opacity 0.1s, background-color 0.2s;
+	transition:
+		opacity 0.1s,
+		background-color 0.2s;
 	vertical-align: bottom;
 	cursor: pointer;
 }
@@ -1806,7 +1841,9 @@ input[type='checkbox']:checked + .greendoc-widget:before {
 	opacity: 0;
 	list-style: none;
 	box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-	transition: visibility 0s 0.2s, opacity 0.2s;
+	transition:
+		visibility 0s 0.2s,
+		opacity 0.2s;
 }
 .greendoc-select .greendoc-select-list li {
 	padding: 0 20px 0 0;
@@ -1845,8 +1882,14 @@ img {
  * * ========================================================================== */
 
 body {
-	font-family: Iowan Old Style, Apple Garamond, Palatino Linotype, Times New Roman, 'Droid Serif',
-		Times, serif;
+	font-family:
+		Iowan Old Style,
+		Apple Garamond,
+		Palatino Linotype,
+		Times New Roman,
+		'Droid Serif',
+		Times,
+		serif;
 }
 
 .header-badge img {

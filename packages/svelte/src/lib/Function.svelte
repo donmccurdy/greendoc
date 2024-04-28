@@ -3,6 +3,7 @@
 	import Comment from './Comment.svelte';
 	import Sources from './Sources.svelte';
 	import Reference from './Reference.svelte';
+	import Tags from './Tags.svelte';
 	export let data: GD.ApiFunction;
 </script>
 
@@ -21,6 +22,9 @@
 				>{:else}<Reference data={data.returns} />{/if}
 		</li>
 	</ul>
+	{#if data.tags}
+		<Tags data={data.tags} />
+	{/if}
 	<ul class="greendoc-descriptions">
 		<li class="greendoc-description">
 			{#if data.comment}

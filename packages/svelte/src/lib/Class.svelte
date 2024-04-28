@@ -5,10 +5,14 @@
 	import Comment from './Comment.svelte';
 	import Reference from './Reference.svelte';
 	import Constructor from './Constructor.svelte';
+	import Tags from './Tags.svelte';
 	export let data: GD.ApiClass;
 </script>
 
 <section class="greendoc-panel greendoc-comment">
+	{#if data.tags}
+		<Tags data={data.tags} />
+	{/if}
 	{#if data.comment}
 		<Comment data={data.comment} />
 	{/if}

@@ -3,6 +3,7 @@
 	import Comment from './Comment.svelte';
 	import Sources from './Sources.svelte';
 	import Reference from './Reference.svelte';
+	import Tags from './Tags.svelte';
 	export let data: GD.ApiEnumMember;
 </script>
 
@@ -15,6 +16,9 @@
 				data={data.type}
 			/>{/if}
 	</div>
+	{#if data.tags}
+		<Tags data={data.tags} />
+	{/if}
 	{#if data.comment}
 		<Comment data={data.comment} />
 	{/if}
