@@ -1,6 +1,6 @@
 {
 	"name": "@greendoc/svelte",
-	"version": "0.4.0",
+	"version": "0.4.1",
 	"repository": "https://github.com/donmccurdy/greendoc",
 	"author": "Don McCurdy <dm@donmccurdy.com>",
 	"license": "BlueOak-1.0.0",
@@ -66,7 +66,7 @@
 		"clean": "rimraf dist/*"
 	},
 	"dependencies": {
-		"@greendoc/parse": "^0.4.0"
+		"@greendoc/parse": "^0.4.1"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"
