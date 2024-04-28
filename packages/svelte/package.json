@@ -66,19 +66,10 @@
 		"clean": "rimraf dist/*"
 	},
 	"dependencies": {
-		"@greendoc/parse": "^0.3.0",
-		"svelte": "^4.2.15"
+		"@greendoc/parse": "^0.3.0"
 	},
 	"peerDependencies": {
 		"svelte": "^4.0.0"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/package": "^2.3.1",
-		"@sveltejs/vite-plugin-svelte": "^3.0.0",
-		"svelte-check": "^3.7.0",
-		"svelte-preprocess": "^5.1.4"
 	},
 	"files": [
 		"dist"
