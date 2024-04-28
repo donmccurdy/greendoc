@@ -29,7 +29,7 @@ jobs:
         run: |
           npm config rm proxy
           npm config rm https-proxy
-      - run: yarn install --frozen-lockfile
+      - run: yarn install --frozen-lockfile --network-timeout 100000
       - run: yarn build
       - run: yarn test
       - run: yarn lint
