@@ -3,10 +3,14 @@
 	import Method from './Method.svelte';
 	import Property from './Property.svelte';
 	import Comment from './Comment.svelte';
+	import Tags from './Tags.svelte';
 	export let data: GD.ApiInterface;
 </script>
 
 <section class="greendoc-panel greendoc-comment">
+	{#if data.tags}
+		<Tags data={data.tags} />
+	{/if}
 	{#if data.comment}
 		<Comment data={data.comment} />
 	{/if}

@@ -2,10 +2,14 @@
 	import type { GD } from '@greendoc/parse';
 	import Comment from './Comment.svelte';
 	import EnumMember from './EnumMember.svelte';
+	import Tags from './Tags.svelte';
 	export let data: GD.ApiEnum;
 </script>
 
 <section class="greendoc-panel greendoc-comment">
+	{#if data.tags}
+		<Tags data={data.tags} />
+	{/if}
 	{#if data.comment}
 		<Comment data={data.comment} />
 	{/if}

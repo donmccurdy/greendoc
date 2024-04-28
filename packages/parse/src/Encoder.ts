@@ -63,7 +63,8 @@ export class Encoder {
 			source: {
 				text: this._parser.getSourceText(item),
 				url: this._parser.getSourceURL(item)
-			}
+			},
+			tags: this._parser.getTags(item) || undefined
 		};
 	}
 

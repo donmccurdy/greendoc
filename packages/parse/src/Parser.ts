@@ -1,5 +1,6 @@
 import * as TS from 'ts-morph';
 import { markedFormatter } from './utils/format';
+import { SUPPORTED_TAGS } from './constants';
 
 type $StringLike = { toString: () => string };
 
@@ -157,6 +158,23 @@ export class Parser {
 		}
 
 		throw new Error(`Module not found for path "${filePath}".`);
+	}
+
+	getTags(item: TS.Node): Record<string, string | true> | null {
+		const tags: Record<string, string | true> = {};
+		let tagCount = 0;
+		if ((item as unknown as TS.JSDocableNode).getJsDocs) {
+			for (const doc of (item as unknown as TS.JSDocableNode).getJsDocs()) {
+				for (const tag of doc.getTags()) {
+					const tagName = tag.getTagName();
+					if (SUPPORTED_TAGS.has(tagName)) {
+						tags[tagName] = tag.getCommentText() || true;
+						tagCount++;
+					}
+				}
+			}
+		}
+		return tagCount > 0 ? tags : null;
 	}
 
 	getTag(item: TS.Node, tagName: string): string | null {

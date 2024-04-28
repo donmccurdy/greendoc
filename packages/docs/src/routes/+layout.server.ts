@@ -15,6 +15,7 @@ interface Export {
 	kind: string;
 	category?: string;
 	external?: boolean;
+	tags?: Record<string, string | true>;
 }
 
 interface Section {
@@ -33,7 +34,8 @@ function createExport(item: Node): Export {
 		text: parser.getName(item),
 		href: parser.getPath(item)!,
 		kind: item.getKindName(),
-		category: parser.getTag(item, 'category') || undefined
+		category: parser.getTag(item, 'category') || undefined,
+		tags: parser.getTags(item) || undefined
 	};
 }
 

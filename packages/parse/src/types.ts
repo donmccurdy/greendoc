@@ -40,6 +40,7 @@ export namespace GD {
 		name: string;
 		kind: ApiItemKind;
 		source?: Source;
+		tags?: Record<string, string | true>;
 	}
 
 	export interface ApiClass extends ApiItemBase {
