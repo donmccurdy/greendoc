@@ -18,7 +18,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^20.10.2",
-		"ava": "^5.2.0",
+		"ava": "^6.0.0",
 		"concurrently": "^8.2.0",
 		"lerna": "^8.0.0",
 		"microbundle": "^0.15.1",
