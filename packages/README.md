@@ -7,5 +7,5 @@ _An adaptable system for generating documentation of TypeScript and JavaScript A
 ## Packages
 
 - [`@greendoc/docs`](./docs): Documentation for, and example of, the greendoc system
-- [`@greendoc/parse`](./parse): Parses TS/JS (with [API Extractor](https://api-extractor.com/)) and builds a strongly-typed API model in JSON
+- [`@greendoc/parse`](./parse): Parses TS/JS (with [TS Morph](https://ts-morph.com/) and builds a strongly-typed API model in JSON
 - [`@greendoc/svelte`](./svelte): Renders the API model in HTML, using [Svelte](https://svelte.dev/)
