@@ -1879,11 +1879,11 @@
     string.prototype.matchall "^4.0.6"
 
 "@sveltejs/adapter-auto@^3.0.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-auto/-/adapter-auto-3.2.0.tgz#00720dfad99f95452c6e47cc64a1cb58324337d2"
-  integrity sha512-She5nKT47kwHE18v9NMe6pbJcvULr82u0V3yZ0ej3n1laWKGgkgdEABE9/ak5iDPs93LqsBkuIo51kkwCLBjJA==
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@sveltejs/adapter-auto/-/adapter-auto-3.2.1.tgz#f2d39cd7ed625a2fe2db3c4e578c5e2fbb9263d5"
+  integrity sha512-/3xx8ZFCD5UBc/7AbyXkFF3HNCzWAp2xncH8HA4doGjoGQEN7PmwiRx4Y9nOzi4mqDqYYUic0gaIAE2khWWU4Q==
   dependencies:
-    import-meta-resolve "^4.0.0"
+    import-meta-resolve "^4.1.0"
 
 "@sveltejs/adapter-static@^3.0.0":
   version "3.0.1"
@@ -1891,15 +1891,15 @@
   integrity sha512-6lMvf7xYEJ+oGeR5L8DFJJrowkefTK6ZgA4JiMqoClMkKq0s6yvsd3FZfCFvX1fQ0tpCD7fkuRVHsnUVgsHyNg==
 
 "@sveltejs/kit@^2.0.0":
-  version "2.5.8"
-  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-2.5.8.tgz#233b171e20cac11194908811b58059476aff1c93"
-  integrity sha512-ZQXYaVHd1p0kDGwOi4l82i5kAiUQtrhMthDKtJi0zVzmNupKJ0ZlBVAoceuarCuIntPNctyQchW29h5DkFxd1Q==
+  version "2.5.10"
+  resolved "https://registry.yarnpkg.com/@sveltejs/kit/-/kit-2.5.10.tgz#c52e54508d96af5db8a92f2a81250bd81d0c409b"
+  integrity sha512-OqoyTmFG2cYmCFAdBfW+Qxbg8m23H4dv6KqwEt7ofr/ROcfcIl3Z/VT56L22H9f0uNZyr+9Bs1eh2gedOCK9kA==
   dependencies:
     "@types/cookie" "^0.6.0"
     cookie "^0.6.0"
     devalue "^5.0.0"
     esm-env "^1.0.0"
-    import-meta-resolve "^4.0.0"
+    import-meta-resolve "^4.1.0"
     kleur "^4.1.5"
     magic-string "^0.30.5"
     mrmime "^2.0.0"
@@ -2021,9 +2021,9 @@
   integrity sha512-CRpX21/kGdzjOpFsZSkcrXMGIBWMGNIHXXBVFSH+ggkftxg+XYP20TESbh+zFvFj3EQOl5byk0HTRn1IL6hbqg==
 
 "@types/node@^20.12.7":
-  version "20.12.11"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.12.11.tgz#c4ef00d3507000d17690643278a60dc55a9dc9be"
-  integrity sha512-vDg9PZ/zi+Nqp6boSOT7plNuthRugEKixDv5sFTIpkE89MmNtEArAShI4mxuX2+UrLEe9pxC1vm2cjm9YlWbJw==
+  version "20.12.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.12.12.tgz#7cbecdf902085cec634fdb362172dfe12b8f2050"
+  integrity sha512-eWLDGF/FOSPtAvEqeRAQ4C8LSA7M1I7i0ky1I8U7kD1J5ITyW3AsRhQrKVoWf5pFKZ2kILsEGJhsI9r93PYnOw==
   dependencies:
     undici-types "~5.26.4"
 
@@ -3960,7 +3960,7 @@ get-symbol-description@^1.0.0:
     call-bind "^1.0.2"
     get-intrinsic "^1.1.1"
 
-get-tsconfig@^4.7.3:
+get-tsconfig@^4.7.5:
   version "4.7.5"
   resolved "https://registry.yarnpkg.com/get-tsconfig/-/get-tsconfig-4.7.5.tgz#5e012498579e9a6947511ed0cd403272c7acbbaf"
   integrity sha512-ZCuZCnlqNzjb4QprAzXKdpp/gh6KTxSJuw3IBsPnV/7fV4NxC9ckB+vPTt8w7fJA0TaSD7c55BR47JD6MEDyDw==
@@ -4374,7 +4374,7 @@ import-local@3.1.0:
     pkg-dir "^4.2.0"
     resolve-cwd "^3.0.0"
 
-import-meta-resolve@^4.0.0:
+import-meta-resolve@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/import-meta-resolve/-/import-meta-resolve-4.1.0.tgz#f9db8bead9fafa61adb811db77a2bf22c5399706"
   integrity sha512-I6fiaX09Xivtk+THaMfAwnA3MVA5Big1WHF1Dfx9hFuvNIWpXnorlkzhcQf6ehrqQiiZECRt1poOAkPmer3ruw==
@@ -7654,9 +7654,9 @@ svelte2tsx@~0.7.0:
     pascal-case "^3.1.1"
 
 svelte@^4.2.15:
-  version "4.2.16"
-  resolved "https://registry.yarnpkg.com/svelte/-/svelte-4.2.16.tgz#f94f3f3ea13f98292ce54f596786d0ce0872ee8b"
-  integrity sha512-mQwHpqHD2PmFcCyHaZ7XiTqposaLvJ75WpYcyY5/ce3qxbYtwQpZ+M7ZKP+2CG5U6kfnBZBpPLyofhlE6ROrnQ==
+  version "4.2.17"
+  resolved "https://registry.yarnpkg.com/svelte/-/svelte-4.2.17.tgz#e8f4d70be8cac6bf4dbfa89ca2fcb1a99445933f"
+  integrity sha512-N7m1YnoXtRf5wya5Gyx3TWuTddI4nAyayyIWFojiWV5IayDYNV5i2mRp/7qNGol4DtxEYxljmrbgp1HM6hUbmQ==
   dependencies:
     "@ampproject/remapping" "^2.2.1"
     "@jridgewell/sourcemap-codec" "^1.4.15"
@@ -7832,12 +7832,12 @@ tslib@^2.1.0, tslib@^2.3.0, tslib@^2.4.0:
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
 
 tsx@^4.7.3:
-  version "4.10.2"
-  resolved "https://registry.yarnpkg.com/tsx/-/tsx-4.10.2.tgz#ed1a39f556e208e899d2d8b204aa4108fe7b4668"
-  integrity sha512-gOfACgv1ElsIjvt7Fp0rMJKGnMGjox0JfGOfX3kmZCV/yZumaNqtHGKBXt1KgaYS9KjDOmqGeI8gHk/W7kWVZg==
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/tsx/-/tsx-4.11.0.tgz#fdd8ce7ccaa0a84aed64c11e2fc5da314e1d8d14"
+  integrity sha512-vzGGELOgAupsNVssAmZjbUDfdm/pWP4R+Kg8TVdsonxbXk0bEpE1qh0yV6/QxUVXaVlNemgcPajGdJJ82n3stg==
   dependencies:
     esbuild "~0.20.2"
-    get-tsconfig "^4.7.3"
+    get-tsconfig "^4.7.5"
   optionalDependencies:
     fsevents "~2.3.3"
 
