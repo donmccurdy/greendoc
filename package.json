@@ -22,7 +22,7 @@
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/package": "^2.3.1",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
-		"@types/node": "^20.12.7",
+		"@types/node": "^22.0.0",
 		"ava": "^6.1.2",
 		"concurrently": "^8.2.0",
 		"lerna": "^8.1.2",
