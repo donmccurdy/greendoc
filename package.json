@@ -21,7 +21,7 @@
 		"@sveltejs/adapter-static": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/package": "^2.3.1",
-		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@types/node": "^22.0.0",
 		"ava": "^6.1.2",
 		"concurrently": "^8.2.0",
