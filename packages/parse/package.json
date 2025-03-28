@@ -29,7 +29,7 @@
 	"dependencies": {
 		"highlight.js": "^11.9.0",
 		"marked": "^4.2.3",
-		"ts-morph": "^23.0.0"
+		"ts-morph": "^25.0.0"
 	},
 	"ava": {
 		"extensions": {
