@@ -17,7 +17,7 @@
 		"@greendoc/svelte": "^0.4.1",
 		"@types/he": "^1.2.3",
 		"he": "^1.2.0",
-		"ts-morph": "^23.0.0"
+		"ts-morph": "^25.0.0"
 	},
 	"type": "module"
 }
